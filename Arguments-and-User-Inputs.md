@@ -82,7 +82,7 @@
 
 * `-reupload` **(flag)**
   * **Used by autodl-irssi during automated re-uploads**
-  * This is only used by the **[automatic re-uploading](https://github.com/ryelogheat/xpbot/wiki/autodl-irssi-automatic-re-uploading)** function. Don't pass unless you know what you're doing.
+  * This is only used by the **[automatic re-uploading](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/autodl-irssi-automatic-re-uploading)** function. Don't pass unless you know what you're doing.
   
 ***
 
