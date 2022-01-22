@@ -3,7 +3,7 @@ The tracker template is used to provide the configuration that the uploader shou
 
 
 
-### [x] Simple Attributes
+### :large_blue_diamond: Simple Attributes
 The simple attributes are pretty self explanatory.
 | Key| Description|
 | ------ | ------ |
@@ -33,7 +33,7 @@ The simple attributes are pretty self explanatory.
 
 
 
-### [x] Technical Jargons
+### :large_blue_diamond: Technical Jargons
 These technical jargons denote the different methods that needs to be used to interact with the tracker.
 | Key| Description| Supported Values|
 | ------ | ------ | ------ |
@@ -72,7 +72,7 @@ During communication the following header will be added to each request. [ Autho
 
 
 
-### [x] Translation Attributes
+### :large_blue_diamond: Translation Attributes
 The translation attributes provides the mapping for the `name/key` used by us to the keys that are recognizable by the target tracker. For example the .torrent file is named as `dot_torrent` inside the uploader. For some trackers the .torrent file might be read from the key `file`, for some trackers it might be `torrent`. Any data that the uploader collects which must be sent to the tracker can be mapped / translated here.
 | Key| Description|
 | ------ | ------ |
