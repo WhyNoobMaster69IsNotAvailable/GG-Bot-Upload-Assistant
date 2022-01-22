@@ -39,6 +39,15 @@ These technical jargons denote the different methods that needs to be used to in
 | **authentication_mode**| The type of authentication method to be used. | API_KEY \| BEARER|
 | **payload_type**| The structure of the payload that is accepted by the tracker| MULTI-PART \| JSON|
 
+<details><summary>Sample Data For Reference</summary>
+
+    "technical_jargons": {
+        "authentication_mode": "BEARER",
+        "payload_type": "JSON"
+    },
+
+</details>
+
 #### Technical Jargons Explanation
 
 1. **API_KEY** : When API_KEY authentication mode is used, an api_key needs to be provided by the user which will be used to authenticate the user. The placeholder {api_key} can be used to denote the place where api key should be substituted by the uploader.
@@ -59,17 +68,6 @@ During communication the following header will be added to each request. [ Autho
 3. **JSON** : If JSON is provided as the payload type, the uploader will send the upload payload in JSON format. Please note that in cases where JSON is accepted the files [nfos and torrents] needs to be encoded as base64 strings.
 
 4. **MULTI-PART** : If MULTI-PARTis provided as the payload type, the uploader will send the upload payload as multi-part form data. Any files will be send to the endpoint as FILES
-
-<details><summary>Sample Data For Reference</summary>
-
-    "technical_jargons": {
-        "authentication_mode": "BEARER",
-        "payload_type": "JSON"
-    },
-
-</details>
-
-
 
 ## How exactly `/site_templates/*.json` works
 1. Each site is going to have some small differences in the required API key/values as well as what info we can pass in
