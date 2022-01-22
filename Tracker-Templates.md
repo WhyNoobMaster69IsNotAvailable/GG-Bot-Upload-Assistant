@@ -1,4 +1,77 @@
-### How exactly `/site_templates/*.json` works
+## The Tracker template JSON
+The tracker template is used to provide the configuration that the uploader should use to upload a torrent to a particular tracker. Each tracker irrespective of the platform its based on will have some differences. To accommodate for these differences the site template json is introduced. How the template is used is explained below. For now lets get to know the various components of this template file
+
+
+### Simple Attributes
+The simple attributes are pretty self explanatory.
+| Key| Description|
+| ------ | ------ |
+| **name**| The name of the tracker|
+| **url**| The url for the tracker home page|
+| **platform**| The codebase / platform used by the tracker [UNIT3D, Gazelle, XBTIT, etc]|
+| **source**| The value of the `source` filed to be added to the info dictionary of the torrent metadata|
+| **bbcode_line_break**| The line break to be used in bbcode data|
+| **bbcode_code**| The `code` tags accepted by the tracker bbcode parser|
+| **title_separator**| The separator to be used to create the torrent title [{space} or {dot} or {anything else you need}]|
+| **torrents_search**| The url to be used to search for existing torrents in the tracker [checking for duplicates]|
+| **upload_form**| The url to be used to upload the torrent to the tracker|
+
+<details><summary>Sample Data For Reference</summary>
+
+    "name": "Tracker",
+    "url": "https://tracker.io/",
+    "platform": "TBDev",
+    "source": "TKR",
+    "bbcode_line_break": "\n",
+    "bbcode_code": "[code][/code]",
+    "title_separator" : ".",
+    "torrents_search": "https://tracker.io/api/torrent",
+    "upload_form": "https://tracker.io/api/upload",
+
+</details>
+
+
+
+### Technical Jargons
+These technical jargons denote the different methods that needs to be used to interact with the tracker.
+| Key| Description| Supported Values|
+| ------ | ------ | ------ |
+| **authentication_mode**| The type of authentication method to be used. | API_KEY \| BEARER|
+| **payload_type**| The structure of the payload that is accepted by the tracker| MULTI-PART \| JSON|
+
+#### Technical Jargons Explanation
+
+1. **API_KEY** : When API_KEY authentication mode is used, an api_key needs to be provided by the user which will be used to authenticate the user. The placeholder {api_key} can be used to denote the place where api key should be substituted by the uploader.
+
+```
+Assume the API_KEY = asd12indkasnd19i2ndo1nci2n3ueqj
+Upload URL Configured: https://tracker.me/api/upload/{api_key}
+Translated URL: https://tracker.me/api/upload/asd12indkasnd19i2ndo1nci2n3ueqj
+```
+
+2. **BEARER** : If authentication mode is set as BEARER, the api key provided via the `config.env` will be set as the Bearer Token in the Authorization Header during communication with the tracker.
+```
+Assume the API_KEY = asd12indkasnd19i2ndo1nci2n3ueqj
+Upload URL Configured: https://tracker.me/api/upload/
+During communication the following header will be added to each request. [ Authorization: Bearer asd12indkasnd19i2ndo1nci2n3ueqj]
+```
+
+3. **JSON** : If JSON is provided as the payload type, the uploader will send the upload payload in JSON format. Please note that in cases where JSON is accepted the files [nfos and torrents] needs to be encoded as base64 strings.
+
+4. **MULTI-PART** : If MULTI-PARTis provided as the payload type, the uploader will send the upload payload as multi-part form data. Any files will be send to the endpoint as FILES
+
+<details><summary>Sample Data For Reference</summary>
+
+    "technical_jargons": {
+        "authentication_mode": "BEARER",
+        "payload_type": "JSON"
+    },
+
+</details>
+
+
+
+## How exactly `/site_templates/*.json` works
 1. Each site is going to have some small differences in the required API key/values as well as what info we can pass in
     * A simple example of this would be the *resolution / source*  sites have you select
     * BHD has `BD Remux` clumped in with other resolutions (??) while still leaving `Bluray` as a `source` option
@@ -12,6 +85,10 @@
             "torrent_title" : "name",
             "description": "description",
             "mediainfo": "mediainfo",
+            "bdinfo": "bdinfo",
+            "shameless_self_promotion": "releaseInfo",
+            "url_images": "screenshots",
+            "hybrid_type": "hybrid_type",
             "type": "category_id",
             "source": "source",
             "resolution": "type",
@@ -31,8 +108,6 @@
         * e.g. in the script we assign `dot_torrent` to the path of the generated .torrent file 
             * BHD want it passed as `file`
             * BLU & ACM want it passed as `torrent`
-
-
 3.  Next we split the **.json* file into **2** parts
     * **Part 1:** Required
         * All the *Keys* here **have** to be set a value and passed during the upload process
