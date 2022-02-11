@@ -19,7 +19,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>Asiancinema private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"></tr>
 <tr style="text-align: center">
             <td><strong>BHD_API_KEY</strong></td>
             <td>Optional</td>
