@@ -1,18 +1,209 @@
-1. **API keys**
-    * To upload to a tracker you need the following information
-      * Tracker API Key
-      * Tracker Announce URL (used for generating .torrent)
+## API Keys and URLs:
+Tracker API keys and announce urls are optional unless you plan on uploading torrents to them. For example if you don't intent to upload torrents to Asiancinema, then there is no need to provide its api key and announce url.
 
-    * **TMDB API Key is required**, TMDB is integral to this script. [Get API Key](https://www.themoviedb.org/documentation/api)
+<details><summary>Tracker API and Announce Url Properties</summary>
+<table>
+    <tbody>
+         <tr style="text-align: center; font-size:20px">
+            <th><strong>Property</strong></th>
+            <th><strong>Required/Optional</strong></th>
+            <th><strong>Description</strong></th>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>ACM_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>Asiancinema API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>ACM_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>Asiancinema private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>BHD_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>Beyond-HD API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>BHD_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>Beyond-HD private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>BLU_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>Blutopia API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>BLU_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>Blutopia private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>R4E_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>Racing4Everyone API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>R4E_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>Racing4Everyone private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>ATH_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>Aither API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>ATH_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>Aither private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>TELLY_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>Telly API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>TELLY_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>Telly private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>NTELOGO_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>Ntelogo API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>NTELOGO_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>Ntelogo private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>TSP_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>TheScenePlace API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>TSP_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>TheScenePlace private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>DT_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>Desitorrents API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>DT_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>Desitorrents private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>UHDHVN_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>UHD-Heaven API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>UHDHVN_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>UHD-Heaven private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>STC_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>SkipTheCommericals API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>STC_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>SkipTheCommericals private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>SPD_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>SpeedApp API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>SPD_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>SpeedApp private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>TDB_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>TorrentDB API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>TDB_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>TorrentDB private announce url</td>
+        </tr>
+<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center">
+            <td><strong>ACM_API_KEY</strong></td>
+            <td>Optional</td>
+            <td>Asiancinema API Key</td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>ACM_ANNOUNCE_URL</strong></td>
+            <td>Optional</td>
+            <td>Asiancinema private announce url</td>
+        </tr>
+    </tbody>
+</table>
+</details>
 
-    * **Discord Webhooks**
-      * To get Discord notifications about your uploads you need to create a Server & generate a Webhook URL for one of the channels  
-      * See the image below for an example of the notifications you would receive
-        * ![discord_notification](https://user-images.githubusercontent.com/80369373/111088206-68cfb580-84fc-11eb-853a-66b968f90a75.png)
+The metadata fetching is performed by the upload assistant with the help of [TheMovieDB](https://www.themoviedb.org/). The API Key to interact with TMDB needs to be provided and the operations done by the upload assistant can be notified to a text channel in a discord service with the help of discord webhook.
 
-
-<br />
-<br />
+<table>
+    <tbody>
+         <tr style="text-align: center; font-size:20px">
+            <th><strong>Property</strong></th>
+            <th><strong>Required/Optional</strong></th>
+            <th><strong>Description</strong></th>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>TMDB_API_KEY</strong></td>
+            <td>Required</td>
+            <td>The API key to communicate with TMDB ([TheMovieDB](https://www.themoviedb.org/))<br><br>
+                To get an API Key:<br>
+                <ul>
+                    <li>Create an account at [TheMovieDB](https://www.themoviedb.org/)</li>
+                    <li>Navigate to settings</li>
+                    <li>Choose the API section and copy the API Key (v3 auth)</li>
+                </ul>
+                Refer to [API Documentation](https://www.themoviedb.org/documentation/api) for more details
+            </td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>DISCORD_WEBHOOK</strong></td>
+            <td>Optional</td>
+            <td>Discord webhook where torrent upload messages and status are to be sent to. <br><br>
+                To create a Webhook:<br>
+                <ul>
+                    <li>Open your Server Settings and head into the Integrations tab</li>
+                    <li>Click the "Create Webhook" button to create a new webhook!</li>
+                </ul>
+                Refer to [Intro To Webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) for more details
+                See the image below for an example of the notifications you would receive
+                ![discord_notification](https://user-images.githubusercontent.com/80369373/111088206-68cfb580-84fc-11eb-853a-66b968f90a75.png)
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 2. **Image Hosts**
     * These are used for screenshots, currently 4 are supported
