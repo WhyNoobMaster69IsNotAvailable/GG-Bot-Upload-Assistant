@@ -19,7 +19,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>Asiancinema private announce url</td>
         </tr>
-<tr style="text-align: center"></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>BHD_API_KEY</strong></td>
             <td>Optional</td>
@@ -30,7 +30,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>Beyond-HD private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>BLU_API_KEY</strong></td>
             <td>Optional</td>
@@ -41,7 +41,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>Blutopia private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>R4E_API_KEY</strong></td>
             <td>Optional</td>
@@ -52,7 +52,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>Racing4Everyone private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>ATH_API_KEY</strong></td>
             <td>Optional</td>
@@ -63,7 +63,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>Aither private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>TELLY_API_KEY</strong></td>
             <td>Optional</td>
@@ -74,7 +74,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>Telly private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>NTELOGO_API_KEY</strong></td>
             <td>Optional</td>
@@ -85,7 +85,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>Ntelogo private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>TSP_API_KEY</strong></td>
             <td>Optional</td>
@@ -96,7 +96,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>TheScenePlace private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>DT_API_KEY</strong></td>
             <td>Optional</td>
@@ -107,7 +107,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>Desitorrents private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>UHDHVN_API_KEY</strong></td>
             <td>Optional</td>
@@ -118,7 +118,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>UHD-Heaven private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>STC_API_KEY</strong></td>
             <td>Optional</td>
@@ -129,7 +129,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>SkipTheCommericals private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>SPD_API_KEY</strong></td>
             <td>Optional</td>
@@ -140,7 +140,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>SpeedApp private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>TDB_API_KEY</strong></td>
             <td>Optional</td>
@@ -151,7 +151,7 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
             <td>Optional</td>
             <td>TorrentDB private announce url</td>
         </tr>
-<tr style="text-align: center"><td></td></tr>
+<tr style="text-align: center"><td></td><td></td><td></td></tr>
 <tr style="text-align: center">
             <td><strong>ACM_API_KEY</strong></td>
             <td>Optional</td>
