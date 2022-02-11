@@ -55,17 +55,17 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
 <tr>
 <th>
 
-**Property**
+Property
 
 </th>
 <th>
 
-**Required/Optional**
+Required/Optional
 
 </th>
 <th>
 
-**Description**
+Description
 
 </th>
 </tr>
