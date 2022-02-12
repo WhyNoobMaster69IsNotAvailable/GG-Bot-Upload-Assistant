@@ -239,12 +239,6 @@ The API Key for ptpimg. <br>Follow the guide [here](https://github.com/theirix/p
 </tr>
 </table>
 
-4.  **Selecting media for uploading**
-    - You can either set a **upload_dir_path** or use the **-path** argument
-    1. **upload_dir_path:** set the full path to a folder which contains a single file or folder (e.g. season pack), and it will be uploaded automatically upon script execution
-       - `upload_dir_path=/home/user/videos/upload_me/`
-    2. **-path argument:** If you leave **upload_dir_path** blank then you have to supply the **-path** argument followed by the path to the media you want to upload (video file or folder)
-       - `python3 auto_upload.py -t ABC -path /home/user/videos/upload_me/test.mkv`
 5.  **Post Processing**
 
     - After a successful upload we can move the .torrent file & actual media file/folder to a location you specify
@@ -348,12 +342,3 @@ The API Key for ptpimg. <br>Follow the guide [here](https://github.com/theirix/p
 
     - See this page for more info [xpbot/wiki/autodl-irssi-automatic-re-uploading](https://github.com/ryelogheat/xpbot/wiki/autodl-irssi-automatic-re-uploading)
 
-```
-</td>
-<td>
-
-</td>
-</tr>
-</table>
-
-```
