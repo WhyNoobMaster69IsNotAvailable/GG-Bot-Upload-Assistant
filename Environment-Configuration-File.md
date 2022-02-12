@@ -1,4 +1,5 @@
-## API Keys and URLs:
+
+## 1. API Keys and URLs:
 
 Tracker API keys and announce urls are optional unless you plan on uploading torrents to them. For example if you don't intent to upload torrents to Asiancinema, then there is no need to provide its api key and announce url.
 
@@ -110,7 +111,7 @@ Refer to [Intro To Webhooks](https://support.discord.com/hc/en-us/articles/22838
 
 <br>
 
-## Screenshots and Image Uploads
+## 2. Screenshots and Image Uploads
 
 GG-BOT Upload Assistant take frame accurate screenshots automatically and can upload them to the image hosting site of users choice.
 | **Property** | **Required/Optional** | **Description** |
@@ -239,69 +240,64 @@ The API Key for ptpimg. <br>Follow the guide [here](https://github.com/theirix/p
 </tr>
 </table>
 
-5.  **Post Processing**
+<br>
 
-    - After a successful upload we can move the .torrent file & actual media file/folder to a location you specify
-    - **Leave blank to disable any movement**
+## 3. Post Processing:
+Once a torrent has been uploaded the upload assistant can move the .torrent file and the actual media file/folder to configured folder.
+> Leave these properties blank to disable any post processing
 
-    1\. **dot_torrent_move_location:** specify the full path to where you want the .torrent file moved after uploading \* this could be used with an AutoWatch directory to automatically start seeding
+| Property | Required/Optional | Description |
+| ------ | ------ | ------ |
+| **dot_torrent_move_location** | Optional | Specify the full path to where you want the .torrent file moved after uploading. (_This could be used with an AutoWatch directory to automatically start seeding_) |
+| **media_move_location** | Optional | Path to location where you want media file/folder moved to after uploading (_Again this could be used with AutoTools to automatically start seeding after uploading_) |
+| **enable_type_base_move** | Optional | when type based move is enabled, torrents will be moved to sub folders within the `dot_torrent_move_location`|
 
-    2\. **media_move_location:** path to location where you want media file/folder moved to after uploading \* again this could be used with AutoTools to automatically start seeding after uploading
+<details><summary>Torrent client & watch directories</summary>
 
-    **Torrent client & watch directories:**
+1. Transmission: open `settings.json` & append the following lines
 
-    1. **Transmission**: open **settings.json** & append the following lines
+```plaintext
+"watch-dir": "/path/to/folder/to/watch/",
+"watch-dir-enabled": true
+```
 
-       ```plaintext
-       "watch-dir": "/path/to/folder/to/watch/",
-       "watch-dir-enabled": true
-       ```
+2. rtorrent/ruTorrent: open `rtorrent.rc` and add the following line (might already exist)
+       
+```plaintext
+schedule = watch_directory,5,5,"load.start=/path/to/folder/to/watch/*.torrent,d.delete_tied="
+```
+</details>
 
-    2. **rtorrent/ruTorrent**: open **rtorrent.rc** and add the following line (might already exist)
+<br>
 
-       ```plaintext
-       schedule = watch_directory,5,5,"load.start=/path/to/folder/to/watch/*.torrent,d.delete_tied="
-       ```
+## 4. Dupe check:
+The upload assistant uses `fuzzywuzzy` to compare a stripped down version of the title it generated to the results obtained from the site search API. The title, year, resolution are removed before comparing similarity (the upload assistant filter out results that don't match the resolution of the local file).
+| Property | Required/Optional | Default value| Description |
+| ------ | ------ | ------ | ------ |
+| **check_dupes** | Required | true | This flag determines whether or not dupe check needs to be done on a tracker site before uploading torrents to that tracker.|
+| **acceptable_similarity_percentage** | Required | 70 | Set a maximum similarity percentage. If torrents obtained from tracker site is greater than this threshold user will be prompted a choice to stop or continue the upload. Please note that this flag has significance only when `check_dupes=true`|
 
-    3. **Deluge**: TODO
+<details><summary>Examples of filename & percentage similarities</summary>
 
-       ```plaintext
-       fill me out later
-       ```
+```
+Ex Machina 2015 1080p UHD Bluray DTS 5.1 HDR x265-D-Z0N3
+Ex Machina 2014 1080p UHD BluRay DTS HDR x265 D-Z0N3
+100%
+-----
+Atomic Blonde 2017 1080p UHD Bluray DD+ 7.1 HDR x265-NCmt
+Atomic Blonde 2017 1080p UHD BluRay DD+7.1 HDR x265 - HQMUX
+84%
+-----
+Get Him to the Greek 2010 1080p Bluray DTS-HD MA 5.1 AVC Remux-EPSiLON
+Get Him to the Greek 2010 Unrated BluRay 1080p DTS-HD MA 5.1 AVC REMUX-FraMeSToR
+88%
+-----
+Knives Out 2019 1080p UHD Bluray DD+ 7.1 HDR x265-D-Z0N3
+Knives Out 2019 REPACK 1080p UHD BluRay DDP 7.1 HDR x265-SA89
+89%
+```
 
-6.  **Dupe check**
-
-    - _Use at your own risk_
-    - Set `check_dupes=` to `true` if you want to use this
-      - Using fuzzywuzzy we compare a stripped down version of the title we generate to the results we get from the site search API
-      - We remove the title, year, resolution before comparing similarity (we filter out results that don't match the resolution of the local file)
-    - Set a maximum similarity percentage (don't include percentage symbol) at `acceptable_similarity_percentage=`
-      - `acceptable_similarity_percentage` only works if `check_dupes=true`
-      - **100% dupe matches** will always cancel the upload no matter what `acceptable_similarity_percentage` is set to
-      - (Higher = Riskier)
-
-    <details>
-    <summary>examples of filename & percent differences</summary>
-
-    ```plaintext
-     Ex Machina 2015 1080p UHD Bluray DTS 5.1 HDR x265-D-Z0N3
-     Ex Machina 2014 1080p UHD BluRay DTS HDR x265 D-Z0N3
-     100%
-     -----
-     Atomic Blonde 2017 1080p UHD Bluray DD+ 7.1 HDR x265-NCmt
-     Atomic Blonde 2017 1080p UHD BluRay DD+7.1 HDR x265 - HQMUX
-     84%
-     -----
-     Get Him to the Greek 2010 1080p Bluray DTS-HD MA 5.1 AVC Remux-EPSiLON
-     Get Him to the Greek 2010 Unrated BluRay 1080p DTS-HD MA 5.1 AVC REMUX-FraMeSToR
-     88%
-     -----
-     Knives Out 2019 1080p UHD Bluray DD+ 7.1 HDR x265-D-Z0N3
-     Knives Out 2019 REPACK 1080p UHD BluRay DDP 7.1 HDR x265-SA89
-     89%
-    ```
-
-    </details>
+</details>
 
 7.  **Auto Mode (silent mode)**
     - Set this to `true` to run without any human interaction
