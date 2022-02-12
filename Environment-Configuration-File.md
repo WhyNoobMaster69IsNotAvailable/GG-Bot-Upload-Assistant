@@ -299,42 +299,130 @@ Knives Out 2019 REPACK 1080p UHD BluRay DDP 7.1 HDR x265-SA89
 
 </details>
 
-7.  **Auto Mode (silent mode)**
-    - Set this to `true` to run without any human interaction
-      - This will parse the filename & auto select the _right_ TMDB ID
-      - If minor issues are found (e.g. the filename year is off by 1) it will deal with it and upload anyways
-      - Note that you are responsible for following **all** tracker rules and should manually double check all automatic uploads
-    - Set this to `false` to have a more interactive & hands on experience **(recommended)**
-      - If issues are found (e.g. source can't be auto-detected) you'll be prompted for user input that we can use
-      - You'll be shown status updates continually & will have a chance to review/approve the final upload data
-      - You'll be shown the exact POST data/file payload before its uploaded for your review/approval
-8.  **auto_mode_force**
-    - This works in tandem with **auto_mode**, if `auto_mode=false` then this won't work
-    - If your torrent has minor issues like we can't auto-detect the _audio_channels_, this will force the upload without that info
-      - e.g. If **pymediainfo** / **ffprobe** / **regex** can not detect the audio*codec this will simply omit the \_audio_codec* from the torrent title and finish the upload
-    - **If missing, these can be skipped:**
-      - `audio_codec` `audio_channels` `video_codec (maybe)`
-9.  **Live / Draft**
-    - This only applies to **BHD** since they are the only supported site that has a **Drafts** page
-    - It's recommended to set this to `False` for your first few uploads, so you can verify everything is to your liking
-    - Setting this to `True` will result in **BHD** uploads being posted _live_ for everyone to see
-10. **BDInfo script**
-    - If you plan on uploading a "Raw Bluray Disc" you need to fill out this option
-    - You need to supply it with the path of the **BDInfoCLI-ng** docker wrapper script
-    - Process:
-      - Download & install Docker
-      - Clone this project [BDInfoCLI-ng](https://github.com/zoffline/BDInfoCLI-ng) & `cd` into it
-      - In the folder `/BDInfoCLI-ng-UHD_Support_CLI/scripts/` you'll find a file called `bdinfo`
-      - Copy the entire path to that `bdinfo` file into `config.env`
-11. **Auto re-upload**
+<br>
 
-    - these keys are not required & are used if you are auto re-uploading torrents & are using docker containers
+## 4. Auto Mode:
+> Note that you are responsible for following **all** tracker rules and should manually double check all automatic uploads
 
-      ```plaintext
-      translation_needed=
-      host_path=
-      remote_path=
-      ```
+<table>
+    <tbody>
+        <tr>
+            <th><strong>Property</strong></th>
+            <th><strong>Required/Optional</strong></th>
+            <th><strong>Default Value</strong></th>
+            <th><strong>Description</strong></th>
+        </tr>
+        <tr>
+            <td><strong>auto_mode</strong></td>
+            <td>Required </td>
+            <td>False </td>
+            <td>
 
-    - See this page for more info [xpbot/wiki/autodl-irssi-automatic-re-uploading](https://github.com/ryelogheat/xpbot/wiki/autodl-irssi-automatic-re-uploading)
+- Set this to `true` to run without any human interaction
+    - This will parse the filename & auto select the _right_ TMDB ID
+    - If minor issues are found (e.g. the filename year is off by 1) it will deal with it and upload anyways
+    - Note that you are responsible for following **all** tracker rules and should manually double check all automatic uploads
+- Set this to `false` to have a more interactive & hands on experience **(recommended)**
+    - If issues are found (e.g. source can't be auto-detected) you'll be prompted for user input that we can use
+    - You'll be shown status updates continually & will have a chance to review/approve the final upload data
+    - You'll be shown the exact POST data/file payload before its uploaded for your review/approval
+</td>
+        </tr>
+        <tr>
+            <td><strong>force_auto_upload </strong></td>
+            <td>Required </td>
+            <td>False </td>
+            <td>This works in tandem with **auto_mode**, if `auto_mode=False` then this won't work. <br> If your torrent has minor issues like we can't auto-detect the `audio_channels`, this will force the upload without that info. 
 
+<br>
+
+```
+Eg. If pymediainfo / ffprobe / regex can not detect the `audio_codec` this will simply omit the `audio_codec` from the torrent 
+```
+</td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
+
+## 4. Miscellaneous Properties:
+<table>
+    <tbody>
+        <tr>
+            <th><strong>Property</strong></th>
+            <th><strong>Required/Optional</strong></th>
+            <th><strong>Default Value</strong></th>
+            <th><strong>Description</strong></th>
+        </tr>
+        <tr>
+            <td><strong>live</strong></td>
+            <td>Optional </td>
+            <td>False </td>
+            <td>Property to determine whether or not to mark uploads as Live/Draft 
+<br>
+
+- This only applies to **BHD** since they are the only supported site that has a **Drafts** page
+- It's recommended to set this to `False` for your first few uploads, so you can verify everything is to your liking
+- Setting this to `True` will result in **BHD** uploads being posted _live_ for everyone to see
+
+</td>
+        </tr>
+        <tr>
+            <td><strong>bdinfo_script</strong></td>
+            <td>Optional</td>
+            <td></td>
+            <td>
+
+```
+Please note that this property is not applicable when using docker images for torrent uploads.
+```
+
+- If you plan on uploading a "Raw Bluray Disc" you need to fill out this option
+- You need to supply it with the path of the **BDInfoCLI-ng** docker wrapper script
+- Process:
+    - Download & install Docker
+    - Clone this project [BDInfoCLI-ng](https://github.com/zoffline/BDInfoCLI-ng) & `cd` into it
+    - In the folder `/BDInfoCLI-ng-UHD_Support_CLI/scripts/` you'll find a file called `bdinfo`
+    - Copy the entire path to that `bdinfo` file into `config.env`
+
+</td>
+        </tr>
+        <tr>
+            <td><strong>translation_needed</strong></td>
+            <td>Optional </td>
+            <td></td>
+            <td>
+
+```
+This key is not required & are used if you are auto re-uploading torrents & are using docker containers
+```
+- See this page for more info [xpbot/wiki/autodl-irssi-automatic-re-uploading](https://github.com/ryelogheat/xpbot/wiki/autodl-irssi-automatic-re-uploading)
+</td>
+        </tr>
+        <tr>
+            <td><strong>host_path</strong></td>
+            <td>Optional </td>
+            <td></td>
+            <td>
+
+```
+This key is not required & are used if you are auto re-uploading torrents & are using docker containers
+```
+- See this page for more info [xpbot/wiki/autodl-irssi-automatic-re-uploading](https://github.com/ryelogheat/xpbot/wiki/autodl-irssi-automatic-re-uploading)
+</td>
+        </tr>
+        <tr>
+            <td><strong>remote_path</strong></td>
+            <td>Optional </td>
+            <td></td>
+            <td>
+
+```
+This key is not required & are used if you are auto re-uploading torrents & are using docker containers
+```
+- See this page for more info [xpbot/wiki/autodl-irssi-automatic-re-uploading](https://github.com/ryelogheat/xpbot/wiki/autodl-irssi-automatic-re-uploading)
+</td>
+        </tr>
+    </tbody>
+</table>
