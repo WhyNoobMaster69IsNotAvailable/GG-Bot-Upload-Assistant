@@ -122,7 +122,7 @@ GG-BOT Upload Assistant take frame accurate screenshots automatically and can up
 
 Once a screenshot has been created it'll be uploaded to one of the image host configured by the user.
 
-> A total of 5 Image Hosts are currently supported. imgbox | imgbb | freeimage | ptpimg | imgfi
+> A total of 6 Image Hosts are currently supported. imgbox | imgbb | freeimage | ptpimg | imgfi | imgur
 
 The properties associated with Image Hosting sites are described below.
 
@@ -162,9 +162,9 @@ The properties associated with Image Hosting sites are described below.
 img_host_1=freeimage
 img_host_2=imgbb
 img_host_3=ptpimg
-img_host_4=
+img_host_4=imgur
 img_host_5=
-
+img_host_6=
 # imgbox and Imgfi are disabled in this configuration
 ```
 
@@ -178,6 +178,7 @@ Indicates the priority of an image host with lower number having higher priority
 - img_host_3
 - img_host_4
 - img_host_5
+- img_host_6
 </td>
 </tr>
 <tr>
@@ -237,6 +238,28 @@ The API Key for ptpimg. <br>Follow the guide [here](https://github.com/theirix/p
 <td>Optional</td>
 <td>XXXXXXXXXXXXXXX</td>
 <td>Image Host: [imgfi](https://imgfi.com/) <br> The API key for ImgFi</td>
+</tr>
+<tr>
+<td>
+
+**imgur_api_key**
+
+</td>
+<td>Optional</td>
+<td>XXXXXXXXXXXXXXX</td>
+<td>Image Host: [imgur](https://imgur.com/) <br> This is the client secret for your imgur applicaton <br>
+You need to register your application [here](https://api.imgur.com/oauth2/addclient) with `Anonymous usage without user authorization` to get client id and secret</td>
+</tr>
+<tr>
+<td>
+
+**imgur_client_id**
+
+</td>
+<td>Optional</td>
+<td>XXXXXXXXXXXXXXX</td>
+<td>Image Host: [imgur](https://imgur.com/) <br> This is the client id for your imgur applicaton <br>
+You need to register your application [here](https://api.imgur.com/oauth2/addclient) with `Anonymous usage without user authorization` to get client id and secret</td>
 </tr>
 </table>
 
