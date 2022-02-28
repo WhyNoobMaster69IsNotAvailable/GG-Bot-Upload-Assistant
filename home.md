@@ -26,7 +26,7 @@
 
 ## Usage Examples Docker
 1. Upload to BHD drafts with manually selected TMDB ID
-     * See [video example](https://asciinema.org/a/410179)
+     * See [video example](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Usage:-Video-Examples)
 2. Upload to **Beyond-HD** & **Blutopia** with movie file in **/home/user/Videos/movie.title.year.bluray.1080p.etc.mkv**
     * 
 ```
