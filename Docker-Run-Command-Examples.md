@@ -58,7 +58,7 @@ Please refer to the [Arguments and User Inputs](Arguments-and-User-Inputs) Wiki 
 * Reference Run Command
 
 ```plaintext
-docker run -it 
+docker run --rm -it 
         -v {YOUR_MEDIA_LOCATION}:/data 
         --env-file config.env 
         noobmaster669/gg-bot-uploader:latest -t TSP-p "/data/YOUR_FILE_OR_FOLDER" ADDITIONAL_ARGUMENTS
@@ -67,12 +67,12 @@ docker run -it
 * Command to execute
 
 ```plaintext
-docker run -it 
+docker run --rm -it 
         -v /home/ubuntu/media:/data 
         --env-file config.env 
         noobmaster669/gg-bot-uploader:latest -t TSP-p "/data/movies/Movie.Name.2005.1080p.BluRay.REMUX.AVC.DTS-HD.MA.5.1-RELEASEGROUP.mkv" 
 OR
-docker run -it 
+docker run --rm -it 
         -v /home/ubuntu/media:/data 
         --env-file config.env 
         noobmaster669/gg-bot-uploader:latest -t TSP-p "/data/tvshows/TV.Show.Name.S01E04.EpsiodeName.2160p.WEB-DL.DDP5.1.Atmos.DV.HEVC-RELEASEGROUP.mkv"
@@ -82,7 +82,7 @@ docker run -it
 * Reference Run Command
 
 ```plaintext
-docker run -it 
+docker run --rm -it 
         -v {YOUR_MEDIA_LOCATION}:/data 
         --env-file config.env 
         noobmaster669/gg-bot-uploader:latest -t TSP-p "/data/YOUR_FILE_OR_FOLDER" ADDITIONAL_ARGUMENTS
@@ -91,7 +91,7 @@ docker run -it
 * Command to execute
 
 ```plaintext
-docker run -it 
+docker run --rm -it 
         -v /home/ubuntu/media:/data 
         --env-file config.env 
         noobmaster669/gg-bot-uploader:latest -t TSP-p "/data/tvshows/TV.Show.Name.S02.2160p.HULU.WEB-DL.DDP5.1.DV.HEVC-RELEASEGROUP"
@@ -102,7 +102,7 @@ docker run -it
 * Reference Run Command
 
 ```plaintext
-docker run -it 
+docker run --rm -it 
         -v {YOUR_MEDIA_LOCATION}:/data 
         --env-file config.env 
         noobmaster669/gg-bot-uploader:latest -t TSP-p "/data/YOUR_FILE_OR_FOLDER" ADDITIONAL_ARGUMENTS
@@ -111,7 +111,7 @@ docker run -it
 * Command to execute
 
 ```plaintext
-docker run -it 
+docker run --rm -it 
         -v /home/ubuntu/media:/data 
         --env-file config.env 
         noobmaster669/gg-bot-uploader:latest -t TSP-p "/data/tvshows/TV.Show.Name.S02.2160p.HULU.WEB-DL.DDP5.1.DV.HEVC-RELEASEGROUP" -batch
