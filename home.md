@@ -30,7 +30,7 @@
 2. Upload to **Beyond-HD** & **Blutopia** with movie file in **/home/user/Videos/movie.title.year.bluray.1080p.etc.mkv**
     * 
 ```
-     docker run -it \
+     docker run --rm -it \
     -v <PATH_TO_YOUR_MEDIA>:/data \
     --env-file config.env \
     noobmaster669/gg-bot-uploader -t BHD BLU -path /home/user/Videos/movie.title.year.bluray.1080p.etc.mkv
@@ -38,7 +38,7 @@
 3. Upload movie **anonymously** to **AsianCinema** with manually specified **TMDB** & **IMDB** IDs
     * 
 ```
-    docker run -it \
+    docker run --rm -it \
     -v <PATH_TO_YOUR_MEDIA>:/data \
     --env-file config.env \
     noobmaster669/gg-bot-uploader -t acm -p /home/user/Videos/movie.title.year.bluray.1080p.etc.mkv -imdb tt0111161 -tmdb 278 -anon
