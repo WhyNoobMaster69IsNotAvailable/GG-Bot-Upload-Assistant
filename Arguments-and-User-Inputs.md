@@ -1,8 +1,7 @@
-GG-BOT Upload Assistant provides various runtime arguments that can be used to customize the individual upload process. These are mainly classified into 5 different groups.
+GG-BOT Upload Assistant provides various runtime arguments that can be used to customize the individual upload process. These are mainly classified into 4 different groups.
 - Mandatory arguments
 - Commonly used arguments
 - Less commonly used arguments
-- Experimental arguments
 - Internal upload arguments
 
 NOTE: 
@@ -43,6 +42,9 @@ docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bo
 
 ## Commonly Used Arguments
 This category contains the list of arguments that are used commonly.
+
+> It's recommended to use the `-imdb` or `-tmdb` or `-tvmaze` arguments if `auto_mode=true` (auto-detection isn't always 100% accurate)
+
 | #| Flag | Value Needed | Description | Example |
 | ------ | ------ | ------ | ------ | ------ |
 | 1 | **-tmdb** | Yes | Use this to manually provide the TMDB ID | **-tmdb 566525** |
@@ -79,117 +81,73 @@ These are the list of arguments that can provide additional functionality to the
 There are some rare cases where these arguments will come in use. Please see details below.
 | #| Flag | Value Needed | Description | Example |
 | ------ | ------ | ------ | ------ | ------ |
-| 1 | **-title** | cell | cell | cell |
-| 2 | **-type** | cell | cell | cell |
-| 3 | **-reupload** | cell | cell | cell |
-| 4 | **-batch** | cell | cell | cell |
-| 5 | **-disc** | cell | cell | cell |
-| 6 | **-e or --edition** | cell | cell | cell |
-| 7 | **-nfo** | cell | cell | cell |
-| 8 | **-d or --debug** | cell | cell | cell |
-| 9 | **-mkt or --use_mktorrent** | cell | cell | cell |
-| 10 | **-fpm or --force_pymediainfo** | cell | cell | cell |
-| 11 | **-3d** | cell | cell | cell |
-| 12 | **-foreign** | cell | cell | cell |
+| 1 | **-title** | Yes | Custom title provided by the user. You **must** enclose the title you want in **double quotes** (to deal with spaces in title) | **-title "This.Is.My.Custom.Title.WEB-DL.DD+5.1.H.265-SomEGrouP"** |
+| 2 | **-type** | Yes | Use to manually specify 'movie' or 'tv' | **-type tv** |
+| 3 | **-reupload** | No | This is used in conjunction with autodl to automatically re-upload any filter matches. WILL BE DEPRECATED in v3.0 | **-reupload** |
+| 4 | **-batch** | No| Pass this arg if you want to upload all the files/folder within the folder you specify with the '-p' arg. | **-batch** |
+| 5 | **-disc** | No | If you are uploading a raw dvd/bluray disc you need to pass this arg | **-disc** |
+| 6 | **-e or --edition** | Yes | Manually provide an 'edition' (e.g. Criterion Collection, Extended, Remastered, etc). You must enclose the edition you want in double quotes (to deal with possible spaces) | **-e "Extended"** |
+| 7 | **-nfo** | Yes | Use this to provide the path to an nfo file you want to upload. **Note**:: *Don't ever **modify / add / remove** the actual file/folder of whatever you're re-uploading* | **-nfo "path/to/my-file.nfo"** |
+| 8 | **-d or --debug** | No | Used for debugging. Writes debug lines to log file | **--debug** |
+| 9 | **-mkt or --use_mktorrent** | No | Use mktorrent instead of torf (Latest git version only) | **--use_mktorrent** |
+| 10 | **-fpm or --force_pymediainfo** | No | Force use PyMediaInfo to extract video codec over regex extraction from file name | **--force_pymediainfo** |
+| 11 | **-3d** | No | Mark the upload as 3D content | **-3d**|
+| 12 | **-foreign** | No | Mark the upload as foreign content [Non-English] | **-foreign** |
 
+<details><summary>Important Notes</summary>
 
-# Args / user input
-* **Do not** include **commas** or **quotes** with your args
-* Certain options are **flags** that don't require any other input
-  * `-anon` `-batch` `-disc` are all flags that don't require any other input
-  * e.g. `python3 auto_upload.py -t ABC -anon` to upload anonymously
-***
-### Required:
-* `-t` / `--trackers`
-  * This is how you specify which site to upload to
-  * `python3 auto_upload.py -t BHD BLU`
-  
-
-* `-p` / `--path`
-  * Use this to specify which file or folder you want to upload
-  * `python3 auto_upload.py -t ABC -p /home/user/Videos/file.mkv`
-
-***
-
-### Optional Args:
-* `-tmdb` | [**themoviedb.org**](https://www.themoviedb.org/)
-  * Manually provide the **TMDB ID** instead of using built in auto-detection / prompt
-  * It's recommended to use this arg if `auto_mode=true` (auto-detection isn't always 100% accurate)
-  * `python3 auto_upload.py -t ABC -tmdb 1892`
-  
-
-* `-imdb` | [**imdb.com**](https://www.imdb.com/)
-  * Using the **IMDB ID** we can utilize the **TMDB API** `/find/{external_id}` endpoint to get the corresponding **TMDB ID**
-  * `python3 auto_upload.py -t ABC -imdb tt0086190`
-  
-
-* `-e` / `--edition`
-  * If it's **not** auto-extracted *(via this [regex from radarr](https://github.com/Radarr/Radarr/blob/5799b3dc4724dcc6f5f016e8ce4f57cc1939682b/src/NzbDrone.Core/Parser/Parser.cs#L21))* or just not included in the filename, you can **manually** specify the **edition**
-  * You must enclose the edition you want in double quotes (to deal with possible spaces)
-  * `python3 auto_upload.py -t ABC -e "Criterion Collection"`
-  
-
-* `-title`
-  * Manually set the torrent title instead of using auto-generator
-  * You **must** enclose the title you want in **double quotes** (to deal with spaces in title)
-  * `python3 auto_upload.py -t ABC -title "Movie Title 2010 1080p WEB-DL"`
-  
-
-* `-type`
-  * Sometimes the script & occasionally **TMDB** misidentifies content as a **Movie** when it's really a  **TV Show** and vice versa 
-  * You can **manually override** the **content type** by passing the `-type` arg **&** `movie` or `tv` as the value
-  * `python3 auto_upload.py -t ABC -type movie`
-  
-
-* `-nfo`
-  * Use this arg to **manually** provide the path to a relevant `.nfo` file if it's not included in the folder you're uploading
-  * **Note**, *Don't ever **modify / add / remove** the actual file/folder of whatever you're re-uploading*
-  * `python3 auto_upload.py -t ABC -nfo "/home/user/Downloads/file.nfo"`
- 
- 
-* `-mkt` or `--use_mktorrent`
-  * Provide this flag in case if you want to create the .torrent file using mktorrent instead of torf
-
-
-* `-fpm` or `--force_pymediainfo`
-  * Provide this flag to Force use PyMediaInfo to extract video codec over regex extraction from file name
-***
-
-### Optional Flags:
-* `-anon` **(flag)**
-  * This is used to upload **anonymously**
-  * `python3 auto_upload.py -t ABC -anon`
-  
-
-* `-batch` **(flag)**
-  * This is related to the `--path` arg in the way that this will systematically & **<u>individually</u>** upload all the files in a specified folder
-  * The requirements for this to work are:
+* `-batch` :track_next:  The requirements for `-batch`  argument to work are:
     * Pass the path to a **folder** (<u>not an individual file</u>) with `--path`
     * Need to have **more than 1** file / folder in the specified directory
-  * `python3 auto_upload.py -t ABC -p /home/user/Videos/partial_airing_tv_show/ -batch`
 
-  
-* `-disc` **(flag)**
-  * You **must** pass this arg if you're uploading a Raw Bluray disc
-  * `*.iso` bluray files are not currently supported, only `/BDMV/STREAM/` *"structured"* directories are. 
-  * `python3 auto_upload.py -t ABC -p /home/user/Videos/bluray_folder/ -disc`
-  
 
-* `-reupload` **(flag)**
-  * **Used by autodl-irssi during automated re-uploads**
-  * This is only used by the **[automatic re-uploading](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/autodl-irssi-automatic-re-uploading)** function. Don't pass unless you know what you're doing.
-  
-***
+* `-disc` :track_next:  `*.iso` bluray files are not currently supported, only `/BDMV/STREAM/` *"structured"* directories are. 
 
-### Optional Flags (Internals only):
-* This is only applicable if your account is already in a **Internal** class
-* If you are in a **internal** class on a **[UNIT3D](https://github.com/HDInnovations/UNIT3D-Community-Edition)** tracker, you have some extra options when uploading
-* `python3 auto_upload.py -t ABC -p /home/user/Videos/file.mkv -internal -doubleup`
+* `-reupload` :track_next:  This is only used by the **[automatic re-uploading](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/autodl-irssi-automatic-re-uploading)** function. Don't pass unless you know what you're doing.
+</details>
 
-| Arg         | Description                             |
-| :---------- | :-------------------------------------- |
-| `-internal` | Mark a new upload as **Internal**       |
-| `-freeleech`| Mark a new upload as **Freeleech**      |
-| `-featured` | **Feature** a new upload                |
-| `-doubleup` | Gives a new upload **Double Up** status |
-| `-sticky`   | Pins the new upload                     |
+<details><summary>Examples using the less commonly used arguments</summary>
+
+Upload a full disk to trackers
+```
+docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest -t BLU -p "/movies/my.movie.with.bdstream/" -disc
+```
+
+Use `mktorrent` to generate torrent and use `pymediainfo` to extract video codec 
+```
+docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest -t BLU -p "/movies/my.movie.mkv" -fpm -mkt
+```
+</details>
+
+<br>
+
+## Internal Upload Arguments
+> These flags are applicable only if your account is already in a **Internal** class
+
+| #| Flag | Value Needed | Description | Example |
+| ------ | ------ | ------ | ------ | ------ |
+| 1| **-internal** | No| Used to mark an upload as 'Internal' | **-internal** |
+| 2| **-freeleech** | No| Used to give a new upload freeleech | **-freeleech** |
+| 3| **-featured** | No| Mark the upload as featured | **-featured** |
+| 4| **-doubleup** | No| Give a new upload 'double up' status | **-doubleup** |
+| 5| **-tripleup** | No| Give a new upload 'triple up' status [XBTIT Exclusive] | **-tripleup** |
+| 6| **-sticky** | No| Pin the new upload / Mark the upload as sticky | **-sticky** |
+
+> Please note that the arguments `-doubleup` and `-tripleup` cannot be used together
+
+<details><summary>Examples using the internal arguments</summary>
+
+Mark an upload as internal
+
+```
+docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest -t BLU -p "/movies/my.movie.mkv" -internal
+```
+
+Mark an upload as internal and grant it double upload status
+
+```
+docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest -t BLU -p "/movies/my.movie.mkv" -internal -doubleup
+```
+</details>
+
+<br>
