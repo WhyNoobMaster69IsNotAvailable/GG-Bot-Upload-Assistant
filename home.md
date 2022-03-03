@@ -11,6 +11,9 @@
 ### [Automatic re-uploading (autodl)](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/autodl-irssi-automatic-re-uploading)
 
 ### [Docker Run Command Examples](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Docker-Run-Command-Examples)
+
+### [Docker: Noob Friendly Setup Guide](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Noob-Friendly-Setup-Guide)
+
 ## Supported Sites:
   * `BHD` `BLU` `ACM` `R4E` `ATH` `TSP` `DT` `Telly` `Ntelogo`
 
