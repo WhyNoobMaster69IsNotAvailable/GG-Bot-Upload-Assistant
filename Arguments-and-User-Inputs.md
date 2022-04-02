@@ -14,8 +14,7 @@ NOTE:
 These are the arguments that are required for each upload. All the arguments under this category must be provided for the upload assistant to start the upload process. For majority of the uploads only these mandatory arguments are needed.
 | #| Flag | Value Needed | Description | Example |
 | ------ | ------ | ------ | ------ | ------ |
-| 1| **-t** or **--trackers** | Yes | Tracker(s) to upload to. Space-separates if multiple (no commas)| **-t BHD BHDTV NBL** |
-| 2| **-p** or **--path** | Yes | Use this to provide path(s) to file/folder| **-p /data/movies/my.movie.mkv** |
+| 1| **-p** or **--path** | Yes | Use this to provide path(s) to file/folder| **-p /data/movies/my.movie.mkv** |
 
 <details><summary>Examples using the mandatory arguments</summary>
 
@@ -36,6 +35,11 @@ or
 ```
 docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest --trackers ATH BLU --path "/movies/my.movie.mkv"
 ```
+
+Upload a movie my.movie.new.mkv to the default trackers: When the `-t` or `--tracker` argument is not provided then, the default trackers will be taken from the `default_trackers_list` present in the config.env file.
+```
+docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest --path "/movies/my.movie.mkv"
+```
 </details>
 
 <br>
@@ -45,13 +49,29 @@ This category contains the list of arguments that are used commonly.
 
 > It's recommended to use the `-imdb` or `-tmdb` or `-tvmaze` arguments if `auto_mode=true` (auto-detection isn't always 100% accurate)
 
+> Note that for the movie db, ids the priority order are **imdb**, **tmdb** and **tvmaze**. <br>
+> Meaning <br>
+> If both imdb and tmdb id are provided, then imdb id will be used to determine the tmdb and tvmaze id. <br>
+> Similarly if tmdb and tvmaze ids are provided by the user, then the tmdb id will be used to identify the imdb id and tvmaze id.
+
 | #| Flag | Value Needed | Description | Example |
 | ------ | ------ | ------ | ------ | ------ |
-| 1 | **-tmdb** | Yes | Use this to manually provide the TMDB ID | **-tmdb 566525** |
-| 2 | **-imdb** | Yes | Use this to manually provide the IMDB ID | **-imdb tt7569576** |
-| 3 | **-tvmaze** | Yes | Use this to manually provide the TVmaze ID | **-tvmaze 50603** |
-| 4 | **-anon** | No | Used to mark the upload to be anonymous. | **-anon** |
+| 1 | **-t** or **--trackers** | Yes | Tracker(s) to upload to. Space-separates if multiple (no commas)| **-t BHD BHDTV NBL** |
+| 2 | **-a** or **--all_trackers** | No | Select all trackers that can be uploaded to automatically | **--all_trackers** |
+| 3 | **-tmdb** | Yes | Use this to manually provide the TMDB ID | **-tmdb 566525** |
+| 4 | **-imdb** | Yes | Use this to manually provide the IMDB ID | **-imdb tt7569576** |
+| 5 | **-tvmaze** | Yes | Use this to manually provide the TVmaze ID | **-tvmaze 50603** |
+| 6 | **-anon** | No | Used to mark the upload to be anonymous. | **-anon** |
 <details><summary>Examples using the commonly used arguments</summary>
+
+Upload a movie my.movie.new.mkv to all the possible trackers: To upload to all the trackers, simply add the `-a` or `--all_trackers` argument to the run command. The uploader will automatically select all the trackers that have been configured properly.
+```
+docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest -a --path "/movies/my.movie.mkv"
+```
+or
+```
+docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest --all_trackers --path "/movies/my.movie.mkv"
+```
 
 Upload a show anonymously to trackers: THe **-anon** flag needs to be provided to the run command.
 ```
