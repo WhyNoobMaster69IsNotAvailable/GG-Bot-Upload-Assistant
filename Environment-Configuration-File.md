@@ -1,5 +1,5 @@
 
-## 1. API Keys and URLs:
+## 1. API Keys, Tracker Settings, and URLs:
 
 Tracker API keys and announce urls are optional unless you plan on uploading torrents to them. For example if you don't intent to upload torrents to Asiancinema, then there is no need to provide its api key and announce url.
 
@@ -35,8 +35,8 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
 | **DT_API_KEY**           | Optional              | Desitorrents API Key                    |
 | **DT_ANNOUNCE_URL**      | Optional              | Desitorrents private announce url       |
 |                          |                       |                                         |
-| **UHDHVN_API_KEY**       | Optional              | UHD-Heaven API Key                      |
-| **UHDHVN_ANNOUNCE_URL**  | Optional              | UHD-Heaven private announce url         |
+| **STT_API_KEY**          | Optional              | SkipTheTrailers API Key                 |
+| **STT_ANNOUNCE_URL**     | Optional              | SkipTheTrailers private announce url    |
 |                          |                       |                                         |
 | **STC_API_KEY**          | Optional              | SkipTheCommericals API Key              |
 | **STC_ANNOUNCE_URL**     | Optional              | SkipTheCommericals private announce url |
@@ -89,6 +89,26 @@ Refer to [API Documentation](https://www.themoviedb.org/documentation/api) for m
 
 </td>
 </tr>
+
+<tr>
+<td>
+
+**auto_select_tmdb_result**
+
+</td>
+<td>Required</td>
+<td>
+
+When enabled the show will be automatically selected from the tmdb search result. [well there is only one to choose anyway]
+Notes: This attribute has no particular significance
+- when the `auto_mode` is enabled.
+- If the search results from tmdb has multiple results
+
+Refer to [API Documentation](https://www.themoviedb.org/documentation/api) for more details
+
+</td>
+</tr>
+
 <tr>
 <td>
 
@@ -104,6 +124,28 @@ Discord webhook where torrent upload messages and status are to be sent to. <br>
 - Click the "Create Webhook" button to create a new webhook!
 
 Refer to [Intro To Webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) for more details See the image below for an example of the notifications you would receive ![discord_notification](https://user-images.githubusercontent.com/80369373/111088206-68cfb580-84fc-11eb-853a-66b968f90a75.png)
+
+</td>
+</tr>
+<tr>
+<td>
+
+**default_trackers_list**
+
+</td>
+<td>Optional</td>
+<td>
+
+Comma separated list of trackers which should be considered as default or fallback trackers in case `--trackers or -t`  flag is not provided.
+<br>
+<br>
+Sample: `default_trackers_list=NBL,BLU,BHDTV `
+<br>
+This will by default uploads the torrent to NBL, BLU and BHDTV if `--trackers or -t` is not provided as runtime argument.
+
+Notes:
+- The runtime argument `--trackers or -t` has higher priority and overrides `default_trackers_list` property
+- The trackers provided in `default_trackers_list` must have a valid configuration. The trackers without valid configurations will be ignored.  
 
 </td>
 </tr>
