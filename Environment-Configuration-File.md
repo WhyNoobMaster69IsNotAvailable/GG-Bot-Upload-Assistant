@@ -379,7 +379,7 @@ Knives Out 2019 REPACK 1080p UHD BluRay DDP 7.1 HDR x265-SA89
         </tr>
         <tr>
             <td><strong>auto_mode</strong></td>
-            <td>Required </td>
+            <td>Optional</td>
             <td>False </td>
             <td>
 
