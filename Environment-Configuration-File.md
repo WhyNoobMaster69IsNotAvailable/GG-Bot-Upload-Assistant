@@ -112,6 +112,21 @@ Refer to [API Documentation](https://www.themoviedb.org/documentation/api) for m
 <tr>
 <td>
 
+**tmdb_result_auto_select_threshold**
+
+</td>
+<td>Required</td>
+<td>
+
+This property determines whether or not the tmdb id will be automatically decided by the uploader or not. By default this is set as 0, which disables this property altogether. This property is applicable only when auto_mode is enabled. This property is mainly supposed to be used along with GG-BOT Auto ReUploader.
+- when its set to 1, if the TMDB search returns only 1 result, then auto select that and proceed.
+- if this below property is set to say 3, then the uploader will auto select the 1st result as long as the tmdb search gave maximum of 3 entries
+</td>
+</tr>
+
+<tr>
+<td>
+
 **DISCORD_WEBHOOK**
 
 </td>
