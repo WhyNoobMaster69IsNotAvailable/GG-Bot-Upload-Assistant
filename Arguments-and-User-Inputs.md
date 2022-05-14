@@ -113,6 +113,7 @@ There are some rare cases where these arguments will come in use. Please see det
 | 10 | **-fpm or --force_pymediainfo** | No | Force use PyMediaInfo to extract video codec over regex extraction from file name | **--force_pymediainfo** |
 | 11 | **-3d** | No | Mark the upload as 3D content | **-3d**|
 | 12 | **-foreign** | No | Mark the upload as foreign content [Non-English] | **-foreign** |
+| 13 | **-ss or --skip_screenshots** | No | Override the configuration in config.env and proceed to upload without taking screenshots | **-ss** |
 
 <details><summary>Important Notes</summary>
 
