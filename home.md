@@ -1,4 +1,4 @@
-## GG-Bot-Uploader Wiki
+## GG-BOT Upload Assistant / Auto ReUploader Wiki
 
 ### [Video usage examples](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Usage:-Video-Examples)
 
