@@ -504,5 +504,19 @@ This key is not required & are used if you are auto re-uploading torrents & are 
 - See this page for more info [xpbot/wiki/autodl-irssi-automatic-re-uploading](https://github.com/ryelogheat/xpbot/wiki/autodl-irssi-automatic-re-uploading)
 </td>
         </tr>
+<tr>
+            <td><strong>uploader_signature</strong></td>
+            <td>Optional </td>
+            <td></td>
+            <td>
+
+Uploader signature is added at the bottom of the torrent description. By default if no signature is provided the upload assistant will add ``` Uploaded with ❤ using GG-BOT Upload Assistant ``` as the uploader signature.  With this property you can add your own custom signature to torrent uploads.
+PS:
+- The signature provided has to be plain text or must be a valid bbcode
+- The signature will automatically be wrapped inside [center][/center] tag by the upload assistant
+
+``` Sample: uploader_signature=[url=https://ibb.co/VH6n8tC][img]https://i.ibb.co/VH6n8tC/Manchester-United-Logo11.jpg[/img][/url] ```
+</td>
+        </tr>
     </tbody>
 </table>
