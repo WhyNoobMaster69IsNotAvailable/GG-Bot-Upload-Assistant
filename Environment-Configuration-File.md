@@ -47,8 +47,18 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
 | **TDB_API_KEY**          | Optional              | TorrentDB API Key                       |
 | **TDB_ANNOUNCE_URL**     | Optional              | TorrentDB private announce url          |
 |                          |                       |                                         |
-| **ACM_API_KEY**          | Optional              | Asiancinema API Key                     |
-| **ACM_ANNOUNCE_URL**     | Optional              | Asiancinema private announce url        |
+| **BHDTV_API_KEY**        | Optional              | BIT-HDTV API Key                        |
+| **BHDTV_ANNOUNCE_URL**   | Optional              | BIT-HDTV private announce url           |
+|                          |                       |                                         |
+| **NBL_API_KEY**          | Optional              | Nebulance API Key                       |
+| **NBL_ANNOUNCE_URL**     | Optional              | Nebulance private announce url          |
+|                          |                       |                                         |
+| **ANT_API_KEY**          | Optional              | Anthelion API Key                       |
+| **ANT_ANNOUNCE_URL**     | Optional              | Anthelion private announce url          |
+|                          |                       |                                         |
+| **RF_API_KEY**           | Optional              | ReelFliX API Key                        |
+| **RF_ANNOUNCE_URL**      | Optional              | ReelFliX private announce url           |
+
 
 </details>The metadata fetching is performed by the upload assistant with the help of [TheMovieDB](https://www.themoviedb.org/). The API Key to interact with TMDB needs to be provided and the operations done by the upload assistant can be notified to a text channel in a discord service with the help of discord webhook.
 
