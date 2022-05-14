@@ -15,7 +15,7 @@
 ### [Docker: Noob Friendly Setup Guide](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Noob-Friendly-Setup-Guide)
 
 ## Supported Sites:
-  * `BHD` `BLU` `ACM` `R4E` `ATH` `TSP` `DT` `Telly` `Ntelogo`
+  * `ACM` `BHD` `BLU` `R4E` `ATH` `Telly` `Ntelogo` `TSP` `DT` `STC` `STT` `SPD` `TDB` `BHDTV` `NBL` `ANT` `RF`
 
 
 ## Usage Examples Bare Metal / VMs
