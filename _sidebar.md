@@ -12,3 +12,7 @@
         - [Docker Setup (Windows, Linux, Mac)](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/home)
         - [Bare Metal / VM Setup](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/home)
 6. [Tracker Templates](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Tracker-Templates)
+7. GG-BOT Upload Assistant
+    - Environment Configuration
+    - Docker Setup
+    - Bare Metal Setup
