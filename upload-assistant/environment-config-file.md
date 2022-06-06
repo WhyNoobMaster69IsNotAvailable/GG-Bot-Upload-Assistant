@@ -23,9 +23,6 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
 | **ATH_API_KEY**          | Optional              | Aither API Key                          |
 | **ATH_ANNOUNCE_URL**     | Optional              | Aither private announce url             |
 |                          |                       |                                         |
-| **TELLY_API_KEY**        | Optional              | Telly API Key                           |
-| **TELLY_ANNOUNCE_URL**   | Optional              | Telly private announce url              |
-|                          |                       |                                         |
 | **NTELOGO_API_KEY**      | Optional              | Ntelogo API Key                         |
 | **NTELOGO_ANNOUNCE_URL** | Optional              | Ntelogo private announce url            |
 |                          |                       |                                         |
