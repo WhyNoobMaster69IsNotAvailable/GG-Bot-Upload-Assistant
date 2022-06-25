@@ -100,58 +100,6 @@ Refer to [API Documentation](https://www.themoviedb.org/documentation/api) for m
 <tr>
 <td>
 
-**auto_select_tmdb_result**
-
-</td>
-<td>Required</td>
-<td>
-
-When enabled the show will be automatically selected from the tmdb search result. [well there is only one to choose anyway]
-Notes: This attribute has no particular significance
-- when the `auto_mode` is enabled.
-- If the search results from tmdb has multiple results
-
-Refer to [API Documentation](https://www.themoviedb.org/documentation/api) for more details
-
-</td>
-</tr>
-
-<tr>
-<td>
-
-**tmdb_result_auto_select_threshold**
-
-</td>
-<td>Required</td>
-<td>
-
-This property determines whether or not the tmdb id will be automatically decided by the uploader or not. By default this is set as 0, which disables this property altogether. This property is applicable only when auto_mode is enabled. This property is mainly supposed to be used along with GG-BOT Auto ReUploader.
-- when its set to 1, if the TMDB search returns only 1 result, then auto select that and proceed.
-- if this below property is set to say 3, then the uploader will auto select the 1st result as long as the tmdb search gave maximum of 3 entries
-</td>
-</tr>
-
-<tr>
-<td>
-
-**DISCORD_WEBHOOK**
-
-</td>
-<td>Optional</td>
-<td>
-
-Discord webhook where torrent upload messages and status are to be sent to. <br><br>To create a Webhook:
-
-- Open your Server Settings and head into the Integrations tab
-- Click the "Create Webhook" button to create a new webhook!
-
-Refer to [Intro To Webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) for more details See the image below for an example of the notifications you would receive ![discord_notification](https://user-images.githubusercontent.com/80369373/111088206-68cfb580-84fc-11eb-853a-66b968f90a75.png)
-
-</td>
-</tr>
-<tr>
-<td>
-
 **default_trackers_list**
 
 </td>
