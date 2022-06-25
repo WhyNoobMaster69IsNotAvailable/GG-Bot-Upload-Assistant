@@ -61,7 +61,8 @@ This category contains the list of arguments that are used commonly.
 | 3 | **-tmdb** | Yes | Use this to manually provide the TMDB ID | **-tmdb 566525** |
 | 4 | **-imdb** | Yes | Use this to manually provide the IMDB ID | **-imdb tt7569576** |
 | 5 | **-tvmaze** | Yes | Use this to manually provide the TVmaze ID | **-tvmaze 50603** |
-| 6 | **-anon** | No | Used to mark the upload to be anonymous. | **-anon** |
+| 6 | **-mal** | Yes | Use this to manually provide the MyAnimeList ID. | **-mal 12345** |
+| 7 | **-anon** | No | Used to mark the upload to be anonymous. | **-anon** |
 <details><summary>Examples using the commonly used arguments</summary>
 
 Upload a movie my.movie.new.mkv to all the possible trackers: To upload to all the trackers, simply add the `-a` or `--all_trackers` argument to the run command. The uploader will automatically select all the trackers that have been configured properly.
