@@ -473,5 +473,16 @@ PS:
 ``` Sample: uploader_signature=[url=https://ibb.co/VH6n8tC][img]https://i.ibb.co/VH6n8tC/Manchester-United-Logo11.jpg[/img][/url] ```
 </td>
         </tr>
+
+<tr>
+            <td><strong>readable_temp_data</strong></td>
+            <td>Optional </td>
+            <td>False</td>
+            <td>
+
+This property decided whether or not the sub_folders in temp_upload containing screnshots, mediainfo, urls etc needs to be in a human readable format or not. By default a unique hash will be generated for the input path and it'll be used. If this property is enabled then the sub_folder will be created using the file name.
+
+</td>
+        </tr>
     </tbody>
 </table>
