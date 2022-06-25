@@ -278,14 +278,57 @@ You need to register your application [here](https://api.imgur.com/oauth2/addcli
 <br>
 
 ## 3. Post Processing:
-Once a torrent has been uploaded the upload assistant can move the .torrent file and the actual media file/folder to configured folder.
-> Leave these properties blank to disable any post processing
+Once a torrent has been uploaded the upload assistant can perform various operations. GG-BOT Uploader is capable of 2 kinds of post processing steps.
+1. Immediate seeding via torrent client
+> Once a torrent has been uploaded, the uploader can add the dot torrent to a torrent client for immediate seeding.
+2. Move media and torrents to watch folders
+> You can specify a "Watch Directory" in some torrent clients that will automatically add new .torrent files to its download queue. This could be used to automatically start seeding an upload using AutoTools (rtorrent)
 
-| Property | Required/Optional | Description |
-| ------ | ------ | ------ |
-| **dot_torrent_move_location** | Optional | Specify the full path to where you want the .torrent file moved after uploading. (_This could be used with an AutoWatch directory to automatically start seeding_) |
-| **media_move_location** | Optional | Path to location where you want media file/folder moved to after uploading (_Again this could be used with AutoTools to automatically start seeding after uploading_) |
-| **enable_type_base_move** | Optional | when type based move is enabled, torrents will be moved to sub folders within the `dot_torrent_move_location`|
+> Post-processing steps can be enabled or disabled based on the flag `enable_post_processing`. By default post processing steps are disabled.
+
+| Property | Required/Optional | Description | Possible Values |
+| ------ | ------ | ------ | ------ |
+| **enable_post_processing** | Optional | This acts as a flag to tell the upload assistant whether or not to perform post processing steps. By default post processing steps are disabled. | True/False |
+| **post_processing_mode** | Optional | This property tells the upload assistant which kind of post processing needs to be done. The two supported types are immediate cross-seeding via a torrent client and media and torrent movement to watch folders | CROSS_SEED/WATCH_FOLDER |
+
+### 3.1 Post Processing: Watch Folders
+GG-BOT Upload assistant can move the generate torrent files and the original media file to specified locations which are configured as watch folder for torrent clients.
+> Please ensure that the below two paths (if configured) are available and writable. Uploader will **NOT** create these paths.
+
+<table>
+    <tbody>
+        <tr>
+            <th><strong>Property</strong></th>
+            <th><strong>Description</strong></th>
+        </tr>
+        <tr>
+            <td><strong>dot_torrent_move_location</strong></td>
+            <td>
+Once the uploads have been completed the torrent files will be moved to this particular location
+</td>
+        </tr>
+<tr>
+            <td><strong>media_move_location</strong></td>
+            <td>
+The mediafile which was provided as input the uploader will be moved to this particular location
+</td>
+        </tr>
+<tr>
+            <td><strong>enable_type_base_move</strong></td>
+            <td>
+This property tells the upload assistant to create subfolders and move contents to those subfolders.
+
+When type based move is enabled...
+- Torrents will be moved to sub folders within the dot_torrent_move_location
+    - Movies dot torrent will be moved to `{dot_torrent_move_location}/movie/...torrent`
+    - Epsiodes / Season Packs dot torrent  will be moved to `{dot_torrent_move_location}/epsiode/...torrent`
+- Media will be moved to sub folders within the media_move_location
+    - Movies file will be moved to `{media_move_location}/movie/...file`
+    - Epsiodes / Season Packs file will be moved to `{media_move_location}/epsiode/...file`
+</td>
+        </tr>
+</tbody>
+</table>
 
 <details><summary>Torrent client & watch directories</summary>
 
@@ -302,6 +345,90 @@ Once a torrent has been uploaded the upload assistant can move the .torrent file
 schedule = watch_directory,5,5,"load.start=/path/to/folder/to/watch/*.torrent,d.delete_tied="
 ```
 </details>
+
+### 3.2 Post Processing: Immediate Cross Seeding
+Once upload has been completed, upload assistant can be configured to upload the torrents of successful uploads to a torrent client for immediate cross-seeding. This feature requires a torrent client to the configured with the upload assistant. GG-BOT Upload Assistant supports the following torrent clients
+
+- Qbittorrent
+- RuTorrent
+
+<table>
+    <tbody>
+        <tr>
+            <th><strong>Property</strong></th>
+            <th><strong>Description</strong></th>
+        </tr>
+        <tr>
+            <td><strong>client</strong></td>
+            <td>
+Specifies the client to which torrents needs to be uploaded. The possible options for this property are 
+
+- `Qbittorrent`
+- `Rutorrent`
+</td>
+        </tr>
+<tr>
+            <td><strong>client_host</strong></td>
+            <td>
+This is the domain / ipaddress where the torrent client is location and accessible
+</td>
+        </tr>
+<tr>
+            <td><strong>client_port</strong></td>
+            <td>
+The port using which upload assistant can communicate with the torrent client
+</td>
+        </tr>
+<tr>
+            <td><strong>client_username</strong></td>
+            <td>
+Username to be user for authentication with the torrent client. <br> Leave this as empty in case the torrent client doesn't have any authentication.
+</td>
+        </tr>
+<tr>
+            <td><strong>client_password</strong></td>
+            <td>
+Password to be user for authentication with the torrent client. <br> Leave this as empty in case the torrent client doesn't have any authentication.
+</td>
+        </tr>
+<tr>
+            <td><strong>client_path</strong></td>
+            <td>
+
+This property specifies the path (URL Path) at which the torrent client is located. <br> For example, if you access your torrent client at `http://ggbot.com/rutorrent`, then the `client_path` will be `/rutorrent`
+
+</td>
+        </tr>
+<tr>
+            <td><strong>cross_seed_label</strong></td>
+            <td>
+
+The label or category under which the cross-seeded torrents needs to be uploaded as. If you don't provide any value, uploader will set `GGBotCrossSeed` as the default value for this field.
+</td>
+        </tr>
+</tbody>
+</table>
+
+If you are running the torrent client / uploader in a docker containers there is a high chance that the paths accessible inside the containers will be different. For such cases, path translations can be used for propper seeding. If you're running the client / uploader in a docker container you will need to map the containers download path to its system path.
+> If you are using Sonarr/Radarr then you've already probably done this under "Remote Path Mappings" in the "Download Clients" section
+
+| Property | Description |
+| ------ | ------ |
+| **translation_needed** | Flag to indicate whether uploader should perform path translations |
+| **client_accessible_path** | The path that is accessible to the torrent client |
+| **uploader_accessible_path** | The path that is accessible to the upload assistant|
+
+For Example:
+```
+Uploader container / system path: /mnt/local/downloads/torrents/rutorrent/completed/file.mkv
+Client container / system path:   /media/torrents/rutorrent/completed/file.mkv
+```
+Using those paths ^^ you would set the mappings like this:
+```
+uploader_accessible_path=/mnt/local/downloads/
+client_accessible_path=/media/
+```
+That way the file with path `/mnt/local/downloads/torrents/rutorrent/completed/file.mkv` will be uploaded to client with path `/media/torrents/rutorrent/completed/file.mkv`
 
 <br>
 
@@ -421,42 +548,6 @@ Please note that this property is not applicable when using docker images for to
     - In the folder `/BDInfoCLI-ng-UHD_Support_CLI/scripts/` you'll find a file called `bdinfo`
     - Copy the entire path to that `bdinfo` file into `config.env`
 
-</td>
-        </tr>
-        <tr>
-            <td><strong>translation_needed</strong></td>
-            <td>Optional </td>
-            <td></td>
-            <td>
-
-```
-This key is not required & are used if you are auto re-uploading torrents & are using docker containers
-```
-- See this page for more info [xpbot/wiki/autodl-irssi-automatic-re-uploading](https://github.com/ryelogheat/xpbot/wiki/autodl-irssi-automatic-re-uploading)
-</td>
-        </tr>
-        <tr>
-            <td><strong>host_path</strong></td>
-            <td>Optional </td>
-            <td></td>
-            <td>
-
-```
-This key is not required & are used if you are auto re-uploading torrents & are using docker containers
-```
-- See this page for more info [xpbot/wiki/autodl-irssi-automatic-re-uploading](https://github.com/ryelogheat/xpbot/wiki/autodl-irssi-automatic-re-uploading)
-</td>
-        </tr>
-        <tr>
-            <td><strong>remote_path</strong></td>
-            <td>Optional </td>
-            <td></td>
-            <td>
-
-```
-This key is not required & are used if you are auto re-uploading torrents & are using docker containers
-```
-- See this page for more info [xpbot/wiki/autodl-irssi-automatic-re-uploading](https://github.com/ryelogheat/xpbot/wiki/autodl-irssi-automatic-re-uploading)
 </td>
         </tr>
 <tr>
