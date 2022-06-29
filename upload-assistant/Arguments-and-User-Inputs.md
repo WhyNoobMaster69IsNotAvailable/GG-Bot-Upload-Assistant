@@ -4,9 +4,9 @@ GG-BOT Upload Assistant provides various runtime arguments that can be used to c
 - Less commonly used arguments
 - Internal upload arguments
 
-NOTE: 
-* If the **Value Needed** for any argument is **NO**, then only the argument flag needs to be provided in run command. 
-* If the **Value Needed** for any argument is **YES**, then the argument flag followed by the value for the argument also needs to be provided. 
+NOTE:
+* If the **Value Needed** for any argument is **NO**, then only the argument flag needs to be provided in run command.
+* If the **Value Needed** for any argument is **YES**, then the argument flag followed by the value for the argument also needs to be provided.
 
 <br>
 
@@ -22,7 +22,7 @@ Upload a torrent to trackers ATH and BLU: The tracker acronyms **ATH** and **BLU
 ```
 docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest -t ATH BLU -p "/movies/my.movie.mkv"
 ```
-or 
+or
 ```
 docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest --trackers ATH BLU -p "/movies/my.movie.mkv"
 ```
@@ -31,7 +31,7 @@ Upload a movie my.movie.new.mkv to tracker TSP: The file that needs the be uploa
 ```
 docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest -t ATH BLU -p "/movies/my.movie.new.mkv"
 ```
-or 
+or
 ```
 docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest --trackers ATH BLU --path "/movies/my.movie.mkv"
 ```
@@ -115,6 +115,7 @@ There are some rare cases where these arguments will come in use. Please see det
 | 11 | **-3d** | No | Mark the upload as 3D content | **-3d**|
 | 12 | **-foreign** | No | Mark the upload as foreign content [Non-English] | **-foreign** |
 | 13 | **-ss or --skip_screenshots** | No | Override the configuration in config.env and proceed to upload without taking screenshots | **-ss** |
+| 14 | **-amf or --allow_multiple_files** | No | Override the default behavior and allow multiple files to be added in one torrent | **--allow_multiple_files** |
 
 <details><summary>Important Notes</summary>
 
@@ -123,7 +124,7 @@ There are some rare cases where these arguments will come in use. Please see det
     * Need to have **more than 1** file / folder in the specified directory
 
 
-* `-disc` :track_next:  `*.iso` bluray files are not currently supported, only `/BDMV/STREAM/` *"structured"* directories are. 
+* `-disc` :track_next:  `*.iso` bluray files are not currently supported, only `/BDMV/STREAM/` *"structured"* directories are.
 
 * `-reupload` :track_next:  This is only used by the **[automatic re-uploading](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/autodl-irssi-automatic-re-uploading)** function. Don't pass unless you know what you're doing.
 </details>
@@ -135,7 +136,7 @@ Upload a full disk to trackers
 docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest -t BLU -p "/movies/my.movie.with.bdstream/" -disc
 ```
 
-Use `mktorrent` to generate torrent and use `pymediainfo` to extract video codec 
+Use `mktorrent` to generate torrent and use `pymediainfo` to extract video codec
 ```
 docker run --rm -it --env-file config.env -v /movies:/movies noobmaster669/gg-bot-uploader:latest -t BLU -p "/movies/my.movie.mkv" -fpm -mkt
 ```
