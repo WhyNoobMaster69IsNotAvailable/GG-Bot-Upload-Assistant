@@ -463,51 +463,6 @@ Knives Out 2019 REPACK 1080p UHD BluRay DDP 7.1 HDR x265-SA89
 
 <br>
 
-## 4. Auto Mode:
-> Note that you are responsible for following **all** tracker rules and should manually double check all automatic uploads
-
-<table>
-    <tbody>
-        <tr>
-            <th><strong>Property</strong></th>
-            <th><strong>Required/Optional</strong></th>
-            <th><strong>Default Value</strong></th>
-            <th><strong>Description</strong></th>
-        </tr>
-        <tr>
-            <td><strong>auto_mode</strong></td>
-            <td>Optional</td>
-            <td>False </td>
-            <td>
-
-- Set this to `true` to run without any human interaction
-    - This will parse the filename & auto select the _right_ TMDB ID
-    - If minor issues are found (e.g. the filename year is off by 1) it will deal with it and upload anyways
-    - Note that you are responsible for following **all** tracker rules and should manually double check all automatic uploads
-- Set this to `false` to have a more interactive & hands on experience **(recommended)**
-    - If issues are found (e.g. source can't be auto-detected) you'll be prompted for user input that we can use
-    - You'll be shown status updates continually & will have a chance to review/approve the final upload data
-    - You'll be shown the exact POST data/file payload before its uploaded for your review/approval
-</td>
-        </tr>
-        <tr>
-            <td><strong>force_auto_upload </strong></td>
-            <td>Required </td>
-            <td>False </td>
-            <td>This works in tandem with **auto_mode**, if `auto_mode=False` then this won't work. <br> If your torrent has minor issues like we can't auto-detect the `audio_channels`, this will force the upload without that info.
-
-<br>
-
-```
-Eg. If pymediainfo / ffprobe / regex can not detect the `audio_codec` this will simply omit the `audio_codec` from the torrent
-```
-</td>
-        </tr>
-    </tbody>
-</table>
-
-<br>
-
 ## 4. Miscellaneous Properties:
 <table>
     <tbody>
