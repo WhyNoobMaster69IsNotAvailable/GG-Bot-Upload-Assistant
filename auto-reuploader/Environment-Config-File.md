@@ -108,10 +108,12 @@ Refer to [API Documentation](https://www.themoviedb.org/documentation/api) for m
 
 This property determines whether or not the tmdb id will be automatically decided by the uploader or not. Be default this is set as 1, which is the safest configuration (although not fool proof).
 <br>
+<br>
 1 => This indicates that if the TMDB search returns only 1 result, then auto select that and proceed.
 if this below property is set to say 3, then the uploader will auto select the 1st result as long as the tmdb search gave maximum of 3 entries for detailed explanation see wiki pages.
 <br>
-⚠️If you want to ignore this config just set it to 0. (the first result will always be selected !!!DANGEROUS!!! ) ⚠️
+<br>
+> ⚠️If you want to ignore this config just set it to 0. (the first result will always be selected !!!DANGEROUS!!! ) ⚠️
 <br>
 Example: `tmdb_result_auto_select_threshold=2 `
 </td>
