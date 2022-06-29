@@ -333,7 +333,87 @@ Knives Out 2019 REPACK 1080p UHD BluRay DDP 7.1 HDR x265-SA89
 <br>
 
 ## 5. Torrent Client Configurations:
+GG-BOT Auto ReUploader needs to communicate with a torrent client to do pretty much anything. The ReUploader will listen to the torrents added to a torrent client and will upload them automatically to the configured trackers. As soon as an upload is completed, they will be cross-seeded automatically.
 
+The various torrent client configurations are listed below.
+
+<table>
+    <tbody>
+        <tr>
+            <th><strong>Property</strong></th>
+            <th><strong>Description</strong></th>
+        </tr>
+        <tr>
+            <td><strong>reupload_label</strong></td>
+            <td>
+
+Auto Reuploader will reupload torrents based on the labels assigned to them in the client.
+<br>
+- If `reupload_label` is set as `Movies`, then torrents with label `Movies` will be used for reupload
+- If `reupload_label` is set as ``, then all the torrents in the client will be used for reupload (irrespective of labels and categories.)
+- If `reupload_label` is set as `IGNORE_LABEL`, then torrents without any labels will be considered for reupload (ignore torrent labels)
+            </td>
+        </tr>
+        <tr>
+            <td><strong>cross_seed_label</strong></td>
+            <td>
+
+The seeds for reuploaded torrents will be labelled with the value of this property
+> Default value for this property is `GGBotCrossSeed`
+The original torrent (source torrent) which was used to create the seed torrents will be labelled as `{cross_seed_label}_source`
+> If `cross_seed_label=SeedTorrents`, then the source torrent will be labelled as `SeedTorrents_source`.
+Note that cross-seeded torrents will not be considered for reuploading (in case if this question popped into anyone's head).
+            </td>
+        </tr>
+        <tr>
+            <td><strong>client</strong></td>
+            <td>
+
+Specifies the client from which torrents needs to be reuploaded.
+<br>
+Possible Values are
+- Qbittorrent
+- Rutorrent
+
+> See Setup and Upgrade Wiki page for samples configurations.
+
+Based on the selected client, the values for further perperties will vary
+            </td>
+        </tr>
+        <tr>
+            <td><strong>client_host</strong></td>
+            <td>
+            The `hostname` / `domain name` / `ip address` with which reuploader can communicate with the cache
+            </td>
+        </tr>
+        <tr>
+            <td><strong>client_port</strong></td>
+            <td>
+            The `port` at which the cache is available for connections
+            </td>
+        </tr>
+        <tr>
+            <td><strong>client_username</strong></td>
+            <td>
+            The username to use to connect to the client if authentication is enabled for the cache
+            </td>
+        </tr>
+        <tr>
+            <td><strong>client_password</strong></td>
+            <td>
+            The password to use to connect to the client if authentication is enabled for the cache
+            </td>
+        </tr>
+        <tr>
+            <td><strong>client_path</strong></td>
+            <td>
+            The path to be added to the domain inorder to access the torrent client.
+            <br>
+            For example: To communicate with `http://somewhere.com/rutorrent`, you'll need to set `client_path` as `/rutorrent`
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 <br>
 
