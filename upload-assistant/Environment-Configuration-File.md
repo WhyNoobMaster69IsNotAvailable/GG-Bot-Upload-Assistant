@@ -115,7 +115,7 @@ This will by default uploads the torrent to NBL, BLU and BHDTV if `--trackers or
 
 Notes:
 - The runtime argument `--trackers or -t` has higher priority and overrides `default_trackers_list` property
-- The trackers provided in `default_trackers_list` must have a valid configuration. The trackers without valid configurations will be ignored.  
+- The trackers provided in `default_trackers_list` must have a valid configuration. The trackers without valid configurations will be ignored.
 
 </td>
 </tr>
@@ -340,7 +340,7 @@ When type based move is enabled...
 ```
 
 2. rtorrent/ruTorrent: open `rtorrent.rc` and add the following line (might already exist)
-       
+
 ```plaintext
 schedule = watch_directory,5,5,"load.start=/path/to/folder/to/watch/*.torrent,d.delete_tied="
 ```
@@ -361,7 +361,7 @@ Once upload has been completed, upload assistant can be configured to upload the
         <tr>
             <td><strong>client</strong></td>
             <td>
-Specifies the client to which torrents needs to be uploaded. The possible options for this property are 
+Specifies the client to which torrents needs to be uploaded. The possible options for this property are
 
 - `Qbittorrent`
 - `Rutorrent`
@@ -494,12 +494,12 @@ Knives Out 2019 REPACK 1080p UHD BluRay DDP 7.1 HDR x265-SA89
             <td><strong>force_auto_upload </strong></td>
             <td>Required </td>
             <td>False </td>
-            <td>This works in tandem with **auto_mode**, if `auto_mode=False` then this won't work. <br> If your torrent has minor issues like we can't auto-detect the `audio_channels`, this will force the upload without that info. 
+            <td>This works in tandem with **auto_mode**, if `auto_mode=False` then this won't work. <br> If your torrent has minor issues like we can't auto-detect the `audio_channels`, this will force the upload without that info.
 
 <br>
 
 ```
-Eg. If pymediainfo / ffprobe / regex can not detect the `audio_codec` this will simply omit the `audio_codec` from the torrent 
+Eg. If pymediainfo / ffprobe / regex can not detect the `audio_codec` this will simply omit the `audio_codec` from the torrent
 ```
 </td>
         </tr>
@@ -521,7 +521,7 @@ Eg. If pymediainfo / ffprobe / regex can not detect the `audio_codec` this will 
             <td><strong>live</strong></td>
             <td>Optional </td>
             <td>False </td>
-            <td>Property to determine whether or not to mark uploads as Live/Draft 
+            <td>Property to determine whether or not to mark uploads as Live/Draft
 <br>
 
 - This only applies to **BHD** since they are the only supported site that has a **Drafts** page
@@ -571,7 +571,7 @@ PS:
             <td>False</td>
             <td>
 
-This property decided whether or not the sub_folders in temp_upload containing screnshots, mediainfo, urls etc needs to be in a human readable format or not. By default a unique hash will be generated for the input path and it'll be used. If this property is enabled then the sub_folder will be created using the file name.
+This property decided whether or not the sub_folders in `temp_upload` containing screnshots, mediainfo, urls etc needs to be in a human readable format or not. By default a unique hash will be generated for the input path and it'll be used. If this property is enabled then the sub_folder will be created using the file name.
 
 </td>
         </tr>
