@@ -12,3 +12,8 @@
 - Rename the selected compose file to `docker-compose.yml`
 - Edit the environment variable files accordingly
 - Start the uploader using the command `docker-compose up -d` or `docker compose up -d` (for latest versions for docker compose)
+
+
+### [Environment Configuration](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Environment-Config-File)
+### [Arguments and User Inputs](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Arguments-and-User-Inputs)
+### [Setup And Upgrade](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Setup-And-Upgrade)
