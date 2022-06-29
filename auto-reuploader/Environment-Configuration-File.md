@@ -354,21 +354,18 @@ These applications can be configured using the properties mentioned below.
         <tr>
             <td><strong>cache_type</strong></td>
             <td>
-                The type of the cache to be used by the reuploader.
 
-                <br>
-
-                Supported values are
-
-                <br>
-
-                - Mongo
+The type of the cache to be used by the reuploader.
+Supported values are:
+- Mongo
             </td>
         </tr>
         <tr>
             <td><strong>cache_host</strong></td>
             <td>
-                The `hostname` / `domain name` / `ip address` with which reuploader can communicate with the cache
+
+The `hostname` / `domain name` / `ip address` with which reuploader can communicate with the cache
+
             </td>
         </tr>
         <tr>
