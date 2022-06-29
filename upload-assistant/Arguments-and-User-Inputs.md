@@ -123,10 +123,8 @@ There are some rare cases where these arguments will come in use. Please see det
     * Pass the path to a **folder** (<u>not an individual file</u>) with `--path`
     * Need to have **more than 1** file / folder in the specified directory
 
-
 * `-disc` :track_next:  `*.iso` bluray files are not currently supported, only `/BDMV/STREAM/` *"structured"* directories are.
 
-* `-reupload` :track_next:  This is only used by the **[automatic re-uploading](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/autodl-irssi-automatic-re-uploading)** function. Don't pass unless you know what you're doing.
 </details>
 
 <details><summary>Examples using the less commonly used arguments</summary>
