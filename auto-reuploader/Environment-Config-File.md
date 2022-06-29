@@ -115,7 +115,7 @@ if this below property is set to say 3, then the uploader will auto select the 1
 <br>
 > ⚠️If you want to ignore this config just set it to 0. (the first result will always be selected !!!DANGEROUS!!! ) ⚠️
 <br>
-Example: `tmdb_result_auto_select_threshold=2 `
+Example: `tmdb_result_auto_select_threshold=2`
 </td>
 </tr>
 </table>
