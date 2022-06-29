@@ -301,7 +301,7 @@ That way the file with path `/media/torrents/rutorrent/completed/file.mkv` in to
 
 <br>
 
-## 4. Dupe check:
+## 4. Dupe Check:
 The upload assistant uses `fuzzywuzzy` to compare a stripped down version of the title it generated to the results obtained from the site search API. The title, year, resolution are removed before comparing similarity (the upload assistant filter out results that don't match the resolution of the local file).
 | Property | Required/Optional | Default value| Description |
 | ------ | ------ | ------ | ------ |
