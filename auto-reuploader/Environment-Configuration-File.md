@@ -362,9 +362,7 @@ Supported values are:
         <tr>
             <td><strong>cache_host</strong></td>
             <td>
-
 The `hostname` / `domain name` / `ip address` with which reuploader can communicate with the cache
-
             </td>
         </tr>
         <tr>
