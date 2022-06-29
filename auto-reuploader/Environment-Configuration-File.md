@@ -335,6 +335,8 @@ Knives Out 2019 REPACK 1080p UHD BluRay DDP 7.1 HDR x265-SA89
 ## 5. Torrent Client Configurations:
 GG-BOT Auto ReUploader needs to communicate with a torrent client to do pretty much anything. The ReUploader will listen to the torrents added to a torrent client and will upload them automatically to the configured trackers. As soon as an upload is completed, they will be cross-seeded automatically.
 
+> Also see `dynamic_tracker_selection` in `Miscellaneous Properties`
+
 The various torrent client configurations are listed below.
 
 <table>
@@ -511,6 +513,30 @@ PS:
 
 This property decided whether or not the sub_folders in `temp_upload` containing screnshots, mediainfo, urls etc needs to be in a human readable format or not. By default a unique hash will be generated for the input path and it'll be used. If this property is enabled then the sub_folder will be created using the file name.
 
+</td>
+        </tr>
+        <tr>
+            <td><strong>dynamic_tracker_selection</strong></td>
+            <td>Optional </td>
+            <td>False</td>
+            <td>
+
+When the dynamic tracker selction feature is enabled,
+- Reuploader still needs some trackers to be provided via the `-t` or `--trackers` command line argument.
+  These trackers will be considered as `fall_back_trackers`. (we'll get to this in more details later)
+- The property `reupload_label` will be ignored.
+  All torrents added to client must have label `GGBOT` or must start with `GGBOT`.
+
+The trackers to which a particular tracker can be uploaded to can be added to the category/label as `::` separated entries. (dynamic trackers)
+```
+A torrent with label as GGBOT::TSP::SZN will be uploaded to TSP and SZN
+A torrent with label as GGBOT::BHD::BLU::ATH::BHDTV will be uploaded to the following trackers BHD, BLU, ATH and BHDTV
+```
+
+- If the label is just GGBOT or GGBOT:: (user has not provided any dynamic trackers),
+  then the reuploader will upload the torrent to the `fall_back_trackers` provided by the user via `-t` or `--trackers` argument at startup.
+
+- If none of the dynamic trackers, are valid or not configured properly, then reuploader will attempt to upload to the `fall_back_trackers`.
 </td>
         </tr>
     </tbody>
