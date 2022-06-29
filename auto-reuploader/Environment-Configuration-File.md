@@ -355,8 +355,13 @@ These applications can be configured using the properties mentioned below.
             <td><strong>cache_type</strong></td>
             <td>
                 The type of the cache to be used by the reuploader.
+
                 <br>
-                Supported values are:
+
+                Supported values are
+
+                <br>
+
                 - Mongo
             </td>
         </tr>
