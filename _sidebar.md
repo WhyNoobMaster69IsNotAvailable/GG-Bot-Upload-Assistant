@@ -4,6 +4,7 @@
 4. [GG-BOT Upload Assistant](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/upload-assistant/home)
     - [Environment Configuration](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/upload-assistant/environment-config-file)
     - [Arguments and User Inputs](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/upload-assistant/arguments-and-user-inputs)
+    - [Arguments and User Inputs](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/upload-assistant/Upload-Assistant-Arguments-and-User-Inputs)
     - [Run commands](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/upload-assistant/run-command-examples)
     - [Setup And Upgrade](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/home)
     - [Noob friendly docker guide](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/upload-assistant/noob-friendly-docker-guide)
