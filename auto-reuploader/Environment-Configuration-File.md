@@ -354,6 +354,7 @@ These applications can be configured using the properties mentioned below.
         <tr>
             <td><strong>cache_type</strong></td>
             <td>
+
 The type of the cache to be used by the reuploader.
 Supported values are:
 - Mongo
@@ -362,6 +363,7 @@ Supported values are:
         <tr>
             <td><strong>cache_host</strong></td>
             <td>
+
 The `hostname` / `domain name` / `ip address` with which reuploader can communicate with the cache
             </td>
         </tr>
@@ -374,9 +376,9 @@ The `hostname` / `domain name` / `ip address` with which reuploader can communic
         <tr>
             <td><strong>cache_database</strong></td>
             <td>
-                The name of the database to be used by the reuploader. This is optional and its need is subjected to the type of cache being used.
-                <br>
-                - Mongo: Required
+
+The name of the database to be used by the reuploader. This is optional and its need is subjected to the type of cache being used.
+- Mongo: Required
             </td>
         </tr>
         <tr>
