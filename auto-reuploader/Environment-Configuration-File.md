@@ -517,39 +517,6 @@ Eg. If pymediainfo / ffprobe / regex can not detect the `audio_codec` this will 
             <th><strong>Default Value</strong></th>
             <th><strong>Description</strong></th>
         </tr>
-        <tr>
-            <td><strong>live</strong></td>
-            <td>Optional </td>
-            <td>False </td>
-            <td>Property to determine whether or not to mark uploads as Live/Draft
-<br>
-
-- This only applies to **BHD** since they are the only supported site that has a **Drafts** page
-- It's recommended to set this to `False` for your first few uploads, so you can verify everything is to your liking
-- Setting this to `True` will result in **BHD** uploads being posted _live_ for everyone to see
-
-</td>
-        </tr>
-        <tr>
-            <td><strong>bdinfo_script</strong></td>
-            <td>Optional</td>
-            <td></td>
-            <td>
-
-```
-Please note that this property is not applicable when using docker images for torrent uploads.
-```
-
-- If you plan on uploading a "Raw Bluray Disc" you need to fill out this option
-- You need to supply it with the path of the **BDInfoCLI-ng** docker wrapper script
-- Process:
-    - Download & install Docker
-    - Clone this project [BDInfoCLI-ng](https://github.com/zoffline/BDInfoCLI-ng) & `cd` into it
-    - In the folder `/BDInfoCLI-ng-UHD_Support_CLI/scripts/` you'll find a file called `bdinfo`
-    - Copy the entire path to that `bdinfo` file into `config.env`
-
-</td>
-        </tr>
 <tr>
             <td><strong>uploader_signature</strong></td>
             <td>Optional </td>

@@ -8,7 +8,7 @@
     - [Setup And Upgrade](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/upload-assistant/Setup-And-Upgrade)
     - [Noob friendly docker guide](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/upload-assistant/Noob-Friendly-Docker-Guide)
 5. [GG-BOT Auto ReUploader](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/home)
-    - [Environment Configuration](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Environment-Config-File)
+    - [Environment Configuration](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Environment-Configuration-File)
     - [Arguments and User Inputs](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Arguments-and-User-Inputs)
     - [Setup And Upgrade](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Setup-And-Upgrade)
 6. [Tracker Templates](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Tracker-Templates)
