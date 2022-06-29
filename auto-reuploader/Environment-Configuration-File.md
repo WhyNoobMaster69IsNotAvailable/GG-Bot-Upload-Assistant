@@ -357,7 +357,7 @@ These applications can be configured using the properties mentioned below.
 
 The type of the cache to be used by the reuploader.
 Supported values are:
-- Mongo
+- `Mongo`
             </td>
         </tr>
         <tr>
@@ -378,7 +378,7 @@ The `hostname` / `domain name` / `ip address` with which reuploader can communic
             <td>
 
 The name of the database to be used by the reuploader. This is optional and its need is subjected to the type of cache being used.
-- Mongo: Required
+- `Mongo`: Required
             </td>
         </tr>
         <tr>
