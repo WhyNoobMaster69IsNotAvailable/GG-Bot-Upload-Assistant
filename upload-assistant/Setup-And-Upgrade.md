@@ -48,7 +48,7 @@ For example, if you were using `v2.0.1` and wants to use the `v2.0.5`, just chan
 docker run --rm -it \
     -v /home/user/media:/home/user/media \
     --env-file config.env \
-    noobmaster669/gg-bot-uploader:**2.0.5** -t BHDTV BHD NBL -p "/home/user/mediaYOUR_FILE_OR_FOLDER" OPTIONAL_ARGUMENTS
+    noobmaster669/gg-bot-uploader:2.0.5 -t BHDTV BHD NBL -p "/home/user/mediaYOUR_FILE_OR_FOLDER" OPTIONAL_ARGUMENTS
 ```
 
 <br>
