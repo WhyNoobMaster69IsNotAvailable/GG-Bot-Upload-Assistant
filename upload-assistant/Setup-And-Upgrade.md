@@ -30,6 +30,7 @@ docker pull noobmaster669/gg-bot-uploader:latest
 ```
 
 **Automatic Updates**
+
 When using the `:latest` tag, there is an option to download and use the latest versions automatically when they are released. To enable automatic updates, add `--pull=always` to the docker run command.
 ```
 docker run --rm --pull=always -it \
