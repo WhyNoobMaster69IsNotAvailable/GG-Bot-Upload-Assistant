@@ -5,6 +5,7 @@
 3. Start Uploading
 
 **Install docker**
+
 If you are on Windows, Mac, or Linux you can install the [Docker Desktop](https://www.docker.com/products/docker-desktop/) application and get started immediately.
 If you are on linux headless, then you can run the `install_docker.sh` shell file available in `dev_scripts` folder of this repo.
 
