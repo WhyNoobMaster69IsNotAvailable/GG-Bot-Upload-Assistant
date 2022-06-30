@@ -61,14 +61,49 @@ docker run --rm -it \
 4. Setup folders and config
 5. Start Uploading
 
-### Upgrading To Newer Versions
-Upgrading when using the master branch is the easiest option when running on bare metal. Just run the command below and you should have the latest changes.
+**1. Dependencies**
+- FFmpeg
+- Mediainfo
+- Python 3.8
+- Mktorrent
+- Unrar
+
+**2. Clone the repo**
+Clone and use a release tag
 ```
-git pull
+git clone https://gitlab.com/NoobMaster669/gg-bot-upload-assistant.git
+git checkout tags/<TAG_NAME>
 ```
 
+Cloning master branch (not recommended)
+```
+git clone https://gitlab.com/NoobMaster669/gg-bot-upload-assistant.git
+```
+
+**3. Install libraries**
+```
+pip3 install -r requirements/requirements.txt
+```
+
+**4. Setup folders and config**
+1. Create a new folder named, `GGBOTUploadAssistant`
+2. Download and place the `config.env` file from `samples/assistant` in this folder.
+3. Fill in the necessary values. You can refer to the Upload Assistant Environment Configuration File wiki for more details regarding each property.
+
+
+**5. Start uploading**
+```
+python3 auto_upload.py -t <TRACKERS> -p <PATH_TO_FILE_OR_FOLDER> <OPTIONAL_ARGUMENTS>
+```
+
+### Upgrading To Newer Versions
 When you are using a tag (recommended for bare metal), upgrading to new tag involes one more step.
 ```
 git pull
-git checkout -b <TAG>
+git checkout tags/<TAG_NAME>
+```
+
+Upgrading when using the master branch is the easiest option when running on bare metal. Just run the command below and you should have the latest changes.
+```
+git pull
 ```
