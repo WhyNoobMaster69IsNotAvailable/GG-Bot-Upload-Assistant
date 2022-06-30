@@ -19,12 +19,12 @@ If you are on linux headless, then you can run the `install_docker.sh` shell fil
 You can now start uploading using GG-BOT Upload Assistant. The docker run commands must be executed from the `GGBOTUploadAssistant` folder. Advanced docker users know how to get around this 😉. You can also refer to the Noob Friendly Docker Guide and Run Command Examples for more information and examples on the various docker run command possibilitites.
 <br>
 
-#### Upgrading To Newer Versions
+##### Upgrading To Newer Versions
 When running docker version of GG-BOT Upload Assistant, you have two possible options.
 - Use the `:latest` tag
 - Use a particular release tag `:2.0.6`
 
-#### Upgrading when using :latest tag
+##### Upgrading when using :latest tag
 ```bash
 docker pull noobmaster669/gg-bot-uploader:latest
 ```
