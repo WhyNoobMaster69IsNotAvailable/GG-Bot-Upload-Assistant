@@ -12,3 +12,4 @@
     - [Arguments and User Inputs](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Arguments-and-User-Inputs)
     - [Setup And Upgrade](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Setup-And-Upgrade)
 6. [Tracker Templates](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Tracker-Templates)
+7. [Support For New Trackers]()
