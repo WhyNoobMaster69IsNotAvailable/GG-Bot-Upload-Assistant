@@ -116,7 +116,7 @@ There are some rare cases where these arguments will come in use. Please see det
 | 12 | **-foreign** | No | Mark the upload as foreign content [Non-English] | **-foreign** |
 | 13 | **-ss or --skip_screenshots** | No | Override the configuration in config.env and proceed to upload without taking screenshots | **-ss** |
 | 14 | **-amf or --allow_multiple_files** | No | Override the default behavior and allow multiple files to be added in one torrent | **--allow_multiple_files** |
-| 15 | **-let or --load_external_templates** | No | When enabled uploader will load external site templates from ./external/site_templates location | **--load_external_templates** |
+| 15 | **-let or --load_external_templates** | No | When enabled uploader will load external site templates from `./external/site_templates` location | **--load_external_templates** |
 
 <details><summary>Important Notes</summary>
 
