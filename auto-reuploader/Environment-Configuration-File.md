@@ -55,6 +55,18 @@ Tracker API keys and announce urls are optional unless you plan on uploading tor
 |                          |                       |                                         |
 | **RF_API_KEY**           | Optional              | ReelFliX API Key                        |
 | **RF_ANNOUNCE_URL**      | Optional              | ReelFliX private announce url           |
+|                          |                       |                                         |
+| **TELLY_API_KEY**        | Optional              | Telly API Key                           |
+| **TELLY_ANNOUNCE_URL**   | Optional              | Telly private announce url              |
+|                          |                       |                                         |
+| **SZN_API_KEY**          | Optional              | Swarmazon API Key                       |
+| **SZN_ANNOUNCE_URL**     | Optional              | Swarmazon private announce url          |
+|                          |                       |                                         |
+| **LST_API_KEY**          | Optional              | LST API Key                             |
+| **LST_ANNOUNCE_URL**     | Optional              | LST private announce url                |
+|                          |                       |                                         |
+| **3EVILS_API_KEY**       | Optional              | 3Evils API Key                          |
+| **3EVILS_ANNOUNCE_URL**  | Optional              | 3Evils private announce url             |
 
 
 </details>The metadata fetching is performed by the upload assistant with the help of [TheMovieDB](https://www.themoviedb.org/). The API Key to interact with TMDB needs to be provided and the operations done by the upload assistant can be notified to a text channel in a discord service with the help of discord webhook.
@@ -100,6 +112,27 @@ Refer to [API Documentation](https://www.themoviedb.org/documentation/api) for m
 <tr>
 <td>
 
+**IMDB_API_KEY**
+
+</td>
+<td>Optional</td>
+<td>
+
+The API key to communicate with IMDb ([IMDb](https://imdb.com/))<br><br>To get an API Key:
+
+- Create an account at [IMDb API](https://imdb-api.com/api)
+- Navigate to your profile
+- Copy the API Key
+
+Refer to [API Documentation](https://imdb-api.com/api) for more details
+
+</td>
+</tr>
+
+
+<tr>
+<td>
+
 **tmdb_result_auto_select_threshold**
 
 </td>
@@ -134,7 +167,8 @@ GG-BOT Upload Assistant take frame accurate screenshots automatically and can up
 
 Once a screenshot has been created it'll be uploaded to one of the image host configured by the user.
 
-> A total of 6 Image Hosts are currently supported. imgbox | imgbb | freeimage | ptpimg | imgfi | imgur
+> A total of 9 Image Hosts are currently supported. imgbox | imgbb | freeimage | ptpimg | imgfi | imgur 
+| snappie | pixhost | lensdump
 
 The properties associated with Image Hosting sites are described below.
 
@@ -177,6 +211,9 @@ img_host_3=ptpimg
 img_host_4=imgur
 img_host_5=
 img_host_6=
+img_host_7=
+img_host_8=
+img_host_9=
 # imgbox and Imgfi are disabled in this configuration
 ```
 
@@ -191,6 +228,9 @@ Indicates the priority of an image host with lower number having higher priority
 - img_host_4
 - img_host_5
 - img_host_6
+- img_host_7
+- img_host_8
+- img_host_9
 </td>
 </tr>
 <tr>
@@ -202,7 +242,7 @@ Indicates the priority of an image host with lower number having higher priority
 <td>Do Not Change</td>
 <td>leave_blank</td>
 <td>
-Image Host: [imgbb](https://api.imgbb.com/) <br>
+Image Host: [imgbox](https://api.imgbb.com/) <br>
 No api key is needed. The default value seen in the config file **SHOULD NOT BE MODIFIED.** <br>
 [Documentation](https://github.com/plotski/pyimgbox)
 </td>
@@ -273,6 +313,45 @@ You need to register your application [here](https://api.imgur.com/oauth2/addcli
 <td>Image Host: [imgur](https://imgur.com/) <br> This is the client id for your imgur applicaton <br>
 You need to register your application [here](https://api.imgur.com/oauth2/addclient) with `Anonymous usage without user authorization` to get client id and secret</td>
 </tr>
+
+<tr>
+<td>
+
+**snappie_api_key**
+
+</td>
+<td>Optional</td>
+<td>XXXXXXXXXXXXXXX</td>
+<td>Image Host: [Snappie](https://snappie.net/) <br> The API key for Snappie</td>
+</tr>
+<tr>
+
+<tr>
+<td>
+
+**lensdump_api_key**
+
+</td>
+<td>Optional</td>
+<td>XXXXXXXXXXXXXXX</td>
+<td>Image Host: [lensdump](https://lensdump.com/) <br> The API key for Lensdump</td>
+</tr>
+<tr>
+
+<tr>
+<td>
+
+**pixhost_api_key**
+
+</td>
+<td>Do Not Change</td>
+<td>leave_blank</td>
+<td>
+Image Host: [pixhost](https://pixhost.to/) <br>
+No api key is needed. The default value seen in the config file **SHOULD NOT BE MODIFIED.**
+</td>
+</tr>
+
 </table>
 
 <br>
