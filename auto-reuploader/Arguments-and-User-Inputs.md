@@ -31,6 +31,7 @@ There are some rare cases where these arguments will come in use. Please see det
 | 4 | **-fpm or --force_pymediainfo** | No | Force use PyMediaInfo to extract video codec over regex extraction from file name | **--force_pymediainfo** |
 | 5 | **-ss or --skip_screenshots** | No | Override the configuration in config.env and proceed to upload without taking screenshots | **-ss** |
 | 6 | **-let or --load_external_templates** | No | When enabled uploader will load external site templates from `./external/site_templates` location | **--load_external_templates** |
+| 7 | **-tag or --tags** | Yes | Send custom tags to all trackers in addition to automatically resolved ones. | **--tags custom_tag_1 custom_tag_2** |
 
 <br>
 
