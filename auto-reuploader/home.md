@@ -44,6 +44,6 @@ In dynamic tracker selection mode, the uploader starts with default trackers, an
 For example: consider the default trackers are ABC, XYZ. And you wish to upload a torrent to tracker DEF and MNO only. In this case, you can set the label of that torrent to `GGBOT::DEF::MNO`. That particular torrent will be uploaded only to DEF and MNO (this torrent will not be uploaded to ABC and XYZ).
 
 # Wiki Articles
-### [Environment Configuration](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Environment-Config-File)
+### [Environment Configuration](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Environment-Configuration-File)
 ### [Arguments and User Inputs](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Arguments-and-User-Inputs)
 ### [Setup And Upgrade](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Setup-And-Upgrade)
