@@ -25,6 +25,7 @@ Consider the auto reuploader as a baby, and if you plan on running it on bare me
 # Requirements
 - Docker
 - docker-compose
+> See (Dev Scripts)[https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/tree/master/dev_scripts] to see shells to install docker and docker-compose
 
 # Installation and setup
 - Create a new folder and copy the contents of the `env-files-samples` in here.
