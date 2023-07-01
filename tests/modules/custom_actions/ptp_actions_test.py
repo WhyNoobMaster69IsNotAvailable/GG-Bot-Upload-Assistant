@@ -611,3 +611,43 @@ def test_add_trumpable_flags(
     mocker.patch("rich.prompt.Prompt.ask", return_value=user_prompt)
     ptp_actions.add_trumpable_flags(torrent_info, tracker_settings, {})
     assert tracker_settings["trumpable[]"] == expected
+
+
+@pytest.mark.parametrize(
+    ("torrent_info", "tracker_settings", "expected_title"),
+    [
+        pytest.param(
+            {},
+            {"remaster_title": "Remux / Dual-Audio"},
+            "Remux / Dual-Audio",
+            id="not_10_bit",
+        ),
+        pytest.param(
+            {},
+            {"remaster_title": "10-bit / Remux / Dual-Audio"},
+            "10-bit / Remux / Dual-Audio",
+            id="non_hdr_10_bit_release",
+        ),
+        pytest.param(
+            {"hdr": "HDR10"},
+            {"remaster_title": "10-bit / Remux / Dual-Audio"},
+            "Remux / Dual-Audio",
+            id="hdr_10_bit_release_1",
+        ),
+        pytest.param(
+            {"hdr": "HDR10"},
+            {"remaster_title": "Remux / Dual-Audio / 10-bit"},
+            "Remux / Dual-Audio",
+            id="hdr_10_bit_release_2",
+        ),
+        pytest.param(
+            {"hdr": "HDR10"},
+            {"remaster_title": "Remux / 10-bit / Dual-Audio"},
+            "Remux / Dual-Audio",
+            id="hdr_10_bit_release_3",
+        ),
+    ],
+)
+def test_fix_10_bit_tag(torrent_info, tracker_settings, expected_title):
+    ptp_actions.fix_10_bit_tag(torrent_info, tracker_settings, None)
+    assert tracker_settings["remaster_title"] == expected_title
