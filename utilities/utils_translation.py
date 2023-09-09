@@ -16,6 +16,7 @@
 
 import logging
 import sys
+from typing import Dict
 
 from rich.console import Console
 
@@ -743,9 +744,10 @@ def choose_right_tracker_keys(
                     if len(upload_these_tags_list) != 0:
                         # currently we support sending tags as string or as an array
                         if optional_value["type"] == "string":
-                            # if user wants to send tags as string, then a separator needs to be confiured.
-                            # default separator is ,
-                            # Note: If user wants TAG1 | TAG2 ie: <space>|<space> then user must configure separator as " | "
+                            # if user wants to send tags as string, then a separator needs to be configured.
+                            # Default separator is ,
+                            # Note: If user wants TAG1 | TAG2 ie: <space>|<space> then user must
+                            # configure separator as " | "
                             separator = (
                                 ","
                                 if "separator" not in optional_value
@@ -951,7 +953,7 @@ def format_title(json_config, torrent_info):
 # -------------- END of format_title --------------
 
 
-def __add_applicable_tags(torrent_info, group, subkey):
+def __add_applicable_tags(torrent_info: Dict, group: str, subkey: str):
     if group is None or subkey is None:
         return
 
@@ -1012,6 +1014,13 @@ def generate_all_applicable_tags(torrent_info):
         torrent_info["dv"] if "dv" in torrent_info else None,
     )
 
+    logging.debug("[Tags] Creating tags for bit_depth")
+    __add_applicable_tags(
+        torrent_info,
+        "bit_depth",
+        torrent_info["bit_depth"] if "bit_depth" in torrent_info else None,
+    )
+
     logging.debug("[Tags] Creating tags for source_type")
     __add_applicable_tags(
         torrent_info,
@@ -1029,18 +1038,24 @@ def generate_all_applicable_tags(torrent_info):
         torrent_info,
         "audio",
         "commentary"
-        if "commentary" in torrent_info and torrent_info["commentary"] == True
+        if "commentary" in torrent_info and torrent_info["commentary"] is True
         else None,
     )
     __add_applicable_tags(
         torrent_info,
         "audio",
-        torrent_info["dualaudio"] if "dualaudio" in torrent_info else None,
+        "dualaudio"
+        if "dualaudio" in torrent_info
+        and torrent_info["dualaudio"] == "Dual-Audio"
+        else None,
     )
     __add_applicable_tags(
         torrent_info,
         "audio",
-        torrent_info["multiaudio"] if "multiaudio" in torrent_info else None,
+        "multiaudio"
+        if "multiaudio" in torrent_info
+        and torrent_info["multiaudio"] == "Multi"
+        else None,
     )
 
     logging.debug("[Tags] Creating tags for edition")

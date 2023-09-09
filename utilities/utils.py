@@ -347,6 +347,14 @@ def perform_guessit_on_filename(file_name):
     file_name = file_name_split[len(file_name_split) - 1]
 
     guess_it_result = guessit(file_name)
+
+    # Handle movie files with AKA to indicate multiple titles
+    if " AKA " in guess_it_result["title"]:
+        (
+            guess_it_result["title"],
+            guess_it_result["alternative_title"],
+        ) = guess_it_result["title"].split(" AKA ")
+
     guessit_end_time = time.perf_counter()
     logging.debug(
         f"[Utils] Time taken for guessit regex operations :: {guessit_end_time - guessit_start_time}"

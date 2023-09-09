@@ -307,14 +307,14 @@ pip install -r requirements/requirements.txt
 <br>
 
 # Roadmap
-### v3.0.9
+### v3.1.0
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#96: DVD Remux not supported
 - [ ] Issue#97: PTP uploads fail if no tags in IMDB
 
-### v3.1.0
+### v3.1.1
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
 - [ ] Improved TMDB metadata search Phase 3
 - [ ] Support for encrypted values from config
@@ -344,7 +344,36 @@ pip install -r requirements/requirements.txt
 
 <br>
 
+# Contributors
+This project exists thanks to all the people who contribute.
+
+<a href="https://gitlab.com/NoobMaster669" title="NoobMaster669">
+  <img width="50" src="https://secure.gravatar.com/avatar/94c4464ce0eb2b2792b6b3ff84c65ff7?s=192&d=identicon">
+</a>
+<a href="https://gitlab.com/LostRager" title="LostRager">
+  <img width="50" src="https://secure.gravatar.com/avatar/4c31843c40dcb1e44db407a273709729?s=192&d=identicon">
+</a>
+<a href="https://gitlab.com/kvkv07" title="KV KV">
+  <img width="50" src="https://secure.gravatar.com/avatar/963c6423dbf302f9385367ae7ecddefb?s=192&d=identicon">
+</a>
+<a href="https://gitlab.com/aeraeca" title="Aeraeca">
+  <img width="50" src="https://secure.gravatar.com/avatar/8c850cc650185ac5169830cf60bed786?s=192&d=identicon">
+</a>
+<a href="https://gitlab.com/JerryLarry" title="Jerry">
+  <img width="50" src="https://secure.gravatar.com/avatar/5879a189d87cb16d937ff307b0c829c9?s=192&d=identicon">
+</a>
+
+<br>
+
 # Change Log
+## **3.0.9**
+    Bug Fixes
+        * Bug Fix: Uploader having difficulty when file title has `AKA` -> [@aeraeca]
+        * Issue#126: PTP: Bot does not add 10-bit and Dual Audio edition tags
+        * Issue#132: GPW Incorrect source
+
+<br>
+
 ## **3.0.8**
     New Trackers
         * TorrentLeech

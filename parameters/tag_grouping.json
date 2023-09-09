@@ -8,6 +8,11 @@
         "dv": ["DV", "DoVi", "Do-Vi", "Dolby Vision", "dolby_vision"]
     },
 
+    "bit_depth": {
+        "10": ["10-bit", "10-Bit", "10 Bit", "10 bit"],
+        "8": ["8-bit", "8-Bit", "8 Bit", "8 bit"]
+    },
+
     "edition": {
         "criterion":["Criterion", "criterion"],
         "criterion collection":["Criterion", "Criterion Collection"],

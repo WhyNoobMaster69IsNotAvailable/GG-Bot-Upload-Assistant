@@ -607,12 +607,17 @@ def __get_tag_grouping():
                 "dv": "DV",
                 "edition": "International Cut",
                 "source_type": "webdl",
+                "bit_depth": "8",
                 "tag_grouping": json.load(
                     open(f"{working_folder}/parameters/tag_grouping.json")
                 ),
             },
             sorted(
                 [
+                    "8 Bit",
+                    "8 bit",
+                    "8-Bit",
+                    "8-bit",
                     "Atmos",
                     "Dolby Atmos",
                     "dolby_atmos",
@@ -637,6 +642,9 @@ def __get_tag_grouping():
                 "dv": "DV",
                 "edition": "International Cut",
                 "source_type": "webdl",
+                "bit_depth": "10",
+                "dualaudio": "Dual-Audio",
+                "multiaudio": "Multi",
                 "tag_grouping": json.load(
                     open(f"{working_folder}/parameters/tag_grouping.json")
                 ),
@@ -644,9 +652,21 @@ def __get_tag_grouping():
             },
             sorted(
                 [
+                    "10 Bit",
+                    "10 bit",
+                    "10-Bit",
+                    "10-bit",
                     "another_tag_from_argument",
                     "argument_tag1",
                     "Atmos",
+                    "DUAL",
+                    "Dual Audio",
+                    "Dual-Audio",
+                    "DualAudio",
+                    "dual_audio",
+                    "Multi",
+                    "Multi-Audio",
+                    "MultiAudio",
                     "Dolby Atmos",
                     "dolby_atmos",
                     "WEBDL",

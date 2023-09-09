@@ -1001,7 +1001,15 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
         if "raw_video_file" in torrent_info
         else torrent_info["upload_media"]
     )[1]
-    # Video continer information
+    # Video container information
+
+    # Video bit-depth information
+    torrent_info[
+        "bit_depth"
+    ] = miscellaneous_utilities.miscellaneous_get_bit_depth(
+        media_info_result.video_tracks[0]
+    )
+    # Video bit-depth information
 
     # Detecting Anamorphic Video
     miscellaneous_utilities.detect_anamorphic_video_and_pixel_ratio(

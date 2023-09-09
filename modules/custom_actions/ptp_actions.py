@@ -82,6 +82,29 @@ def _get_tags(imdb_tags, tmdb_tags):
     return tags
 
 
+def fix_10_bit_tag(torrent_info, tracker_settings, __):
+    remaster_title = tracker_settings["remaster_title"]
+
+    if "10-bit" not in remaster_title:
+        return
+    if "hdr" not in torrent_info:
+        logging.info(
+            "[CustomActions][PTP] Release is not an HDR release. Skipping 10-bit tag removal"
+        )
+        return
+
+    logging.info(
+        f"[CustomActions][PTP] Original remaster_title: {remaster_title}"
+    )
+    remaster_title = remaster_title.replace("10-bit / ", "")
+    remaster_title = remaster_title.replace(" / 10-bit", "")
+    remaster_title = remaster_title.replace(" / 10-bit / ", " / ")
+    logging.info(
+        f"[CustomActions][PTP] Stripped remaster_title: {remaster_title}"
+    )
+    tracker_settings["remaster_title"] = remaster_title
+
+
 def check_for_existing_group(torrent_info, tracker_settings, tracker_config):
     # group_check_url = tracker_config["dupes"]["url_format"].format(search_url=str(tracker_config["torrents_search"]), imdb=torrent_info["imdb"])
     group_check_url = f"https://passthepopcorn.me/ajax.php?imdb={torrent_info['imdb_with_tt']}&action=torrent_info&fast=1"
@@ -390,7 +413,7 @@ def get_ptp_type(torrent_info, tracker_settings, _):
     # languages, "language codes",
     # runtimes, title, year
     if movie_details is not None:
-        # we we can get the `kind` from IMDb we can use that to find the PTP type.
+        # we can get the `kind` from IMDb we can use that to find the PTP type.
         kind = movie_details.get("kind", "movie").lower()
         # TODO: this doesn't seem to work always. Find another way to get this working
         if kind in ("movie", "tv movie"):
@@ -503,7 +526,7 @@ def add_trumpable_flags(torrent_info, tracker_settings, tracker_config):
     logging.debug(
         f"[CustomActions][PTP] No subs in release: {no_subs_in_release}"
     )
-    # for all non-english release if there are no subtiles or if english subtitle is not present
+    # for all non-english release if there are no subtitles or if english subtitle is not present
     if is_non_english_release and (
         no_subs_in_release or not is_english_subs_present
     ):

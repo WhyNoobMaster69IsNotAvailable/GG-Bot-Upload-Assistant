@@ -32,6 +32,7 @@
             "modules.custom_actions.ptp_actions.add_trumpable_flags",
             "modules.custom_actions.ptp_actions.mark_scene_release_if_applicable",
             "modules.custom_actions.ptp_actions.fix_other_resolution",
+            "modules.custom_actions.ptp_actions.fix_10_bit_tag",
             "modules.custom_actions.ptp_actions.get_crsf_token"
         ]
     },
@@ -255,6 +256,7 @@
                 "Extended Cut",
                 "Uncut",
                 "Unrated",
+                "10-bit",
                 "4K Restoration",
                 "Dolby Atmos",
                 "Dolby Vision",

@@ -4,7 +4,7 @@
     "upload_form": "https://greatposterwall.com/api.php?api_key={api_key}&action=upload",
     "torrents_search": "https://greatposterwall.com/api.php?api_key={api_key}&action=torrent&req=torrent",
 
-    "source": "GPW",
+    "source": "GreatPosterWall",
     "platform": "Gazelle",
     "bbcode_line_break": "\n",
     "title_separator" : " ",
