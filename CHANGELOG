@@ -1,3 +1,11 @@
+### **3.0.9**
+    Bug Fixes
+        * Bug Fix: Uploader having difficulty when file title has `AKA` -> [@aeraeca]
+        * Issue#126: PTP: Bot does not add 10-bit and Dual Audio edition tags
+        * Issue#132: GPW Incorrect source
+
+<br>
+
 ### **3.0.8**
     New Trackers
         * TorrentLeech
