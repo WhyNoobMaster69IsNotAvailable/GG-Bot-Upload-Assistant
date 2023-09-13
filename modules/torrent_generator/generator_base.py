@@ -45,6 +45,9 @@ class GGBotTorrentGeneratorBase(ABC):
             "*.rar",
             "*.screens",
             "*.sfv",
+            "@eaDir", # Sinology likes to put those files
+            ".DS_Store", # Mac files
+            "thumbs.db" # Windows
         ]
 
     @cached_property
