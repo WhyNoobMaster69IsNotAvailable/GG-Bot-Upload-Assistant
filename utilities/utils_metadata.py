@@ -547,6 +547,12 @@ def _fill_tmdb_metadata_to_torrent_info(torrent_info, tmdb_response):
         if "original_language" in tmdb_response
         else ""
     )
+    tmdb_metadata["spoken_languages"] = (
+        tmdb_response["spoken_languages"]
+        if "spoken_languages" in tmdb_response
+        else {}
+    )
+
     tmdb_metadata["genres"] = (
         list(map(lambda genre: genre["name"], tmdb_response["genres"]))
         if "genres" in tmdb_response

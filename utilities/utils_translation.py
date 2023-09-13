@@ -916,6 +916,11 @@ def format_title(json_config, torrent_info):
         tracker_torrent_name_style.replace("{", "").replace("}", "").split(" ")
     )
     for item in temp_load_torrent_info:
+        upper = False
+        if item[0] == "!":
+            item = item[1:]
+            upper = True
+
         # Here is were we actual get the torrent_info response and add it to the "generate_format_string" dict we
         # declared earlier
         generate_format_string[item] = (
@@ -923,6 +928,8 @@ def format_title(json_config, torrent_info):
             if item in torrent_info and torrent_info[item] is not None
             else ""
         )
+        if upper:
+            generate_format_string[item] = generate_format_string[item].upper()
 
     formatted_title = ""  # This is the final torrent title, we add any info we get from "torrent_info" to it using
     # the "for loop" below
