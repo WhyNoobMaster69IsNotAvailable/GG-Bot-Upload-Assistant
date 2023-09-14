@@ -640,7 +640,7 @@ def test_fill_dual_multi_and_commentary(
 
 
 @pytest.mark.parametrize(
-    ("tmdb_metadata", "language_str", "language_str_if_foreign"),
+    ("tmdb_metadata", "expected_language_str", "expected_language_str_if_foreign"),
     [
         pytest.param(
             {'original_language': 'cn','spoken_languages': [{'english_name': 'Cantonese', 'iso_639_1': 'cn', 'name': '广州话 / 廣州話'}, {'english_name': 'French', 'iso_639_1': 'fr', 'name': 'Français'}, {'english_name': 'Spanish', 'iso_639_1': 'es', 'name': 'Español'}]},
