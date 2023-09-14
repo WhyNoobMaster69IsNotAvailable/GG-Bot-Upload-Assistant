@@ -640,6 +640,39 @@ def test_fill_dual_multi_and_commentary(
 
 
 @pytest.mark.parametrize(
+    ("tmdb_metadata", "language_str", "language_str_if_foreign"),
+    [
+        pytest.param(
+            {'original_language': 'cn','spoken_languages': [{'english_name': 'Cantonese', 'iso_639_1': 'cn', 'name': '广州话 / 廣州話'}, {'english_name': 'French', 'iso_639_1': 'fr', 'name': 'Français'}, {'english_name': 'Spanish', 'iso_639_1': 'es', 'name': 'Español'}]},
+            'Cantonese', 
+            'Cantonese'
+        ),
+        pytest.param(
+            {'original_language': 'en','spoken_languages': [{"english_name":"English","iso_639_1":"en","name":"English"}]},
+            'English',
+            None
+        ),
+        pytest.param(
+            {'original_language': 'fr','spoken_languages': [{"english_name":"French","iso_639_1":"fr","name":"Français"}]},
+            'French',
+            'French'
+        ),
+        pytest.param(
+            {"original_language": "ja",'spoken_languages': [{"english_name":"Japanese","iso_639_1":"ja","name":"日本語"}]},
+            'Japanese',
+            'Japanese'
+        )
+    ]
+)
+def test_get_upload_original_language_title(
+    tmdb_metadata, expected_language_str, expected_language_str_if_foreign
+):
+    language_str, language_str_if_foreign = get_upload_original_language_title(tmdb_metadata)
+
+    assert language_str == expected_language_str
+    assert language_str_if_foreign == expected_language_str_if_foreign
+
+@pytest.mark.parametrize(
     ("video_track", "expected"),
     [
         pytest.param(
