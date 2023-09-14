@@ -996,7 +996,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
 
     # TMDB gives the original language iso_639_1 which doesn't differentiate between all languages. 
     # So to get the actual name, we have to look through the spoken language list
-    original_language_str = next((l for l in torrent_info["tmdb_metadata"]["spoken_languages"] if l["iso_639_1"] == original_language), {}).get('english_name')
+    original_language_str = next((language.get('english_name') for language in torrent_info["tmdb_metadata"]["spoken_languages"] if language["iso_639_1"] == original_language), None)
 
     torrent_info["language_str"] = original_language_str
     if original_language != "en" and original_language != "":
