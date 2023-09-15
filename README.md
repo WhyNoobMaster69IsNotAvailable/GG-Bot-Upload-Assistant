@@ -308,6 +308,7 @@ pip install -r requirements/requirements.txt
 
 # Roadmap
 ### v3.1.0
+- [X] Support adding language title to upload title -> [@aeraeca]
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
