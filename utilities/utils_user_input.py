@@ -38,12 +38,12 @@ def _load_components(custom_text_components_path):
     # TODO is there any better approach to do this in python??
     components_choices = components_choices[::-1].replace(" ,", " ro ", 1)[::-1]
 
-    # adding I'm and idiot to the components list :p
+    # adding I'm an idiot to the components list :p
     logging.debug("[CustomUserInputs] Adding IDIOT key to the text components")
     custom_text_components.append(
         {
             "key": "IDIOT",
-            "display_name": "I'm and idiot",
+            "display_name": "I'm an idiot",
             "tracker_reference_key": "",
             "title": "false",
         }

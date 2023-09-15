@@ -182,14 +182,9 @@ def check_for_existing_group(torrent_info, tracker_settings, tracker_config):
                 tracker_settings["tags"] = tags
                 # ------- Tags -------
 
-                tracker_settings["maindesc"] = auto_fill_metadata[
-                    "MainPlot"
-                ]  # English description
-                tracker_settings["desc"] = (
-                    auto_fill_metadata["Plot"]
-                    if "Plot" in auto_fill_metadata
-                    else auto_fill_metadata["MainPlot"]
-                )  # Chinese description
+                tracker_settings["maindesc"] = auto_fill_metadata["MainPlot"]  # English description
+                tracker_settings["desc"] = auto_fill_metadata.get("Plot",auto_fill_metadata["MainPlot"])
+                  # Chinese description
 
                 # filling the personnel details
                 tracker_settings["artist_ids[]"] = []
