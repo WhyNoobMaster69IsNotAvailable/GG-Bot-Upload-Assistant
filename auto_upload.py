@@ -594,11 +594,8 @@ def identify_type_and_basic_info(full_path, guess_it_result):
 
     # parsing mediainfo, this will be reused for further processing.
     # only when the required data is mediainfo, this will be computed again, but as `text` format to write to file.
-    parse_me = (
-        torrent_info["raw_video_file"]
-        if "raw_video_file" in torrent_info
-        else torrent_info["upload_media"]
-    )
+    parse_me = torrent_info.get("raw_video_file", torrent_info["upload_media"])
+
     logging.debug(
         f"[Main] Torrent info just before MediaInfo generation. \n {pformat(torrent_info)}"
     )
@@ -722,11 +719,7 @@ def analyze_video_file(missing_value, media_info):
     logging.debug(f"[Main] Trying to identify the {missing_value}...")
 
     # ffprobe/mediainfo need to access to video file not folder, set that here using the 'parse_me' variable
-    parse_me = (
-        torrent_info["raw_video_file"]
-        if "raw_video_file" in torrent_info
-        else torrent_info["upload_media"]
-    )
+    parse_me = torrent_info.get("raw_video_file", torrent_info["upload_media"])
 
     # In pretty much all cases "media_info.tracks[1]" is going to be the video track and media_info.tracks[2] will be the primary audio track
     media_info_video_track = media_info.tracks[1]
@@ -1003,11 +996,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     )
 
     # Video container information
-    torrent_info["container"] = os.path.splitext(
-        torrent_info["raw_video_file"]
-        if "raw_video_file" in torrent_info
-        else torrent_info["upload_media"]
-    )[1]
+    torrent_info["container"] = os.path.splitext(torrent_info.get("raw_video_file", torrent_info["upload_media"]))[1]
     # Video container information
 
     # Video bit-depth information
@@ -1818,9 +1807,7 @@ for file in upload_queue:
     # set the correct video & audio codecs (Dolby Digital --> DDP, use x264 if encode vs remux etc)
     identify_miscellaneous_details(
         guess_it_result,
-        torrent_info["raw_video_file"]
-        if "raw_video_file" in torrent_info
-        else torrent_info["upload_media"],
+        torrent_info.get("raw_video_file", torrent_info["upload_media"])
     )
 
     # -------- User input edition --------
@@ -1901,21 +1888,15 @@ for file in upload_queue:
                 )
 
     # -------- Take / Upload Screenshots --------
-    media_info_duration = MediaInfo.parse(
-        torrent_info["raw_video_file"]
-        if "raw_video_file" in torrent_info
-        else torrent_info["upload_media"]
-    ).tracks[1]
+    media_info_duration = MediaInfo.parse(torrent_info.get("raw_video_file", torrent_info["upload_media"])).tracks[1]
+
     torrent_info["duration"] = str(media_info_duration.duration).split(".", 1)[
         0
     ]
     # This is used to evenly space out timestamps for screenshots
     # Call function to actually take screenshots & upload them (different file)
-    upload_media_for_screenshot = (
-        torrent_info["raw_video_file"]
-        if "raw_video_file" in torrent_info
-        else torrent_info["upload_media"]
-    )
+    upload_media_for_screenshot = torrent_info.get("raw_video_file", torrent_info["upload_media"])
+
     is_screenshots_available = GGBotScreenshotManager(
         duration=torrent_info["duration"],
         torrent_title=torrent_info["title"],

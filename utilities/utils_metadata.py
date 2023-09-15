@@ -528,26 +528,13 @@ def _fill_tmdb_metadata_to_torrent_info(torrent_info, tmdb_response):
 
     tmdb_metadata = dict()
     # saving the original language. This will be used to detect dual / multi and dubbed releases
-    tmdb_metadata["runtime_minutes"] = (
-        tmdb_response["runtime"] if "runtime" in tmdb_response else ""
-    )
-    tmdb_metadata["overview"] = (
-        tmdb_response["overview"] if "overview" in tmdb_response else ""
-    )
-    tmdb_metadata["title"] = (
-        tmdb_response[content_title] if content_title in tmdb_response else ""
-    )
-    tmdb_metadata["original_title"] = (
-        tmdb_response["original_title"]
-        if "original_title" in tmdb_response
-        else ""
-    )
-    tmdb_metadata["original_language"] = (
-        tmdb_response["original_language"]
-        if "original_language" in tmdb_response
-        else ""
-    )
-    tmdb_metadata["spoken_languages"] = tmdb_response.get("spoken_languages", {})
+    tmdb_metadata["runtime_minutes"]   = tmdb_response.get("runtime", "")
+    tmdb_metadata["overview"]          = tmdb_response.get("overview", "")
+    tmdb_metadata["title"]             = tmdb_response.get(content_title, "")
+    tmdb_metadata["overview"]          = tmdb_response.get("overview", "")
+    tmdb_metadata["original_title"]    = tmdb_response.get("original_title", "")
+    tmdb_metadata["original_language"] = tmdb_response.get("original_language", "")
+    tmdb_metadata["spoken_languages"]  = tmdb_response.get("spoken_languages", {})
 
     tmdb_metadata["genres"] = (
         list(map(lambda genre: genre["name"], tmdb_response["genres"]))
