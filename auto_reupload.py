@@ -1323,6 +1323,13 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     torrent_info["commentary"] = commentary
     # --------- Dual Audio / Dubbed / Multi / Commentary --------- #
 
+    (
+        torrent_info["language_str"],
+        torrent_info["language_str_if_foreign"],
+    ) = miscellaneous_utilities.get_upload_original_language_title(
+        torrent_info["tmdb_metadata"]
+    )
+
     # Video container information
     torrent_info["container"] = os.path.splitext(
         torrent_info["raw_video_file"]

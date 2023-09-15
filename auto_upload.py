@@ -983,20 +983,24 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
         if torrent_info["tmdb_metadata"] is not None
         else ""
     )
-    (   
+    (
         dual,
         multi,
-        commentary
+        commentary,
     ) = miscellaneous_utilities.fill_dual_multi_and_commentary(
         original_language, media_info_result.audio_tracks
     )
     torrent_info["dualaudio"] = dual
     torrent_info["multiaudio"] = multi
     torrent_info["commentary"] = commentary
-
-    torrent_info["language_str"], torrent_info["language_str_if_foreign"] = miscellaneous_utilities.get_upload_original_language_title(torrent_info["tmdb_metadata"])
-
     # --------- Dual Audio / Dubbed / Multi / Commentary --------- #
+
+    (
+        torrent_info["language_str"],
+        torrent_info["language_str_if_foreign"],
+    ) = miscellaneous_utilities.get_upload_original_language_title(
+        torrent_info["tmdb_metadata"]
+    )
 
     # Video container information
     torrent_info["container"] = os.path.splitext(
