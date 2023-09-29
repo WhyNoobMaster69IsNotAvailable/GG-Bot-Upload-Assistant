@@ -84,6 +84,9 @@ def _get_tags(imdb_tags, tmdb_tags):
 
 def fix_10_bit_tag(torrent_info, tracker_settings, __):
     remaster_title = tracker_settings.get("remaster_title", "")
+    if remaster_title is None:
+        tracker_settings["remaster_title"] = ""
+        return
 
     if "10-bit" not in remaster_title:
         return
