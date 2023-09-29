@@ -314,6 +314,8 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#96: DVD Remux not supported
 - [ ] Issue#97: PTP uploads fail if no tags in IMDB
+- [X] Issue#134: PTP uploads fails if 2FA is disabled
+- [X] Issue#135: PTP uploads for 10-bit releases if no tags are present
 
 ### v3.1.1
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
