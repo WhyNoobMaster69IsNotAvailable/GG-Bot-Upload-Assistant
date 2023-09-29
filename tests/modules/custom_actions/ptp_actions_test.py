@@ -646,8 +646,20 @@ def test_add_trumpable_flags(
             "Remux / Dual-Audio",
             id="hdr_10_bit_release_3",
         ),
+        pytest.param(
+            {},
+            {},
+            None,
+            id="no_tags_for_upload",
+        ),
+        pytest.param(
+            {},
+            {"remaster_title": None},
+            "",
+            id="tags_are_none",
+        ),
     ],
 )
 def test_fix_10_bit_tag(torrent_info, tracker_settings, expected_title):
     ptp_actions.fix_10_bit_tag(torrent_info, tracker_settings, None)
-    assert tracker_settings["remaster_title"] == expected_title
+    assert tracker_settings.get("remaster_title", None) == expected_title
