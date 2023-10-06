@@ -3,7 +3,7 @@
     "url": "https://fearnopeer.com",
     "upload_form": "https://fearnopeer.com/api/torrents/upload?api_token={api_key}",
     "torrents_search": "https://fearnopeer.com/api/torrents/filter?api_token={api_key}",
-    "source": "FNP",
+    "source": "FnP",
     "platform": "UNIT3D",
     "bbcode_line_break": "\n",
     "title_separator" : " ",
