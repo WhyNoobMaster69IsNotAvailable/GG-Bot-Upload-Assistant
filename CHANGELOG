@@ -1,3 +1,17 @@
+## **3.1.0**
+    New Trackers
+        * Fearnooper
+        * Upload.cx -> [@starlight543]
+
+    New Features
+        * Support adding language title to upload title -> [@aeraeca]
+
+    Bug Fixes
+        * Issue#134: PTP uploads fails if 2FA is disabled
+        * Issue#135: PTP uploads for 10-bit releases if no tags are
+
+<br>
+
 ### **3.0.9**
     Bug Fixes
         * Bug Fix: Uploader having difficulty when file title has `AKA` -> [@aeraeca]
