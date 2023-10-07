@@ -7,6 +7,7 @@
     "bhdtv_api_key",
     "blu_api_key",
     "dt_api_key",
+    "fnp_api_key",
     "gpw_api_key",
     "lst_api_key",
     "nxt_api_key",
@@ -26,5 +27,6 @@
     "telly_api_key",
     "tl_api_key",
     "tmdb_api_key",
-    "tsp_api_key"
+    "tsp_api_key",
+    "ulcx_api_key"
 ]

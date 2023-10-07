@@ -955,9 +955,7 @@ def search_for_dupes_api(
                 our_title=torrent_info["torrent_title"],
                 check_against_title=possible_dupe_title,
                 release_title=torrent_info["title"],
-                release_year=torrent_info["year"]
-                if "year" in torrent_info
-                else None,
+                release_year=torrent_info.get("year", None),
                 release_screen_size=torrent_info["screen_size"],
             )
 

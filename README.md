@@ -70,7 +70,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
             <td><strong>Site Name</strong></td>
         </th>
         <tr style="text-align: center">
-            <td rowspan="13"><strong>UNIT3D</strong></td>
+            <td rowspan="15"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
             <td><strong><a href="https://asiancinema.me">AsianCinema</a></strong></td>
         </tr>
@@ -121,6 +121,14 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
         <tr style="text-align: center">
             <td><strong>TELLY</strong></td>
             <td><strong><a href="https://telly.wtf">Telly</a></strong></td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>FNP</strong></td>
+            <td><strong><a href="https://fearnopeer.com">Fearnooper</a></strong></td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>ULCX</strong></td>
+            <td><strong><a href="https://upload.cx">Upload.cx</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td rowspan="1"><strong>XBTIT</strong></td>
@@ -307,14 +315,14 @@ pip install -r requirements/requirements.txt
 <br>
 
 # Roadmap
-### v3.1.0
+### v3.1.1
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#96: DVD Remux not supported
 - [ ] Issue#97: PTP uploads fail if no tags in IMDB
 
-### v3.1.1
+### v3.1.2
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
 - [ ] Improved TMDB metadata search Phase 3
 - [ ] Support for encrypted values from config
@@ -362,10 +370,27 @@ This project exists thanks to all the people who contribute.
 <a href="https://gitlab.com/JerryLarry" title="Jerry">
   <img width="50" src="https://secure.gravatar.com/avatar/5879a189d87cb16d937ff307b0c829c9?s=192&d=identicon">
 </a>
+<a href="https://gitlab.com/starlight543" title="asedwfasfasfas">
+  <img width="50" src="https://secure.gravatar.com/avatar/5b326cf39498822a2ef8fd8847121bc6?s=192&d=identicon">
+</a>
 
 <br>
 
 # Change Log
+## **3.1.0**
+    New Trackers
+        * Fearnooper
+        * Upload.cx -> [@starlight543]
+
+    New Features
+        * Support adding language title to upload title -> [@aeraeca]
+
+    Bug Fixes
+        * Issue#134: PTP uploads fails if 2FA is disabled
+        * Issue#135: PTP uploads for 10-bit releases if no tags are
+
+<br>
+
 ## **3.0.9**
     Bug Fixes
         * Bug Fix: Uploader having difficulty when file title has `AKA` -> [@aeraeca]

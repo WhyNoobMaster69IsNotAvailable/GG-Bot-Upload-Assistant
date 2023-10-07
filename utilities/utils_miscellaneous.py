@@ -412,6 +412,27 @@ def fill_dual_multi_and_commentary(original_language, audio_tracks):
     return dualaudio, multiaudio, commentary
 
 
+def get_upload_original_language_title(tmdb_metadata):
+    # TMDB gives the original language iso_639_1 which doesn't differentiate between all languages.
+    # So to get the actual name, we have to look through the spoken language list
+    original_language_str = next(
+        (
+            language.get("english_name")
+            for language in tmdb_metadata["spoken_languages"]
+            if language["iso_639_1"] == tmdb_metadata["original_language"]
+        ),
+        None,
+    )
+
+    if (
+        tmdb_metadata["original_language"] != "en"
+        and tmdb_metadata["original_language"] != ""
+    ):
+        return original_language_str, original_language_str
+
+    return original_language_str, None
+
+
 def detect_anamorphic_video_and_pixel_ratio(video_track):
     pixel_aspect_ratio = 1.000
     try:
@@ -420,7 +441,7 @@ def detect_anamorphic_video_and_pixel_ratio(video_track):
         )
     except ValueError:
         logging.error(
-            "[MiscellaneousUtils] Failed to get proper pixel aspect ratio for detcting anamorphic video"
+            "[MiscellaneousUtils] Failed to get proper pixel aspect ratio for detecting anamorphic video"
         )
         logging.info(
             f"[MiscellaneousUtils] Pixel aspect ratio from mediainfo: {video_track.pixel_aspect_ratio}"
