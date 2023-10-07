@@ -1323,7 +1323,9 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     )
 
     # Video container information
-    torrent_info["container"] = os.path.splitext(torrent_info.get("raw_video_file", torrent_info["upload_media"]))[1]
+    torrent_info["container"] = os.path.splitext(
+        torrent_info.get("raw_video_file", torrent_info["upload_media"])
+    )[1]
 
     # Video container information
 
@@ -1538,7 +1540,7 @@ def _process_torrent(torrent: Dict):
     # set the correct video & audio codecs (Dolby Digital --> DDP, use x264 if encode vs remux etc)
     identify_miscellaneous_details(
         guess_it_result,
-        torrent_info.get("raw_video_file", torrent_info["upload_media"])
+        torrent_info.get("raw_video_file", torrent_info["upload_media"]),
     )
 
     # Fix some default naming styles
@@ -1581,7 +1583,9 @@ def _process_torrent(torrent: Dict):
             return
 
     # -------- Take / Upload Screenshots --------
-    upload_media_for_screenshot = torrent_info.get("raw_video_file", torrent_info["upload_media"])
+    upload_media_for_screenshot = torrent_info.get(
+        "raw_video_file", torrent_info["upload_media"]
+    )
 
     media_info_duration = MediaInfo.parse(upload_media_for_screenshot).tracks[1]
     torrent_info["duration"] = str(media_info_duration.duration).split(".", 1)[
@@ -1590,7 +1594,7 @@ def _process_torrent(torrent: Dict):
 
     # This is used to evenly space out timestamps for screenshots
     # Call function to actually take screenshots & upload them (different file)
-    
+
     is_screenshots_available = GGBotScreenshotManager(
         duration=torrent_info["duration"],
         torrent_title=torrent_info["title"],
