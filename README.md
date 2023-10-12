@@ -316,17 +316,17 @@ pip install -r requirements/requirements.txt
 
 # Roadmap
 ### v3.1.1
+- [ ] EPIC: GG-Bot Auto Uploader
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
+- [ ] Issue#96: DVD Remux not supported
 - [ ] Issue#97: PTP uploads fail if no tags in IMDB
-- [X] Issue#130: TMDB to MAL Flask app appears to down
 
 ### v3.1.2
-- [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
-- [ ] Issue#96: DVD Remux not supported
 - [ ] Improved TMDB metadata search Phase 3
 - [ ] Support for encrypted values from config
+- [ ] Add support for adding primary language to title
 - [ ] Use new search API for ANT
 
 ### Backlogs
@@ -347,6 +347,7 @@ pip install -r requirements/requirements.txt
     - [ ] MoreThanTV
     - [ ] DanishBytes
     - [ ] RetroFlix
+    - [ ] PirateTheNet
 - [ ] Add support for DVDs
 
 <br>

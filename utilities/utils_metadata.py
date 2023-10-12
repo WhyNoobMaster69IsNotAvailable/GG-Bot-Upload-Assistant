@@ -16,7 +16,6 @@
 
 import logging
 import sys
-import json
 
 import requests
 from imdb import Cinemagoer
@@ -26,11 +25,6 @@ from rich.prompt import Prompt
 from rich.table import Table
 
 from modules.config import UploaderConfig, ReUploaderConfig
-from modules.constants import (
-    TMDB_TO_MAL_MAPPING,
-    IMDB_TO_MAL_MAPPING,
-    TVDB_TO_MAL_MAPPING,
-)
 
 console = Console()
 
@@ -148,6 +142,7 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
         selected_tmdb_results = 0
         selected_tmdb_results_data = []
         for possible_match in search_tmdb_request.json()["results"]:
+
             result_num += 1  # This counter is used so that when we prompt a user to select a match, we know which one they are referring to
             # here we just associate the number count ^^ with each results TMDB ID
             result_dict[str(result_num)] = possible_match["id"]
@@ -488,50 +483,7 @@ def _get_external_id(id_site, id_value, external_site, content_type):
     return "0"
 
 
-def _scan_mappings_for_mal_id(*, tmdb, imdb, tvdb, working_folder):
-    with open(
-        TMDB_TO_MAL_MAPPING.format(base_path=working_folder)
-    ) as mapping_file:
-        logging.info("[MetadataUtils] Trying to get mal id from tmdb id")
-        mapping = json.load(mapping_file)
-        mal_id = mapping.get(str(tmdb))
-        if mal_id is not None:
-            logging.info(
-                f"[MetadataUtils] Obtained mal_id as {mal_id} from tmdb id"
-            )
-            return mal_id
-
-    with open(
-        IMDB_TO_MAL_MAPPING.format(base_path=working_folder)
-    ) as mapping_file:
-        logging.info("[MetadataUtils] Trying to get mal id from imdb id")
-        mapping = json.load(mapping_file)
-        mal_id = mapping.get(str(imdb))
-        if mal_id is not None:
-            logging.info(
-                f"[MetadataUtils] Obtained mal_id as {mal_id} from imdb id"
-            )
-            return mal_id
-
-    with open(
-        TVDB_TO_MAL_MAPPING.format(base_path=working_folder)
-    ) as mapping_file:
-        logging.info("[MetadataUtils] Trying to get mal id from tvdb id")
-        mapping = json.load(mapping_file)
-        mal_id = mapping.get(str(tvdb))
-        if mal_id is not None:
-            logging.info(
-                f"[MetadataUtils] Obtained mal_id as {mal_id} from tvdb id"
-            )
-            return mal_id
-
-    logging.info(
-        "[MetadataUtils] Failed to get mal id from cached mapping. Setting mal_id to 0"
-    )
-    return "0"
-
-
-def search_for_mal_id(*, content_type, tmdb_id, imdb_id, working_folder):
+def search_for_mal_id(content_type, tmdb_id, torrent_info):
     # if 'content_type == tv' then we need to get the TVDB ID since we're going to need it to try and get the MAL ID
     # the below mapping is needed for the Flask app hosted by the original dev.
     # TODO convert this api call to use the metadata locally
@@ -553,12 +505,19 @@ def search_for_mal_id(*, content_type, tmdb_id, imdb_id, working_folder):
     content_type_to_value_dict = {"movie": "tmdb", "tv": "tvdb"}
 
     # Now we we get the MAL ID
-    temp_map["mal"] = _scan_mappings_for_mal_id(
-        tmdb=tmdb_id,
-        imdb=imdb_id,
-        tvdb=temp_map["tvdb"],
-        working_folder=working_folder,
+
+    # Before you get too concerned, this address is a flask app I quickly set up to convert TMDB/IMDB IDs to mal using this project/collection https://github.com/Fribb/anime-lists
+    # You can test it out yourself with the url: http://195.201.146.92:5000/api/?tmdb=10515 to see what it returns (it literally just returns the number "513" which is the corresponding MAL ID)
+    # I might just start include the "tmdb --> mal .json" map with this bot instead of selfhosting it as an api, but for now it works so I'll revisit the subject later
+    tmdb_tvdb_id_to_mal = f"http://195.201.146.92:5000/api/?{content_type_to_value_dict[content_type]}={temp_map[content_type_to_value_dict[content_type]]}"
+    logging.info(
+        f"[MetadataUtils] GET Request For MAL Lookup: {tmdb_tvdb_id_to_mal}"
     )
+    mal_id_response = requests.get(tmdb_tvdb_id_to_mal)
+
+    # If the response returns http code 200 that means that a number has been returned, it'll either be the real mal ID or it will just be 0, either way we can use it
+    if mal_id_response.status_code == 200:
+        temp_map["mal"] = str(mal_id_response.json())
     return temp_map["tvdb"], temp_map["mal"]
 
 
@@ -569,17 +528,13 @@ def _fill_tmdb_metadata_to_torrent_info(torrent_info, tmdb_response):
 
     tmdb_metadata = dict()
     # saving the original language. This will be used to detect dual / multi and dubbed releases
-    tmdb_metadata["runtime_minutes"] = tmdb_response.get("runtime", "")
-    tmdb_metadata["overview"] = tmdb_response.get("overview", "")
-    tmdb_metadata["title"] = tmdb_response.get(content_title, "")
-    tmdb_metadata["overview"] = tmdb_response.get("overview", "")
-    tmdb_metadata["original_title"] = tmdb_response.get("original_title", "")
-    tmdb_metadata["original_language"] = tmdb_response.get(
-        "original_language", ""
-    )
-    tmdb_metadata["spoken_languages"] = tmdb_response.get(
-        "spoken_languages", {}
-    )
+    tmdb_metadata["runtime_minutes"]   = tmdb_response.get("runtime", "")
+    tmdb_metadata["overview"]          = tmdb_response.get("overview", "")
+    tmdb_metadata["title"]             = tmdb_response.get(content_title, "")
+    tmdb_metadata["overview"]          = tmdb_response.get("overview", "")
+    tmdb_metadata["original_title"]    = tmdb_response.get("original_title", "")
+    tmdb_metadata["original_language"] = tmdb_response.get("original_language", "")
+    tmdb_metadata["spoken_languages"]  = tmdb_response.get("spoken_languages", {})
 
     tmdb_metadata["genres"] = (
         list(map(lambda genre: genre["name"], tmdb_response["genres"]))
@@ -758,8 +713,7 @@ def metadata_compare_tmdb_data_local(torrent_info):
             tvdb, mal = search_for_mal_id(
                 content_type=content_type,
                 tmdb_id=torrent_info["tmdb"],
-                imdb_id=torrent_info["imdb"],
-                working_folder=torrent_info["working_folder"],
+                torrent_info=torrent_info,
             )
 
     # Acquire and set the title we get from TMDB here
@@ -1076,6 +1030,7 @@ def fill_database_ids(
                 )
 
             if torrent_info["type"] == "episode":
+
                 if "tvmaze" in ids_present and any(
                     x in ids_missing and torrent_info[x] == "0"
                     for x in ["imdb", "tvdb"]
