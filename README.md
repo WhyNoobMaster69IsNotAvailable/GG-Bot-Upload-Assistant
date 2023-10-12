@@ -319,6 +319,7 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#97: PTP uploads fail if no tags in IMDB
+- [X] Issue#119: Upload Report
 - [X] Issue#130: TMDB to MAL Flask app appears to down
 
 ### v3.1.2
