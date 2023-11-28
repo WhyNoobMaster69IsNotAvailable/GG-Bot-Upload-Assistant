@@ -765,7 +765,7 @@ def metadata_compare_tmdb_data_local(torrent_info):
                 content_type=content_type,
                 tmdb_id=torrent_info["tmdb"],
                 imdb_id=torrent_info["imdb"],
-                working_folder=torrent_info["working_folder"],
+                working_folder=torrent_info["base_working_folder"],
             )
 
     # Acquire and set the title we get from TMDB here

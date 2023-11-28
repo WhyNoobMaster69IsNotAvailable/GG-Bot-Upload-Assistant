@@ -1730,6 +1730,7 @@ for file in upload_queue:
     torrent_info["working_folder"] = utils.delete_leftover_files(
         working_folder, resume=args.resume, file=file
     )
+    torrent_info["base_working_folder"] = working_folder
     torrent_info["cookies_dump"] = cookies_dump
     torrent_info[
         "absolute_working_folder"
