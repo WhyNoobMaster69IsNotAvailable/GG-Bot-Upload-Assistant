@@ -488,45 +488,51 @@ def _get_external_id(id_site, id_value, external_site, content_type):
     return "0"
 
 
+def _scan_mapping_file_for_mal_id(
+    *, identifier, mapping_format, source, working_folder
+):
+    mapping_file_path = mapping_format.format(base_path=working_folder)
+
+    try:
+        with open(mapping_file_path) as mapping_file:
+            logging.info(
+                f"[MetadataUtils] Trying to get MAL ID from {source} ID"
+            )
+            mapping = json.load(mapping_file)
+            mal_id = mapping.get(str(identifier))
+
+            if mal_id is not None:
+                logging.info(
+                    f"[MetadataUtils] Obtained MAL ID as {mal_id} from {source} ID"
+                )
+                return mal_id
+    except FileNotFoundError:
+        logging.warning(
+            f"[MetadataUtils] Mapping file not found at {mapping_file_path}"
+        )
+
+    return None
+
+
 def _scan_mappings_for_mal_id(*, tmdb, imdb, tvdb, working_folder):
-    with open(
-        TMDB_TO_MAL_MAPPING.format(base_path=working_folder)
-    ) as mapping_file:
-        logging.info("[MetadataUtils] Trying to get mal id from tmdb id")
-        mapping = json.load(mapping_file)
-        mal_id = mapping.get(str(tmdb))
-        if mal_id is not None:
-            logging.info(
-                f"[MetadataUtils] Obtained mal_id as {mal_id} from tmdb id"
-            )
-            return mal_id
+    sources = [
+        (tmdb, TMDB_TO_MAL_MAPPING, "TMDB"),
+        (imdb, IMDB_TO_MAL_MAPPING, "IMDB"),
+        (tvdb, TVDB_TO_MAL_MAPPING, "TVDB"),
+    ]
 
-    with open(
-        IMDB_TO_MAL_MAPPING.format(base_path=working_folder)
-    ) as mapping_file:
-        logging.info("[MetadataUtils] Trying to get mal id from imdb id")
-        mapping = json.load(mapping_file)
-        mal_id = mapping.get(str(imdb))
+    for identifier, mapping_format, source in sources:
+        mal_id = _scan_mapping_file_for_mal_id(
+            identifier=identifier,
+            mapping_format=mapping_format,
+            source=source,
+            working_folder=working_folder,
+        )
         if mal_id is not None:
-            logging.info(
-                f"[MetadataUtils] Obtained mal_id as {mal_id} from imdb id"
-            )
-            return mal_id
-
-    with open(
-        TVDB_TO_MAL_MAPPING.format(base_path=working_folder)
-    ) as mapping_file:
-        logging.info("[MetadataUtils] Trying to get mal id from tvdb id")
-        mapping = json.load(mapping_file)
-        mal_id = mapping.get(str(tvdb))
-        if mal_id is not None:
-            logging.info(
-                f"[MetadataUtils] Obtained mal_id as {mal_id} from tvdb id"
-            )
             return mal_id
 
     logging.info(
-        "[MetadataUtils] Failed to get mal id from cached mapping. Setting mal_id to 0"
+        "[MetadataUtils] Failed to get MAL ID from cached mapping. Setting MAL ID to 0"
     )
     return "0"
 
