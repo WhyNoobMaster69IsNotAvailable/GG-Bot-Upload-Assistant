@@ -1407,6 +1407,7 @@ def _process_torrent(torrent: Dict):
         working_folder, file=torrent_path, resume=False
     )
     torrent_info["cookies_dump"] = cookies_dump
+    torrent_info["base_working_folder"] = working_folder
     torrent_info[
         "absolute_working_folder"
     ] = f"{WORKING_DIR.format(base_path=working_folder)}{torrent_info['working_folder']}"

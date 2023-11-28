@@ -996,7 +996,9 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     )
 
     # Video container information
-    torrent_info["container"] = os.path.splitext(torrent_info.get("raw_video_file", torrent_info["upload_media"]))[1]
+    torrent_info["container"] = os.path.splitext(
+        torrent_info.get("raw_video_file", torrent_info["upload_media"])
+    )[1]
     # Video container information
 
     # Video bit-depth information
@@ -1727,6 +1729,7 @@ for file in upload_queue:
     torrent_info["working_folder"] = utils.delete_leftover_files(
         working_folder, resume=args.resume, file=file
     )
+    torrent_info["base_working_folder"] = working_folder
     torrent_info["cookies_dump"] = cookies_dump
     torrent_info[
         "absolute_working_folder"
@@ -1807,7 +1810,7 @@ for file in upload_queue:
     # set the correct video & audio codecs (Dolby Digital --> DDP, use x264 if encode vs remux etc)
     identify_miscellaneous_details(
         guess_it_result,
-        torrent_info.get("raw_video_file", torrent_info["upload_media"])
+        torrent_info.get("raw_video_file", torrent_info["upload_media"]),
     )
 
     # -------- User input edition --------
@@ -1888,14 +1891,18 @@ for file in upload_queue:
                 )
 
     # -------- Take / Upload Screenshots --------
-    media_info_duration = MediaInfo.parse(torrent_info.get("raw_video_file", torrent_info["upload_media"])).tracks[1]
+    media_info_duration = MediaInfo.parse(
+        torrent_info.get("raw_video_file", torrent_info["upload_media"])
+    ).tracks[1]
 
     torrent_info["duration"] = str(media_info_duration.duration).split(".", 1)[
         0
     ]
     # This is used to evenly space out timestamps for screenshots
     # Call function to actually take screenshots & upload them (different file)
-    upload_media_for_screenshot = torrent_info.get("raw_video_file", torrent_info["upload_media"])
+    upload_media_for_screenshot = torrent_info.get(
+        "raw_video_file", torrent_info["upload_media"]
+    )
 
     is_screenshots_available = GGBotScreenshotManager(
         duration=torrent_info["duration"],
