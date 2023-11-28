@@ -1020,6 +1020,37 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
 # -------------- END of identify_miscellaneous_details --------------
 
 
+def display_upload_report(upload_report: Dict) -> None:
+    console.line(count=2)
+    console.rule("Upload Report", style="red", align="center")
+    console.line(count=1)
+
+    upload_report_table = Table(
+        box=box.SQUARE, show_header=True, header_style="bold cyan"
+    )
+    for upload_to_tracker in [
+        "Tracker",
+        "Upload Status",
+        "Message",
+        "Post-Processing",
+        "Post-Processing Message",
+    ]:
+        upload_report_table.add_column(
+            f"{upload_to_tracker}", justify="center", style="#38ACEC"
+        )
+
+    for tracker, report in upload_report.items():
+        upload_report_table.add_row(
+            tracker,
+            report["upload"],
+            report["message"],
+            report["post_process"],
+            report["post_message"],
+        )
+
+    console.print(upload_report_table)
+
+
 # ---------------------------------------------------------------------- #
 #                             Upload that shit!                          #
 # ---------------------------------------------------------------------- #
@@ -2299,34 +2330,3 @@ for file in upload_queue:
     script_end_time = time.perf_counter()
     total_run_time = f"{script_end_time - script_start_time:0.4f}"
     logging.info(f"[Main] Total runtime is {total_run_time} seconds")
-
-
-def display_upload_report(upload_report: Dict) -> None:
-    console.line(count=2)
-    console.rule("Upload Report", style="red", align="center")
-    console.line(count=1)
-
-    upload_report_table = Table(
-        box=box.SQUARE, show_header=True, header_style="bold cyan"
-    )
-    for upload_to_tracker in [
-        "Tracker",
-        "Upload Status",
-        "Message",
-        "Post-Processing",
-        "Post-Processing Message",
-    ]:
-        upload_report_table.add_column(
-            f"{upload_to_tracker}", justify="center", style="#38ACEC"
-        )
-
-    for tracker, report in upload_report.items():
-        upload_report_table.add_row(
-            tracker,
-            report["upload"],
-            report["message"],
-            report["post_process"],
-            report["post_message"],
-        )
-
-    console.print(upload_report_table)
