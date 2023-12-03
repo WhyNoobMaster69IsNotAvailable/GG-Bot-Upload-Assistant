@@ -728,7 +728,10 @@ def get_crsf_token(torrent_info, tracker_settings, tracker_config):
             "keeplogged": "1",
         }
         # adding tfa code if user has tfa enabled
-        if tracker_env_config.get_config("PTP_2FA_ENABLED", False) is True:
+        if (
+            tracker_env_config.get_config_as_boolean("PTP_2FA_ENABLED", False)
+            is True
+        ):
             data["TfaType"] = "normal"
             logging.info(
                 "[CustomActions][PTP] User has 2FA enabled. Trying to generate TOTP code."
