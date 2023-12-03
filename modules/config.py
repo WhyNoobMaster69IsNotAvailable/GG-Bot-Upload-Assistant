@@ -50,7 +50,7 @@ class GGBotConfig(ABC):
     def get_config(self, key, default=None):
         return self._get_property(key, default)
 
-    def get_config_as_boolean(self, key, default: bool=False):
+    def get_config_as_boolean(self, key, default: bool = False) -> bool:
         return self._get_property_as_boolean(key, default)
 
 
