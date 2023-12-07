@@ -413,6 +413,8 @@ def fill_dual_multi_and_commentary(original_language, audio_tracks):
 
 
 def get_upload_original_language_title(tmdb_metadata):
+    if tmdb_metadata is None:
+        return "", None
     # TMDB gives the original language iso_639_1 which doesn't differentiate between all languages.
     # So to get the actual name, we have to look through the spoken language list
     original_language_str = next(

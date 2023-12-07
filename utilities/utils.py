@@ -936,7 +936,14 @@ def load_custom_actions(full_method_string):
     return getattr(module, method_string)
 
 
-def prepare_headers_for_tracker(technical_jargons, search_site, tracker_api):
+def prepare_headers_for_tracker(
+    technical_jargons,
+    search_site,
+    tracker_api,
+    torrent_info=None,
+    tracker_settings=None,
+    tracker_config=None,
+):
     if technical_jargons["authentication_mode"] == "API_KEY":
         return None
 
@@ -969,10 +976,31 @@ def prepare_headers_for_tracker(technical_jargons, search_site, tracker_api):
                 f"[DupeCheck] Header based authentication cannot be done without `header_key` for tracker {search_site}."
             )
     elif technical_jargons["authentication_mode"] == "COOKIE":
-        logging.fatal(
-            "[DupeCheck] Cookie based authentication is not supported yet."
+        logging.info(
+            f"[DupeCheck] Using Cookie based authentication method for tracker {search_site}"
         )
-
+        cookie_meta = technical_jargons.get("cookie")
+        if cookie_meta is None:
+            logging.fatal(
+                f"[DupeCheck] `cookie` is not set properly in template file for {search_site}. Skipping dupecheck."
+            )
+            return None
+        response = {}
+        if cookie_meta["provider"] == "custom_action":
+            logging.info(
+                f"[DupeCheck] Setting cookies from custom action. {cookie_meta['data']}"
+            )
+            custom_action = load_custom_actions(cookie_meta["data"])
+            cookie = custom_action(
+                torrent_info, tracker_settings, tracker_config
+            )
+            response["CookieFile"] = cookie
+        else:
+            cookie = cookie_meta["data"]
+        logging.info(
+            f"[DupeCheck] Setting cookie for {search_site} as `{cookie}`"
+        )
+        return {"Cookie": cookie, **response}
     return None
 
 

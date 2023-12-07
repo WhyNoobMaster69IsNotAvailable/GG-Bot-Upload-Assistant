@@ -1,8 +1,8 @@
 {
     "name": "UHDBits",
     "url": "https://uhdbits.org/",
-    "upload_form": "https://passthepopcorn.me/upload.php",
-    "torrents_search": "https://uhdbits.org/ajax.php?action=browse&searchstr={title}",
+    "upload_form": "https://uhdbits.org/upload.php",
+    "torrents_search": "https://uhdbits.org/ajax.php",
     "source": "[UHDBits]",
     "platform": "Gazelle",
     "bbcode_line_break": "\n",
@@ -294,29 +294,24 @@
 
     "dupes": {
         "technical_jargons": {
-            "authentication_mode": "HEADER",
-            "headers" : [
-                {
-                    "key": "ApiUser",
-                    "value": "API_USER"
-                },
-                {
-                    "key": "ApiKey",
-                    "value": "API_KEY"
-                }
-            ],
+            "authentication_mode": "COOKIE",
+            "cookie": {
+                "provider": "custom_action",
+                "data": "modules.custom_actions.uhdb_actions.login_and_get_cookie"
+            },
             "payload_type": "MULTI-PART",
             "request_method": "GET",
             "response_type": "JSON"
         },
 
-        "url_format": "{search_url}?imdb={imdb}",
+        "url_format": "{search_url}?action=browse&searchstr={title}",
         "strip_text": false,
 
         "parse_json": {
             "is_needed": true,
-            "top_lvl": "Torrents",
-            "torrent_name": "ReleaseName"
+            "top_lvl": "response",
+            "second_level": "results",
+            "process_item_action": "modules.custom_actions.uhdb_actions.user_choice_for_torrent_group"
         }
     },
 

@@ -16,7 +16,9 @@
 
 import json
 import logging
+import pickle
 import re
+from pathlib import Path
 from pprint import pformat
 
 import requests
@@ -27,7 +29,7 @@ from rich.prompt import Confirm
 from rich.table import Table
 
 from modules.config import UploaderConfig
-from utilities.utils import prepare_headers_for_tracker
+from utilities.utils import prepare_headers_for_tracker, load_custom_actions
 from utilities.utils_miscellaneous import miscellaneous_identify_repacks
 
 console = Console()
@@ -67,18 +69,34 @@ def _make_request(
     headers=None,
 ):
     try:
+        if "CookieFile" in headers and Path(headers["CookieFile"]).is_file():
+            with requests.Session() as session:
+                session.cookies.update(
+                    pickle.load(open(headers["CookieFile"], "rb"))
+                )
+                headers.pop("Cookie")
+                headers.pop("CookieFile")
+                return session.request(
+                    method,
+                    url,
+                    json=json_data,
+                    data=multipart_data,
+                    headers=headers,
+                )
         return requests.request(
             method, url, json=json_data, data=multipart_data, headers=headers
         )
     except Exception as ex:
         console.print(
-            f"[bold red]:warning: Dupe check request to tracker [green]{site_name}[/green], failed. Hence skipping this tracker. :warning:[/bold red]\n"
+            f"[bold red]:warning: Dupe check request to tracker [green]{site_name}[/green], failed. "
+            f"Hence skipping this tracker. :warning:[/bold red]\n"
         )
         logging.exception(
             f"[DupeCheck] Request to  {search_site} for dupe check Failed. Error {ex}"
         )
         logging.info(
-            "[DupeCheck] Skipping upload to tracker since the dupe check request failed. The tracker might not be responding, hence skipping upload."
+            "[DupeCheck] Skipping upload to tracker since the dupe check request failed. "
+            "The tracker might not be responding, hence skipping upload."
         )
         return True
 
@@ -93,7 +111,7 @@ def _get_response_from_wrapper(
             f"[DupeCheck] Error while reading response from tracker {search_site} for dupe check. Error {ex}"
         )
         logging.fatal(
-            f"[DupeCheck] Text data from tracker {search_site} for dupe check {pformat(dupe_check_response_wrapper)}"
+            f"[DupeCheck] Text data from tracker {search_site} for dupe check {pformat(dupe_check_response_wrapper.text)}"
         )
         console.print(
             f"[bold red]:warning:  Could not parse the dupe check response from tracker [green]{site_name}[/green], hence skipping this tracker. :warning:[/bold red]\n"
@@ -376,9 +394,13 @@ def search_for_dupes_api(
 
     # multiple authentication modes
     headers = prepare_headers_for_tracker(
-        config["dupes"]["technical_jargons"], tracker, tracker_api
+        config["dupes"]["technical_jargons"],
+        tracker,
+        tracker_api,
+        torrent_info=torrent_info,
+        tracker_config=config,
+        tracker_settings=None,
     )
-
     if (
         str(config["dupes"]["technical_jargons"]["request_method"]) == "POST"
     ):  # POST request (BHD)
@@ -510,6 +532,17 @@ def search_for_dupes_api(
         dupe_check_response, config["dupes"]["parse_json"]
     )
 
+    process_item_action = config["dupes"]["parse_json"].get(
+        "process_item_action", None
+    )
+    if process_item_action is not None:
+        logging.info(
+            f"[DupeCheck] Invoking a custom action {process_item_action} to process the dupe check response"
+        )
+        torrent_items = load_custom_actions(process_item_action)(
+            torrent_info=torrent_info, torrent_items=torrent_items
+        )
+
     for item in torrent_items:
         if "torrent_details" in config["dupes"]["parse_json"]:
             # BLU & ACM have us go 2 "levels" down to get torrent info -->  [data][attributes][name] = torrent title
@@ -546,6 +579,7 @@ def search_for_dupes_api(
             r"[.\s]",
             torrent_title.lower()
             .replace("blu-ray", "bluray")
+            .replace(".mkv", "")
             .replace("-", " "),
         )
         torrent_title_upper_split = re.split(
