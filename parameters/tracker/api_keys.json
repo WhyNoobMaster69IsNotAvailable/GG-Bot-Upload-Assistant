@@ -28,5 +28,6 @@
     "tl_api_key",
     "tmdb_api_key",
     "tsp_api_key",
+    "uhdb_api_key",
     "ulcx_api_key"
 ]
