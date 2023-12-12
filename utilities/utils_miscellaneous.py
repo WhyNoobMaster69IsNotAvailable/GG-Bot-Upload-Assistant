@@ -420,15 +420,15 @@ def get_upload_original_language_title(tmdb_metadata):
     original_language_str = next(
         (
             language.get("english_name")
-            for language in tmdb_metadata["spoken_languages"]
-            if language["iso_639_1"] == tmdb_metadata["original_language"]
+            for language in tmdb_metadata.get("spoken_languages", [])
+            if language["iso_639_1"] == tmdb_metadata.get("original_language")
         ),
         None,
     )
 
     if (
-        tmdb_metadata["original_language"] != "en"
-        and tmdb_metadata["original_language"] != ""
+        tmdb_metadata.get("original_language") != "en"
+        and tmdb_metadata.get("original_language") != ""
     ):
         return original_language_str, original_language_str
 
