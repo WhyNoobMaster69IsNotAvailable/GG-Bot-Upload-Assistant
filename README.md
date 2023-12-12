@@ -316,6 +316,8 @@ pip install -r requirements/requirements.txt
 
 # Roadmap
 ### v3.1.1
+- [ ] New Tracker: UHDBits
+- [ ] New Tracker: TMGHub
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#97: PTP uploads fail if no tags in IMDB
