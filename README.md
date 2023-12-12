@@ -321,6 +321,7 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#97: PTP uploads fail if no tags in IMDB
 - [X] Issue#119: Upload Report
 - [X] Issue#130: TMDB to MAL Flask app appears to down
+- [X] Issue#150: Uploader crash if `spoken_languages` not available from tmdb
 
 ### v3.1.2
 - [ ] EPIC: GG-Bot Auto Uploader
