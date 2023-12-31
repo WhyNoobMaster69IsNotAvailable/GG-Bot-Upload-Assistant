@@ -27,6 +27,7 @@ import re
 import sys
 import time
 from pprint import pformat
+from typing import Dict
 
 # These packages need to be installed
 import requests
@@ -996,7 +997,9 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     )
 
     # Video container information
-    torrent_info["container"] = os.path.splitext(torrent_info.get("raw_video_file", torrent_info["upload_media"]))[1]
+    torrent_info["container"] = os.path.splitext(
+        torrent_info.get("raw_video_file", torrent_info["upload_media"])
+    )[1]
     # Video container information
 
     # Video bit-depth information
@@ -1015,6 +1018,37 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
 
 
 # -------------- END of identify_miscellaneous_details --------------
+
+
+def display_upload_report(upload_report: Dict) -> None:
+    console.line(count=2)
+    console.rule("Upload Report", style="red", align="center")
+    console.line(count=1)
+
+    upload_report_table = Table(
+        box=box.SQUARE, show_header=True, header_style="bold cyan"
+    )
+    for upload_to_tracker in [
+        "Tracker",
+        "Upload Status",
+        "Message",
+        "Post-Processing",
+        "Post-Processing Message",
+    ]:
+        upload_report_table.add_column(
+            f"{upload_to_tracker}", justify="center", style="#38ACEC"
+        )
+
+    for tracker, report in upload_report.items():
+        upload_report_table.add_row(
+            tracker,
+            report["upload"],
+            report["message"],
+            report["post_process"],
+            report["post_message"],
+        )
+
+    console.print(upload_report_table)
 
 
 # ---------------------------------------------------------------------- #
@@ -1727,6 +1761,7 @@ for file in upload_queue:
     torrent_info["working_folder"] = utils.delete_leftover_files(
         working_folder, resume=args.resume, file=file
     )
+    torrent_info["base_working_folder"] = working_folder
     torrent_info["cookies_dump"] = cookies_dump
     torrent_info[
         "absolute_working_folder"
@@ -1807,7 +1842,7 @@ for file in upload_queue:
     # set the correct video & audio codecs (Dolby Digital --> DDP, use x264 if encode vs remux etc)
     identify_miscellaneous_details(
         guess_it_result,
-        torrent_info.get("raw_video_file", torrent_info["upload_media"])
+        torrent_info.get("raw_video_file", torrent_info["upload_media"]),
     )
 
     # -------- User input edition --------
@@ -1855,8 +1890,12 @@ for file in upload_queue:
     # -------- Dupe check for single tracker uploads --------
     # If user has provided only one Tracker to upload to, then we do dupe check prior to taking screenshots. [if dupe_check is enabled]
     # If there are duplicates in the tracker, then we do not waste time taking and uploading screenshots.
+    upload_report = {}
     if upload_assistant_config.CHECK_FOR_DUPES and len(upload_to_trackers) == 1:
         tracker = upload_to_trackers[0]
+        upload_report[tracker] = {}
+        upload_report[tracker]["message"] = ""
+
         temp_tracker_api_key = api_keys_dict[f"{str(tracker).lower()}_api_key"]
 
         console.line(count=2)
@@ -1876,9 +1915,15 @@ for file in upload_queue:
             logging.error(
                 f"[Main] Could not upload to: {tracker} because we found a dupe on site"
             )
+            upload_report[tracker]["upload"] = "Skipped"
+            upload_report[tracker]["message"] = "Duplicate Upload"
+            upload_report[tracker]["post_process"] = "Skipped"
+            upload_report[tracker]["post_message"] = "Upload Was Skipped"
+
             if auto_mode:
                 continue
             else:
+                display_upload_report(upload_report)
                 sys.exit(
                     console.print(
                         "\nOK, quitting now..\n",
@@ -1888,14 +1933,18 @@ for file in upload_queue:
                 )
 
     # -------- Take / Upload Screenshots --------
-    media_info_duration = MediaInfo.parse(torrent_info.get("raw_video_file", torrent_info["upload_media"])).tracks[1]
+    media_info_duration = MediaInfo.parse(
+        torrent_info.get("raw_video_file", torrent_info["upload_media"])
+    ).tracks[1]
 
     torrent_info["duration"] = str(media_info_duration.duration).split(".", 1)[
         0
     ]
     # This is used to evenly space out timestamps for screenshots
     # Call function to actually take screenshots & upload them (different file)
-    upload_media_for_screenshot = torrent_info.get("raw_video_file", torrent_info["upload_media"])
+    upload_media_for_screenshot = torrent_info.get(
+        "raw_video_file", torrent_info["upload_media"]
+    )
 
     is_screenshots_available = GGBotScreenshotManager(
         duration=torrent_info["duration"],
@@ -1931,6 +1980,12 @@ for file in upload_queue:
     # At this point the only stuff that remains to be done is site specific so we can start a loop here for each site we are uploading to
     logging.info("[Main] Now starting tracker specific tasks")
     for tracker in upload_to_trackers:
+        upload_report[tracker] = {}
+        upload_report[tracker]["upload"] = ""
+        upload_report[tracker]["message"] = ""
+        upload_report[tracker]["post_process"] = ""
+        upload_report[tracker]["post_message"] = ""
+
         tracker_env_config = TrackerConfig(tracker)
 
         torrent_info[
@@ -1967,6 +2022,10 @@ for file in upload_queue:
                 f"[bold red] :warning: Group {torrent_info['release_group']} is banned on {tracker} :warning: [/bold red]",
                 style="red",
             )
+            upload_report[tracker]["upload"] = "Skipped"
+            upload_report[tracker]["message"] = "Banned Group"
+            upload_report[tracker]["post_process"] = "Skipped"
+            upload_report[tracker]["post_message"] = "Upload Was Skipped"
             continue
 
         # If the user provides this arg with the title right after in double quotes then we automatically use that
@@ -2050,6 +2109,10 @@ for file in upload_queue:
                 logging.error(
                     f"[Main] Could not upload to: {tracker} because we found a dupe on site"
                 )
+                upload_report[tracker]["upload"] = "Skipped"
+                upload_report[tracker]["message"] = "Duplicate Upload"
+                upload_report[tracker]["post_process"] = "Skipped"
+                upload_report[tracker]["post_message"] = "Upload Was Skipped"
                 # If dupe was found & the script is auto_mode OR if the user responds with 'n' for the 'dupe found, continue?' prompt
                 #  we will essentially stop the current 'for loops' iteration & jump back to the beginning to start next cycle (if exists else quits)
                 continue
@@ -2100,6 +2163,12 @@ for file in upload_queue:
             )
             == "STOP"
         ):
+            upload_report[tracker]["upload"] = "Failed"
+            upload_report[tracker][
+                "message"
+            ] = "Failed to prepare payload for tracker"
+            upload_report[tracker]["post_process"] = "Skipped"
+            upload_report[tracker]["post_message"] = "Upload Was Skipped"
             continue
 
         logging.debug(
@@ -2134,6 +2203,12 @@ for file in upload_queue:
                 torrent_info[
                     f"{tracker}_upload_status"
                 ] = False  # to skip Post-Processing steps for this tracker
+                upload_report[tracker]["upload"] = "Failed"
+                upload_report[tracker][
+                    "message"
+                ] = "Failed to perform a custom action"
+                upload_report[tracker]["post_process"] = "Skipped"
+                upload_report[tracker]["post_message"] = "Upload Was Skipped"
                 continue
 
             # TODO save torrent_info before custom actions and restore the original torrent_info.
@@ -2148,6 +2223,15 @@ for file in upload_queue:
         torrent_info[f"{tracker}_upload_status"] = upload_to_site(
             upload_to=tracker, tracker_api_key=temp_tracker_api_key
         )
+
+        if torrent_info[f"{tracker}_upload_status"]:
+            upload_report[tracker]["upload"] = "Success"
+        else:
+            upload_report[tracker]["upload"] = "Failure"
+            upload_report[tracker]["message"] = "Failed to upload to tracker"
+            upload_report[tracker]["post_process"] = "Skipped"
+            upload_report[tracker]["post_message"] = "Upload Failed"
+
         if (
             torrent_info[f"{tracker}_upload_status"] is True
             and "success_processor" in config["technical_jargons"]
@@ -2217,17 +2301,31 @@ for file in upload_queue:
         console.print(
             "[bold red] Dry Run Mode [bold red] Skipping post processing steps"
         )
+        upload_report[tracker]["post_process"] = "Skipped"
+        upload_report[tracker]["post_message"] = "Dry run mode"
     else:
         for tracker in upload_to_trackers:
             if torrent_info["post_processing_complete"] == True:
-                break  # this flag is used for watch folder post processing. we need to move only once
-            utils.perform_post_processing(
+                upload_report[tracker]["post_process"] = "Success"
+                upload_report[tracker]["post_message"] = ""
+                continue  # this flag is used for watch folder post processing. we need to move only once
+            status = utils.perform_post_processing(
                 torrent_info,
                 torrent_client,
                 working_folder,
                 tracker,
                 args.allow_multiple_files,
             )
+            if status:
+                upload_report[tracker]["post_process"] = "Success"
+                upload_report[tracker]["post_message"] = ""
+            else:
+                upload_report[tracker]["post_process"] = "Failed"
+                upload_report[tracker][
+                    "post_message"
+                ] = "Post-Processing Failed"
+
+    display_upload_report(upload_report)
 
     script_end_time = time.perf_counter()
     total_run_time = f"{script_end_time - script_start_time:0.4f}"

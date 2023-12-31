@@ -483,7 +483,56 @@ def _get_external_id(id_site, id_value, external_site, content_type):
     return "0"
 
 
-def search_for_mal_id(content_type, tmdb_id, torrent_info):
+def _scan_mapping_file_for_mal_id(
+    *, identifier, mapping_format, source, working_folder
+):
+    mapping_file_path = mapping_format.format(base_path=working_folder)
+
+    try:
+        with open(mapping_file_path) as mapping_file:
+            logging.info(
+                f"[MetadataUtils] Trying to get MAL ID from {source} ID"
+            )
+            mapping = json.load(mapping_file)
+            mal_id = mapping.get(str(identifier))
+
+            if mal_id is not None:
+                logging.info(
+                    f"[MetadataUtils] Obtained MAL ID as {mal_id} from {source} ID"
+                )
+                return mal_id
+    except FileNotFoundError:
+        logging.warning(
+            f"[MetadataUtils] Mapping file not found at {mapping_file_path}"
+        )
+
+    return None
+
+
+def _scan_mappings_for_mal_id(*, tmdb, imdb, tvdb, working_folder):
+    sources = [
+        (tmdb, TMDB_TO_MAL_MAPPING, "TMDB"),
+        (imdb, IMDB_TO_MAL_MAPPING, "IMDB"),
+        (tvdb, TVDB_TO_MAL_MAPPING, "TVDB"),
+    ]
+
+    for identifier, mapping_format, source in sources:
+        mal_id = _scan_mapping_file_for_mal_id(
+            identifier=identifier,
+            mapping_format=mapping_format,
+            source=source,
+            working_folder=working_folder,
+        )
+        if mal_id is not None:
+            return mal_id
+
+    logging.info(
+        "[MetadataUtils] Failed to get MAL ID from cached mapping. Setting MAL ID to 0"
+    )
+    return "0"
+
+
+def search_for_mal_id(*, content_type, tmdb_id, imdb_id, working_folder):
     # if 'content_type == tv' then we need to get the TVDB ID since we're going to need it to try and get the MAL ID
     # the below mapping is needed for the Flask app hosted by the original dev.
     # TODO convert this api call to use the metadata locally
@@ -713,7 +762,8 @@ def metadata_compare_tmdb_data_local(torrent_info):
             tvdb, mal = search_for_mal_id(
                 content_type=content_type,
                 tmdb_id=torrent_info["tmdb"],
-                torrent_info=torrent_info,
+                imdb_id=torrent_info["imdb"],
+                working_folder=torrent_info["base_working_folder"],
             )
 
     # Acquire and set the title we get from TMDB here
