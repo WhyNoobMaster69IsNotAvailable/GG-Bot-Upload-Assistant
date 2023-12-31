@@ -379,7 +379,9 @@ This project exists thanks to all the people who contribute.
 <a href="https://gitlab.com/starlight543" title="asedwfasfasfas">
   <img width="50" src="https://secure.gravatar.com/avatar/5b326cf39498822a2ef8fd8847121bc6?s=192&d=identicon">
 </a>
-
+<a href="https://gitlab.com/edge2020tgx" title="Edge Edge">
+  <img width="50" src="https://secure.gravatar.com/avatar/f2cf30323908e2a379d918ab929cc7d3?s=192&d=identicon">
+</a>
 <br>
 
 # Change Log
