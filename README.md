@@ -328,6 +328,7 @@ pip install -r requirements/requirements.txt
 ### v3.1.2
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
+- [ ] Template based custom description
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
