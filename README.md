@@ -70,7 +70,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
             <td><strong>Site Name</strong></td>
         </th>
         <tr style="text-align: center">
-            <td rowspan="15"><strong>UNIT3D</strong></td>
+            <td rowspan="16"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
             <td><strong><a href="https://asiancinema.me">AsianCinema</a></strong></td>
         </tr>
@@ -129,6 +129,10 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
         <tr style="text-align: center">
             <td><strong>ULCX</strong></td>
             <td><strong><a href="https://upload.cx">Upload.cx</a></strong></td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>OE</strong></td>
+            <td><strong><a href="https://onlyencodes.cc">OnlyEncodes</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td rowspan="1"><strong>XBTIT</strong></td>
@@ -318,6 +322,7 @@ pip install -r requirements/requirements.txt
 ### v3.1.1
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
+- [X] New Tracker: OnlyEncodes -> [@edge2020tgx]
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#97: PTP uploads fail if no tags in IMDB
