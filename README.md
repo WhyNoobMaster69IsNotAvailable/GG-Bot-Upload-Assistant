@@ -319,12 +319,6 @@ pip install -r requirements/requirements.txt
 <br>
 
 # Roadmap
-### v3.1.1
-- [X] New Tracker: OnlyEncodes -> [@edge2020tgx]
-- [X] Issue#119: Upload Report
-- [X] Issue#130: TMDB to MAL Flask app appears to down
-- [X] Issue#150: Uploader crash if `spoken_languages` not available from tmdb
-
 ### v3.1.2
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
@@ -389,6 +383,19 @@ This project exists thanks to all the people who contribute.
 <br>
 
 # Change Log
+## **3.1.1**
+    New Trackers
+        * OnlyEncodes -> [@edge2020tgx]
+
+    New Features
+        * Upload report after completing an upload job
+
+    Bug Fixes
+        * Issue#130: TMDB to MAL Flask app appears to down
+        * Issue#150: Uploader crash if `spoken_languages` not available from tmdb
+
+<br>
+
 ## **3.1.0**
     New Trackers
         * Fearnooper

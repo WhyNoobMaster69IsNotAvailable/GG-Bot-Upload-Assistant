@@ -1,3 +1,16 @@
+## **3.1.1**
+    New Trackers
+        * OnlyEncodes -> [@edge2020tgx]
+
+    New Features
+        * Upload report after completing an upload job
+
+    Bug Fixes
+        * Issue#130: TMDB to MAL Flask app appears to down
+        * Issue#150: Uploader crash if `spoken_languages` not available from tmdb
+
+<br>
+
 ## **3.1.0**
     New Trackers
         * Fearnooper
