@@ -320,20 +320,23 @@ pip install -r requirements/requirements.txt
 
 # Roadmap
 ### v3.1.1
-- [ ] New Tracker: UHDBits
-- [ ] New Tracker: TMGHub
 - [X] New Tracker: OnlyEncodes -> [@edge2020tgx]
-- [ ] Issue#79: Not able to cross-seed rared releases
-- [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
-- [ ] Issue#97: PTP uploads fail if no tags in IMDB
 - [X] Issue#119: Upload Report
 - [X] Issue#130: TMDB to MAL Flask app appears to down
 - [X] Issue#150: Uploader crash if `spoken_languages` not available from tmdb
 
 ### v3.1.2
+- [ ] New Tracker: UHDBits
+- [ ] New Tracker: TMGHub
+- [ ] Issue#79: Not able to cross-seed rared releases
+- [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
+- [ ] Issue#151: Re-uploader MongoDB with authentication
+
+### v3.1.3
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
 - [ ] Issue#96: DVD Remux not supported
+- [ ] Issue#97: PTP uploads fail if no tags in IMDB
 - [ ] Improved TMDB metadata search Phase 3
 - [ ] Support for encrypted values from config
 - [ ] Use new search API for ANT
