@@ -334,6 +334,7 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#97: PTP uploads fail if no tags in IMDB
 - [ ] Improved TMDB metadata search Phase 3
 - [ ] Support for encrypted values from config
+- [ ] Add support for adding primary language to title
 - [ ] Use new search API for ANT
 
 ### Backlogs
@@ -354,6 +355,7 @@ pip install -r requirements/requirements.txt
     - [ ] MoreThanTV
     - [ ] DanishBytes
     - [ ] RetroFlix
+    - [ ] PirateTheNet
 - [ ] Add support for DVDs
 
 <br>
