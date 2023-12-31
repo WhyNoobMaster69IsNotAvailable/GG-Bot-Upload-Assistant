@@ -70,7 +70,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
             <td><strong>Site Name</strong></td>
         </th>
         <tr style="text-align: center">
-            <td rowspan="15"><strong>UNIT3D</strong></td>
+            <td rowspan="16"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
             <td><strong><a href="https://asiancinema.me">AsianCinema</a></strong></td>
         </tr>
@@ -129,6 +129,10 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
         <tr style="text-align: center">
             <td><strong>ULCX</strong></td>
             <td><strong><a href="https://upload.cx">Upload.cx</a></strong></td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>OE</strong></td>
+            <td><strong><a href="https://onlyencodes.cc">OnlyEncodes</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td rowspan="1"><strong>XBTIT</strong></td>
@@ -315,20 +319,19 @@ pip install -r requirements/requirements.txt
 <br>
 
 # Roadmap
-### v3.1.1
+### v3.1.2
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
+- [ ] Template based custom description
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
-- [ ] Issue#97: PTP uploads fail if no tags in IMDB
-- [X] Issue#119: Upload Report
-- [X] Issue#130: TMDB to MAL Flask app appears to down
-- [X] Issue#150: Uploader crash if `spoken_languages` not available from tmdb
+- [ ] Issue#151: Re-uploader MongoDB with authentication
 
-### v3.1.2
+### v3.1.3
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
 - [ ] Issue#96: DVD Remux not supported
+- [ ] Issue#97: PTP uploads fail if no tags in IMDB
 - [ ] Improved TMDB metadata search Phase 3
 - [ ] Support for encrypted values from config
 - [ ] Use new search API for ANT
@@ -376,10 +379,25 @@ This project exists thanks to all the people who contribute.
 <a href="https://gitlab.com/starlight543" title="asedwfasfasfas">
   <img width="50" src="https://secure.gravatar.com/avatar/5b326cf39498822a2ef8fd8847121bc6?s=192&d=identicon">
 </a>
-
+<a href="https://gitlab.com/edge2020tgx" title="Edge Edge">
+  <img width="50" src="https://secure.gravatar.com/avatar/f2cf30323908e2a379d918ab929cc7d3?s=192&d=identicon">
+</a>
 <br>
 
 # Change Log
+## **3.1.1**
+    New Trackers
+        * OnlyEncodes -> [@edge2020tgx]
+
+    New Features
+        * Upload report after completing an upload job
+
+    Bug Fixes
+        * Issue#130: TMDB to MAL Flask app appears to down
+        * Issue#150: Uploader crash if `spoken_languages` not available from tmdb
+
+<br>
+
 ## **3.1.0**
     New Trackers
         * Fearnooper
