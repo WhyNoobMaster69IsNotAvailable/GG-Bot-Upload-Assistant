@@ -25,6 +25,9 @@ temp_working_dir = "/tests/working_folder"
 dummy_for_guessit = (
     "Movie.Name.2017.1080p.BluRay.Remux.AVC.DTS.5.1-RELEASE_GROUP"
 )
+guessit_test_folders = [
+    "Vikings (2013) Season 1 (1080p AMZN WEB-DL H265 SDR DDP 5.1 English - DarQ)"
+]
 
 
 def touch(file_path):
@@ -52,6 +55,11 @@ def run_around_tests():
     Path(f"{folder}/media/{dummy_for_guessit}").mkdir(
         parents=True, exist_ok=True
     )  # media guessit folder
+
+    for guessit_folder in guessit_test_folders:
+        Path(f"{folder}/media/{guessit_folder}").mkdir(
+            parents=True, exist_ok=True
+        )
 
     touch(f"{folder}/media/{dummy_for_guessit}/{dummy_for_guessit}.mkv")
     yield
@@ -95,6 +103,24 @@ def run_around_tests():
                 "type": "movie",
             },
             id="folder_for_guessit",
+        ),
+        pytest.param(
+            f"{working_folder}{temp_working_dir}/media/{guessit_test_folders[0]}/",
+            {
+                "title": "Vikings",
+                "year": 2013,
+                "season": 1,
+                "screen_size": "1080p",
+                "streaming_service": "Amazon Prime",
+                "source": "Web",
+                "other": "Standard Dynamic Range",
+                "video_codec": "H.265",
+                "audio_codec": "Dolby Digital Plus",
+                "audio_channels": "5.1",
+                "release_group": "DarQ",
+                "type": "episode",
+            },
+            id="guess_it_folder_1",
         ),
     ],
 )
