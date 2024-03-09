@@ -11,6 +11,16 @@ TRACKER_ACRONYMS = "{base_path}/parameters/tracker/acronyms.json"
 TRACKER_API_KEYS = "{base_path}/parameters/tracker/api_keys.json"
 TEMPLATE_SCHEMA_LOCATION = "{base_path}/schema/site_template_schema.json"
 
+TMDB_TO_MAL_MAPPING = (
+    "{base_path}/parameters/mal_mapping/tmdb_to_mal_mapping.json"
+)
+IMDB_TO_MAL_MAPPING = (
+    "{base_path}/parameters/mal_mapping/imdb_to_mal_mapping.json"
+)
+TVDB_TO_MAL_MAPPING = (
+    "{base_path}/parameters/mal_mapping/tvdb_to_mal_mapping.json"
+)
+
 # Working dir paths
 # Note: The `sub_folder` is expected to end with a '/'
 WORKING_DIR = "{base_path}/temp_upload/"

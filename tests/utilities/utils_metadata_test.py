@@ -1065,3 +1065,29 @@ def test_user_gave_tvdb_for_tv(mocker, monkeypatch):
     assert torrent_info["tmdb"] == expected_ids["tmdb"]
     assert torrent_info["tvmaze"] == expected_ids["tvmaze"]
     assert torrent_info["tvdb"] == expected_ids["tvdb"]
+
+
+@pytest.mark.parametrize(
+    ("tmdb_id", "imdb_id", "tvdb_id", "expected_mal_id"),
+    [
+        pytest.param("126710", "tt1990421", "0", "10690", id="tmdb_to_mal"),
+        pytest.param(126710, "0", "0", "10690", id="tmdb_to_mal_2"),
+        pytest.param("0", "tt1990421", "0", "10690", id="imdb_to_mal"),
+        pytest.param(None, "tt1990421", "0", "10690", id="imdb_to_mal_2"),
+        pytest.param("0", "0", "202241", "11385", id="tvdb_to_mal"),
+        pytest.param("0", "0", 202241, "11385", id="tvdb_to_mal_2"),
+        pytest.param(None, None, "202241", "11385", id="tvdb_to_mal_3"),
+        pytest.param("0", "0", "0", "0", id="no_mapping"),
+        pytest.param(None, None, None, "0", id="no_mapping_2"),
+    ],
+)
+def test_scan_mappings_for_mal_id(tmdb_id, imdb_id, tvdb_id, expected_mal_id):
+    assert (
+        metadata._scan_mappings_for_mal_id(
+            tmdb=tmdb_id,
+            imdb=imdb_id,
+            tvdb=tvdb_id,
+            working_folder=working_folder,
+        )
+        == expected_mal_id
+    )
