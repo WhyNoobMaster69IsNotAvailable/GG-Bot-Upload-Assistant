@@ -16,6 +16,7 @@
 
 import logging
 import sys
+import json
 
 import requests
 from imdb import Cinemagoer
@@ -25,6 +26,12 @@ from rich.prompt import Prompt
 from rich.table import Table
 
 from modules.config import UploaderConfig, ReUploaderConfig
+from modules.constants import (
+    TMDB_TO_MAL_MAPPING,
+    IMDB_TO_MAL_MAPPING,
+    TVDB_TO_MAL_MAPPING,
+)
+
 
 console = Console()
 
@@ -334,9 +341,9 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
             if tmdb_external_ids is None
             else tmdb_external_ids
         )
-        tmdb_external_ids[
-            "tvmaze"
-        ] = "0"  # initializing tvmaze id as 0. if user is uploading a tv show we'll try to resolve this.
+        tmdb_external_ids["tvmaze"] = (
+            "0"  # initializing tvmaze id as 0. if user is uploading a tv show we'll try to resolve this.
+        )
 
         # with imdb and tvdb we can attempt to get the tvmaze id.
         if content_type in ["episode", "tv"]:  # getting TVmaze ID
@@ -532,6 +539,49 @@ def _scan_mappings_for_mal_id(*, tmdb, imdb, tvdb, working_folder):
     return "0"
 
 
+def _scan_mappings_for_mal_id(*, tmdb, imdb, tvdb, working_folder):
+    with open(
+        TMDB_TO_MAL_MAPPING.format(base_path=working_folder)
+    ) as mapping_file:
+        logging.info("[MetadataUtils] Trying to get mal id from tmdb id")
+        mapping = json.load(mapping_file)
+        mal_id = mapping.get(str(tmdb))
+        if mal_id is not None:
+            logging.info(
+                f"[MetadataUtils] Obtained mal_id as {mal_id} from tmdb id"
+            )
+            return mal_id
+
+    with open(
+        IMDB_TO_MAL_MAPPING.format(base_path=working_folder)
+    ) as mapping_file:
+        logging.info("[MetadataUtils] Trying to get mal id from imdb id")
+        mapping = json.load(mapping_file)
+        mal_id = mapping.get(str(imdb))
+        if mal_id is not None:
+            logging.info(
+                f"[MetadataUtils] Obtained mal_id as {mal_id} from imdb id"
+            )
+            return mal_id
+
+    with open(
+        TVDB_TO_MAL_MAPPING.format(base_path=working_folder)
+    ) as mapping_file:
+        logging.info("[MetadataUtils] Trying to get mal id from tvdb id")
+        mapping = json.load(mapping_file)
+        mal_id = mapping.get(str(tvdb))
+        if mal_id is not None:
+            logging.info(
+                f"[MetadataUtils] Obtained mal_id as {mal_id} from tvdb id"
+            )
+            return mal_id
+
+    logging.info(
+        "[MetadataUtils] Failed to get mal id from cached mapping. Setting mal_id to 0"
+    )
+    return "0"
+
+
 def search_for_mal_id(*, content_type, tmdb_id, imdb_id, working_folder):
     # if 'content_type == tv' then we need to get the TVDB ID since we're going to need it to try and get the MAL ID
     # the below mapping is needed for the Flask app hosted by the original dev.
@@ -554,19 +604,12 @@ def search_for_mal_id(*, content_type, tmdb_id, imdb_id, working_folder):
     content_type_to_value_dict = {"movie": "tmdb", "tv": "tvdb"}
 
     # Now we we get the MAL ID
-
-    # Before you get too concerned, this address is a flask app I quickly set up to convert TMDB/IMDB IDs to mal using this project/collection https://github.com/Fribb/anime-lists
-    # You can test it out yourself with the url: http://195.201.146.92:5000/api/?tmdb=10515 to see what it returns (it literally just returns the number "513" which is the corresponding MAL ID)
-    # I might just start include the "tmdb --> mal .json" map with this bot instead of selfhosting it as an api, but for now it works so I'll revisit the subject later
-    tmdb_tvdb_id_to_mal = f"http://195.201.146.92:5000/api/?{content_type_to_value_dict[content_type]}={temp_map[content_type_to_value_dict[content_type]]}"
-    logging.info(
-        f"[MetadataUtils] GET Request For MAL Lookup: {tmdb_tvdb_id_to_mal}"
+    temp_map["mal"] = _scan_mappings_for_mal_id(
+        tmdb=tmdb_id,
+        imdb=imdb_id,
+        tvdb=temp_map["tvdb"],
+        working_folder=working_folder,
     )
-    mal_id_response = requests.get(tmdb_tvdb_id_to_mal)
-
-    # If the response returns http code 200 that means that a number has been returned, it'll either be the real mal ID or it will just be 0, either way we can use it
-    if mal_id_response.status_code == 200:
-        temp_map["mal"] = str(mal_id_response.json())
     return temp_map["tvdb"], temp_map["mal"]
 
 
@@ -577,13 +620,17 @@ def _fill_tmdb_metadata_to_torrent_info(torrent_info, tmdb_response):
 
     tmdb_metadata = dict()
     # saving the original language. This will be used to detect dual / multi and dubbed releases
-    tmdb_metadata["runtime_minutes"]   = tmdb_response.get("runtime", "")
-    tmdb_metadata["overview"]          = tmdb_response.get("overview", "")
-    tmdb_metadata["title"]             = tmdb_response.get(content_title, "")
-    tmdb_metadata["overview"]          = tmdb_response.get("overview", "")
-    tmdb_metadata["original_title"]    = tmdb_response.get("original_title", "")
-    tmdb_metadata["original_language"] = tmdb_response.get("original_language", "")
-    tmdb_metadata["spoken_languages"]  = tmdb_response.get("spoken_languages", {})
+    tmdb_metadata["runtime_minutes"] = tmdb_response.get("runtime", "")
+    tmdb_metadata["overview"] = tmdb_response.get("overview", "")
+    tmdb_metadata["title"] = tmdb_response.get(content_title, "")
+    tmdb_metadata["overview"] = tmdb_response.get("overview", "")
+    tmdb_metadata["original_title"] = tmdb_response.get("original_title", "")
+    tmdb_metadata["original_language"] = tmdb_response.get(
+        "original_language", ""
+    )
+    tmdb_metadata["spoken_languages"] = tmdb_response.get(
+        "spoken_languages", {}
+    )
 
     tmdb_metadata["genres"] = (
         list(map(lambda genre: genre["name"], tmdb_response["genres"]))
@@ -897,15 +944,19 @@ def _get_external_ids_from_tmdb(content_type, tmdb):
             return None
         else:
             return {
-                "imdb": str(tmdb_response["imdb_id"])
-                if "imdb_id" in tmdb_response
-                and tmdb_response["imdb_id"] is not None
-                else "0",
+                "imdb": (
+                    str(tmdb_response["imdb_id"])
+                    if "imdb_id" in tmdb_response
+                    and tmdb_response["imdb_id"] is not None
+                    else "0"
+                ),
                 "tmdb": str(tmdb_response["id"]),
-                "tvdb": str(tmdb_response["tvdb_id"])
-                if "tvdb_id" in tmdb_response
-                and tmdb_response["tvdb_id"] is not None
-                else "0",
+                "tvdb": (
+                    str(tmdb_response["tvdb_id"])
+                    if "tvdb_id" in tmdb_response
+                    and tmdb_response["tvdb_id"] is not None
+                    else "0"
+                ),
             }
     except Exception as e:
         logging.exception(
@@ -933,14 +984,18 @@ def _get_external_ids_from_tvmaze(tvmaze):
         else:
             return {
                 "tvmaze": str(tvmaze_response["id"]),
-                "tvdb": str(tvmaze_response["externals"]["thetvdb"])
-                if "thetvdb" in tvmaze_response["externals"]
-                and tvmaze_response["externals"]["thetvdb"] is not None
-                else "0",
-                "imdb": tvmaze_response["externals"]["imdb"]
-                if "thetvdb" in tvmaze_response["externals"]
-                and tvmaze_response["externals"]["imdb"] is not None
-                else "0",
+                "tvdb": (
+                    str(tvmaze_response["externals"]["thetvdb"])
+                    if "thetvdb" in tvmaze_response["externals"]
+                    and tvmaze_response["externals"]["thetvdb"] is not None
+                    else "0"
+                ),
+                "imdb": (
+                    tvmaze_response["externals"]["imdb"]
+                    if "thetvdb" in tvmaze_response["externals"]
+                    and tvmaze_response["externals"]["imdb"] is not None
+                    else "0"
+                ),
             }
     except Exception as e:
         logging.exception(
