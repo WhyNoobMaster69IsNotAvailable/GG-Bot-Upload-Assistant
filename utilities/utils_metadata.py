@@ -539,49 +539,6 @@ def _scan_mappings_for_mal_id(*, tmdb, imdb, tvdb, working_folder):
     return "0"
 
 
-def _scan_mappings_for_mal_id(*, tmdb, imdb, tvdb, working_folder):
-    with open(
-        TMDB_TO_MAL_MAPPING.format(base_path=working_folder)
-    ) as mapping_file:
-        logging.info("[MetadataUtils] Trying to get mal id from tmdb id")
-        mapping = json.load(mapping_file)
-        mal_id = mapping.get(str(tmdb))
-        if mal_id is not None:
-            logging.info(
-                f"[MetadataUtils] Obtained mal_id as {mal_id} from tmdb id"
-            )
-            return mal_id
-
-    with open(
-        IMDB_TO_MAL_MAPPING.format(base_path=working_folder)
-    ) as mapping_file:
-        logging.info("[MetadataUtils] Trying to get mal id from imdb id")
-        mapping = json.load(mapping_file)
-        mal_id = mapping.get(str(imdb))
-        if mal_id is not None:
-            logging.info(
-                f"[MetadataUtils] Obtained mal_id as {mal_id} from imdb id"
-            )
-            return mal_id
-
-    with open(
-        TVDB_TO_MAL_MAPPING.format(base_path=working_folder)
-    ) as mapping_file:
-        logging.info("[MetadataUtils] Trying to get mal id from tvdb id")
-        mapping = json.load(mapping_file)
-        mal_id = mapping.get(str(tvdb))
-        if mal_id is not None:
-            logging.info(
-                f"[MetadataUtils] Obtained mal_id as {mal_id} from tvdb id"
-            )
-            return mal_id
-
-    logging.info(
-        "[MetadataUtils] Failed to get mal id from cached mapping. Setting mal_id to 0"
-    )
-    return "0"
-
-
 def search_for_mal_id(*, content_type, tmdb_id, imdb_id, working_folder):
     # if 'content_type == tv' then we need to get the TVDB ID since we're going to need it to try and get the MAL ID
     # the below mapping is needed for the Flask app hosted by the original dev.
