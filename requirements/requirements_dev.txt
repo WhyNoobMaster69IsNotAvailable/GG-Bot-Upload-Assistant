@@ -20,3 +20,7 @@ pyfiglet~=0.8.post1
 cinemagoer~=2023.5.1
 fastjsonschema~=2.16.2
 mongomock~=4.1.2
+poetry~=1.8.2
+black~=24.3.0
+codespell~=2.2.6
+pyupgrade~=3.15.1
