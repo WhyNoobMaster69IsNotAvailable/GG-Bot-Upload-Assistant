@@ -1,16 +1,17 @@
 Starting from GG Bot v3.1.3 onwards, the mongo db backend supports authentication. This allows users to expose mongoDB port publically and see the metadata from the local machine using tools such as MongoDB Compass. Also having authentication is a better practice.
 
-## 1. Configure MongoDB with authentication.
+## Configure MongoDB with authentication.
 
 To configure mongo with authentication, first you'll need to copy the mongo folder within the `samples/reuploader` folder to the location of your reuploader config location.
 > The reuplaoder config location is the folder containing your `docker-compose.yml` file
 
 The mongo db config folder contains the following files
-- .mongo.env
-- init-mongo.js
-  > Do not edit the `init-mongo.js` file unless you know what you are dealing with.
+- `.mongo.env`
+- `init-mongo.js`
+> Do not edit the `init-mongo.js` file unless you know what you are dealing with.
 
-The username and password for your database is configured in the .mongo.env file.
+
+The username and password for your database is configured in the `.mongo.env` file.
 
 ### Properties
 - `MONGO_INITDB_ROOT_USERNAME`: Root user name. Set this to any value you like. This is not the user that gg bot will be using.
