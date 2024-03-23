@@ -326,6 +326,7 @@ pip install -r requirements/requirements.txt
 ### v3.1.3
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
+- [ ] Fixed BLU announce URL
 - [ ] Template based custom description
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
