@@ -235,7 +235,7 @@ class CacheConfig(GGBotConfig):
 
     @property
     def CACHE_PASSWORD(self):
-        return self._get_property("cache_username")
+        return self._get_property("cache_password")
 
 
 class APIKeyConfig(GGBotConfig, ABC):

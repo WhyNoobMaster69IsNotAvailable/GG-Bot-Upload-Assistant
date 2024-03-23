@@ -23,6 +23,7 @@
 # .env file           -> variables for docker-compose
 # .rutorrent.env      -> rutorrent related environment variables
 # reupload.config.env -> gg-bot reuploader configurations
+# mongo               -> copy the mongo folder to get authenticated mongo
 #
 version: "3.5"
 services:
@@ -30,7 +31,10 @@ services:
     image: mongo:${MONGO_VERSION}
     hostname: mongo
     restart: unless-stopped
+    env_file:
+      - ./mongo/.mongo.env
     volumes:
+      - ./mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ${BASE_PATH}/apps/mongo:/data/db
   rutorrent:
     image: romancin/rutorrent:${RUTORRENT_VERSION}

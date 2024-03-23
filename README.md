@@ -326,11 +326,11 @@ pip install -r requirements/requirements.txt
 ### v3.1.3
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
-- [ ] Fixed BLU announce URL
 - [ ] Template based custom description
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
-- [ ] Issue#151: Re-uploader MongoDB with authentication
+- [X] Fixed BLU announce URL
+- [X] Issue#151: Re-uploader MongoDB with authentication
 
 ### v3.1.4
 - [ ] EPIC: GG-Bot Auto Uploader
@@ -822,4 +822,5 @@ This project exists thanks to all the people who contribute.
 ### [Docker: Run Command Examples](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Docker-Run-Command-Examples)
 ### [Docker: Noob Friendly Setup Guide](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Noob-Friendly-Setup-Guide)
 ### [Support For New Trackers](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Support-For-New-Trackers)
+### [Authenticated MongoDB](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/auto-reuploader/Authenticate-Mongo-DB)
 <br>

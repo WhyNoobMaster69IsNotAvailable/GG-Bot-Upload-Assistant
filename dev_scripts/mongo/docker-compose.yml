@@ -1,0 +1,42 @@
+# GG Bot Upload Assistant
+# Copyright (C) 2022  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Docker compose for GG-Bot Auto Uploader | Mongo Local Developmen t
+# please note that this compose file cannot be used with GG-Bot Upload Assistant
+# ------------------------------------
+version: "3.5"
+services:
+  mongo:
+    image: mongo:${MONGO_VERSION}
+    hostname: mongo
+    restart: unless-stopped
+    env_file:
+      - .mongo.env
+    volumes:
+      - ./mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ${BASE_PATH}/apps/mongo:/data/db
+    ports:
+      - ${MONGO_EXPOSE_PORT}:27017
+
+  mongo-express:
+    image: mongo-express:${MONGO_EXPRESS_VERSION}
+    restart: unless-stopped
+    env_file:
+      - .mongo_express.env
+    depends_on:
+      - mongo
+    ports:
+      - ${MONGO_EXPRESS_EXPOSE_PORT}:8081

@@ -46,10 +46,7 @@ class Mongo:
             try:
                 self.mongo_client = self._get_mongo_client()
                 self.mongo_client.admin.command("ping")
-                # self.database = self.mongo_client[
-                #     self.config.CACHE_DATABASE
-                # ]
-                self.database = self.mongo_client["gg-bot-auto-uploader"]
+                self.database = self.mongo_client[self.config.CACHE_DATABASE]
                 self.is_mongo_initialized = True
             except Exception as ex:
                 logging.fatal(
@@ -67,12 +64,10 @@ class Mongo:
         ):
             MONGO_URL = (
                 f"mongodb://{self.config.CACHE_USERNAME}:{self.config.CACHE_PASSWORD}"
-                f"@{self.config.CACHE_HOST}:{self.config.CACHE_PORT}/{self.config.CACHE_DATABASE} "
+                f"@{self.config.CACHE_HOST}:{self.config.CACHE_PORT}/{self.config.CACHE_DATABASE}"
             )
         else:
             MONGO_URL = f"mongodb://{self.config.CACHE_HOST}:{self.config.CACHE_PORT}/{self.config.CACHE_DATABASE}"
-        # MONGO_URL = "mongodb://100.119.76.65:27017/gg-bot-auto-uploader"
-        # MONGO_URL = "mongodb://192.168.0.127:27017/gg-bot-auto-uploader"
         return MongoClient(MONGO_URL)
 
     def hello(self):

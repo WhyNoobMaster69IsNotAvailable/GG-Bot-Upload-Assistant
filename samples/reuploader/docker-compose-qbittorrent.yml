@@ -30,7 +30,10 @@ services:
     image: mongo:${MONGO_VERSION}
     hostname: mongo
     restart: unless-stopped
+    env_file:
+      - ./mongo/.mongo.env
     volumes:
+      - ./mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ${BASE_PATH}/apps/mongo:/data/db
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:${QBITTORRENT_VERSION}
