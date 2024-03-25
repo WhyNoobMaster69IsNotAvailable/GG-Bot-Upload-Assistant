@@ -21,3 +21,4 @@ pyfiglet~=0.8.post1
 cinemagoer~=2023.5.1
 fastjsonschema~=2.16.2
 mongomock~=4.1.2
+setuptools~=69.2.0
