@@ -45,9 +45,9 @@ def _identify_resolution_source(
         total_num_of_optionals_matched = 0
         optional_keys = []
 
-        for sub_key, sub_val in config["Required"][
-            (config["translation"][target_val])
-        ][key].items():
+        for sub_key, sub_val in config["Required"][(config["translation"][target_val])][
+            key
+        ].items():
             # for each sub key and its priority we
             logging.debug(
                 f"[ResolutionSourceMapping] Considering item `{sub_key}` with priority `{sub_val}`"
@@ -59,9 +59,7 @@ def _identify_resolution_source(
             # 2 = select from available items in list
 
             if sub_val == 1:
-                total_num_of_required_keys += (
-                    1  # no of keys with priority 1 in config
-                )
+                total_num_of_required_keys += 1  # no of keys with priority 1 in config
                 # Now check if the sub_key is in the relevant_torrent_info_values list
                 if sub_key in str(relevant_torrent_info_values).lower():
                     total_num_of_acquired_keys += (
@@ -72,13 +70,13 @@ def _identify_resolution_source(
                     )
             elif sub_val == 2:
                 if sub_key in str(relevant_torrent_info_values).lower():
-                    total_num_of_optionals_matched += 1  # indicates whether an optional key has been matched or not
+                    total_num_of_optionals_matched += (
+                        1  # indicates whether an optional key has been matched or not
+                    )
                     logging.debug(
                         f"[ResolutionSourceMapping] SelectMultiple `{sub_key}` is present in relevant torrent info list. Considering key as acquired value"
                     )
-                optional_keys.append(
-                    sub_key
-                )  # number of optional keys configured
+                optional_keys.append(sub_key)  # number of optional keys configured
 
         logging.debug(
             f"[ResolutionSourceMapping] Total number of required keys: {total_num_of_required_keys}"
@@ -86,9 +84,7 @@ def _identify_resolution_source(
         logging.debug(
             f"[ResolutionSourceMapping] Total number of acquired keys: {total_num_of_acquired_keys}"
         )
-        logging.debug(
-            f"[ResolutionSourceMapping] Optional keys: {optional_keys}"
-        )
+        logging.debug(f"[ResolutionSourceMapping] Optional keys: {optional_keys}")
         logging.debug(
             f"[ResolutionSourceMapping] Total number of optionals matched: {total_num_of_optionals_matched}"
         )
@@ -123,18 +119,12 @@ def _identify_resolution_source(
                 break
 
             # TODO: try to find out in which scenario this condition gets satisfied
-            if (
-                len(optional_keys) >= 2
-                and int(total_num_of_optionals_matched) == 1
-            ):
+            if len(optional_keys) >= 2 and int(total_num_of_optionals_matched) == 1:
                 break
 
         # We give higher priority to the non Other match
         # Removing other, if Other and another key was matched.
-        if (
-            len(possible_match_layer_1) >= 2
-            and "Other" in possible_match_layer_1
-        ):
+        if len(possible_match_layer_1) >= 2 and "Other" in possible_match_layer_1:
             possible_match_layer_1.remove("Other")
 
     # checking whether we were able to get a match in any of the configuration
@@ -167,14 +157,10 @@ def _get_hybrid_type(
     Method to get a hybrid type from the source, resolution and type properties of the torrent
     """
     logging.info("[HybridMapping] Performing hybrid mapping now...")
-    logging.debug(
-        "------------------ Hybrid mapping started ------------------"
-    )
+    logging.debug("------------------ Hybrid mapping started ------------------")
     # logging all the Prerequisite data
     # if any of the Prerequisite data is not available, then this method will not be invoked
-    for prerequisite in config["hybrid_mappings"][translation_value][
-        "prerequisite"
-    ]:
+    for prerequisite in config["hybrid_mappings"][translation_value]["prerequisite"]:
         logging.info(
             f"[HybridMapping] Prerequisite :: '{prerequisite}' Value :: '{tracker_settings[prerequisite]}'"
         )
@@ -184,12 +170,12 @@ def _get_hybrid_type(
             f"[HybridMapping] Trying to match '{translation_value}' to hybrid key '{key}'"
         )
         is_valid = None
-        for sub_key, sub_val in config["hybrid_mappings"][translation_value][
-            "mapping"
-        ][key].items():
+        for sub_key, sub_val in config["hybrid_mappings"][translation_value]["mapping"][
+            key
+        ].items():
             if sub_key == "_comment":
                 continue
-            user_wants_negation = "not" in sub_val and sub_val["not"] == True
+            user_wants_negation = "not" in sub_val and sub_val["not"] is True
             if user_wants_negation:
                 logging.debug(
                     f"[HybridMapping] The subkey '{sub_key}' from '{sub_val['data_source']}' must NOT be one of {sub_val['values']} for the mapping to be accepted."
@@ -224,9 +210,7 @@ def _get_hybrid_type(
                     )
                     selected_val = None
             else:
-                selected_val = (
-                    datasource[sub_key] if sub_key in datasource else None
-                )
+                selected_val = datasource[sub_key] if sub_key in datasource else None
 
             logging.debug(
                 f"[HybridMapping] Value selected from data source is '{selected_val}'"
@@ -237,18 +221,12 @@ def _get_hybrid_type(
                         f"[HybridMapping] For the subkey '{sub_key}' the values configured '{sub_val['values']}' is empty. Assuming by default as valid and continuing."
                     )
                     is_valid = True if is_valid is None else is_valid
-                elif (
-                    user_wants_negation
-                    and str(selected_val) not in sub_val["values"]
-                ):
+                elif user_wants_negation and str(selected_val) not in sub_val["values"]:
                     logging.debug(
                         f"[HybridMapping] The subkey '{sub_key}' '{selected_val}' is not present in '{sub_val['values']}' for '{sub_key}' and '{key}'"
                     )
                     is_valid = True if is_valid is None else is_valid
-                elif (
-                    not user_wants_negation
-                    and str(selected_val) in sub_val["values"]
-                ):
+                elif not user_wants_negation and str(selected_val) in sub_val["values"]:
                     logging.debug(
                         f"[HybridMapping] The subkey '{sub_key}' '{selected_val}' is present in '{sub_val['values']}' for '{sub_key}' and '{key}'"
                     )
@@ -274,9 +252,7 @@ def _get_hybrid_type(
                 )
 
         if is_valid:
-            logging.info(
-                f"[HybridMapping] The hybrid key was identified to be '{key}'"
-            )
+            logging.info(f"[HybridMapping] The hybrid key was identified to be '{key}'")
             logging.debug(
                 "------------------ Hybrid mapping Completed ------------------"
             )
@@ -286,12 +262,8 @@ def _get_hybrid_type(
 
     if config["hybrid_mappings"][translation_value]["required"] is False:
         # this hybrid mapping is optional. we can log this and return ""
-        logging.info(
-            "[HybridMapping] Returning '' since this is an optional mapping."
-        )
-        logging.debug(
-            "------------------ Hybrid mapping Completed ------------------"
-        )
+        logging.info("[HybridMapping] Returning '' since this is an optional mapping.")
+        logging.debug("------------------ Hybrid mapping Completed ------------------")
         return ""
 
     logging.debug(
@@ -399,9 +371,7 @@ def _get_url_type_data(translation_key, torrent_info):
         logging.error(
             f"[Translation] Invalid key for url translation provided -- Key {translation_key}"
         )
-    logging.debug(
-        f"[Translation] Created url type data for {translation_key} as {url}"
-    )
+    logging.debug(f"[Translation] Created url type data for {translation_key} as {url}")
     return url
 
 
@@ -428,10 +398,7 @@ def _validate_and_do_hybrid_mapping(
     logging.info(
         f"[HybridMapping] Validating the hybrid mapping settings for '{translation_value}'"
     )
-    if (
-        "hybrid_mappings" in config
-        and translation_value in config["hybrid_mappings"]
-    ):
+    if "hybrid_mappings" in config and translation_value in config["hybrid_mappings"]:
         delayed_mapping = False
         # to do hybrid translation we might need certain prerequisite fields to be resolved before hand in tracker settings.
         # we first check whether they have been resolved or not.
@@ -449,7 +416,7 @@ def _validate_and_do_hybrid_mapping(
             )
             is_hybrid_translation_needed = (
                 delayed_mapping
-                if is_hybrid_translation_needed == False
+                if is_hybrid_translation_needed is False
                 else is_hybrid_translation_needed
             )
         else:
@@ -501,9 +468,7 @@ def choose_right_tracker_keys(
     ]
 
     # Save a few key values in a list that we'll use later to identify the resolution and type
-    relevant_torrent_info_values = __get_relevant_items_for_tracker_keys(
-        torrent_info
-    )
+    relevant_torrent_info_values = __get_relevant_items_for_tracker_keys(torrent_info)
 
     # Filling in data for all the keys that have mapping/translations
     # Here we iterate over the translation mapping and for each translation key, we check the required and optional items for that value
@@ -540,14 +505,14 @@ def choose_right_tracker_keys(
                     # adding support for base64 encoded files
                     # the actual encoding will be performed in `upload_to_site` method
                     if translation_key in torrent_info:
-                        tracker_settings[
-                            config["translation"][translation_key]
-                        ] = torrent_info[translation_key]
+                        tracker_settings[config["translation"][translation_key]] = (
+                            torrent_info[translation_key]
+                        )
                     # Make sure you select the right .torrent file
                     if translation_key == "dot_torrent":
-                        tracker_settings[
-                            config["translation"]["dot_torrent"]
-                        ] = f'{WORKING_DIR.format(base_path=working_folder)}{torrent_info["working_folder"]}{tracker}-{normalize_for_system_path(torrent_info["torrent_title"])}.torrent'
+                        tracker_settings[config["translation"]["dot_torrent"]] = (
+                            f'{WORKING_DIR.format(base_path=working_folder)}{torrent_info["working_folder"]}{tracker}-{normalize_for_system_path(torrent_info["torrent_title"])}.torrent'
+                        )
 
                 # The reason why we keep this elif statement here is because the conditional right above is also technically a "string"
                 # but its easier to keep mediainfo and description in text files until we need them so we have that small exception for them
@@ -560,16 +525,12 @@ def choose_right_tracker_keys(
                         logging.info(
                             f"Upload live status: {'Live (Visible)' if UploaderConfig().BHD_LIVE else 'Draft (Hidden)'}"
                         )
-                        tracker_settings[
-                            config["translation"][translation_key]
-                        ] = live
+                        tracker_settings[config["translation"][translation_key]] = live
 
                     # If the user supplied the "-anon" argument then we want to pass that along when uploading
                     elif translation_key == "anon" and args.anon:
                         logging.info("[Translation] Uploading anonymously")
-                        tracker_settings[
-                            config["translation"][translation_key]
-                        ] = "1"
+                        tracker_settings[config["translation"][translation_key]] = "1"
 
                     # Adding support for internal args
                     elif translation_key in [
@@ -583,46 +544,37 @@ def choose_right_tracker_keys(
                         "foreign",
                         "3d",
                     ]:
-                        tracker_settings[
-                            config["translation"][translation_key]
-                        ] = (
-                            "1"
+                        tracker_settings[config["translation"][translation_key]] = (
+                            "100"
                             if getattr(args, translation_key, False) is True
                             else "0"
                         )
                     elif translation_key in ["exclusive"]:
                         arg_value = getattr(args, translation_key, None)
-                        tracker_settings[
-                            config["translation"][translation_key]
-                        ] = (arg_value[0] if arg_value is not None else "0")
+                        tracker_settings[config["translation"][translation_key]] = (
+                            arg_value[0] if arg_value is not None else "0"
+                        )
 
                     # We dump all the info from torrent_info in tracker_settings here
                     elif translation_key in torrent_info:
-                        tracker_settings[
-                            config["translation"][translation_key]
-                        ] = torrent_info[translation_key]
+                        tracker_settings[config["translation"][translation_key]] = (
+                            torrent_info[translation_key]
+                        )
                     # This work as a sort of 'catch all', if we don't have the correct data in torrent_info, we just send a 0 so we can successfully post
                     else:
-                        tracker_settings[
-                            config["translation"][translation_key]
-                        ] = "0"
+                        tracker_settings[config["translation"][translation_key]] = "0"
 
                 elif required_value == "url":
                     # we need this check because some trackers accepts media database urls from the same key, thereby overwriting the previous data
                     if (
-                        config["translation"][translation_key]
-                        not in tracker_settings
-                        or len(
-                            tracker_settings[
-                                config["translation"][translation_key]
-                            ]
-                        )
+                        config["translation"][translation_key] not in tracker_settings
+                        or len(tracker_settings[config["translation"][translation_key]])
                         == 0
                     ):
                         # URLs can be set only to for certain media databases
-                        tracker_settings[
-                            config["translation"][translation_key]
-                        ] = _get_url_type_data(translation_key, torrent_info)
+                        tracker_settings[config["translation"][translation_key]] = (
+                            _get_url_type_data(translation_key, torrent_info)
+                        )
                 else:
                     logging.error(
                         f"[Translation] Invalid value type {required_value} configured for required item {required_key} with translation key {required_key}"
@@ -630,27 +582,19 @@ def choose_right_tracker_keys(
 
                 # Set the category ID, this could be easily hardcoded in (1=movie & 2=tv) but I chose to use JSON data just in case a future tracker switches this up
                 if translation_key == "type":
-                    for key_cat, val_cat in config["Required"][
-                        required_key
-                    ].items():
+                    for key_cat, val_cat in config["Required"][required_key].items():
                         if torrent_info["type"] == val_cat:
-                            tracker_settings[
-                                config["translation"][translation_key]
-                            ] = key_cat
-                        elif (
-                            val_cat in torrent_info
-                            and torrent_info[val_cat] == "1"
-                        ):
+                            tracker_settings[config["translation"][translation_key]] = (
+                                key_cat
+                            )
+                        elif val_cat in torrent_info and torrent_info[val_cat] == "1":
                             # special case whether we can check for certain values in torrent info to decide the type
                             # eg: complete_season, individual_episodes etc
-                            tracker_settings[
-                                config["translation"][translation_key]
-                            ] = key_cat
+                            tracker_settings[config["translation"][translation_key]] = (
+                                key_cat
+                            )
 
-                    if (
-                        config["translation"][translation_key]
-                        not in tracker_settings
-                    ):
+                    if config["translation"][translation_key] not in tracker_settings:
                         # this type of upload is not permitted in this tracker
                         logging.critical(
                             '[Translation] Unable to find a suitable "category/type" match for this file'
@@ -674,9 +618,9 @@ def choose_right_tracker_keys(
                     )
                     if return_value == "STOP":
                         return return_value
-                    tracker_settings[
-                        config["translation"][translation_key]
-                    ] = return_value
+                    tracker_settings[config["translation"][translation_key]] = (
+                        return_value
+                    )
         # ------------ required_items end ------------
 
         # ------------ optional_items start ------------
@@ -713,16 +657,12 @@ def choose_right_tracker_keys(
                             break
                         else:
                             # We use the 'custom_edition' to set our own, again we only do this if we can't match what BHD already has available to select
-                            tracker_settings["custom_edition"] = torrent_info[
-                                "edition"
-                            ]
+                            tracker_settings["custom_edition"] = torrent_info["edition"]
 
                 # -!-!- Region -!-!- # (Disc only)
                 elif optional_key == "region" and "region" in torrent_info:
                     # This will only run if you are uploading a bluray_disc
-                    region = _get_bluray_region(
-                        optional_value, torrent_info["region"]
-                    )
+                    region = _get_bluray_region(optional_value, torrent_info["region"])
                     if region is not None:
                         tracker_settings[optional_key] = region
 
@@ -731,9 +671,7 @@ def choose_right_tracker_keys(
                     # The uploader will generate all the tags that are applicable to the current upload.
                     # each tracker will specify the list of tags that are accepted by it.
                     # here we select only those tags which are accepted by the tracker from the tags list generated
-                    logging.info(
-                        "[Translation] Identified tags key for tracker."
-                    )
+                    logging.info("[Translation] Identified tags key for tracker.")
                     upload_these_tags_list = []
                     for tag in torrent_info["tags"]:
                         if tag in optional_value["tags"]:
@@ -758,9 +696,7 @@ def choose_right_tracker_keys(
                                 upload_these_tags_list
                             )
                         elif optional_value["type"] == "array":
-                            tracker_settings[
-                                optional_key
-                            ] = upload_these_tags_list
+                            tracker_settings[optional_key] = upload_these_tags_list
 
                 # TODO figure out why .nfo uploads fail on BHD & don't display on BLU...
                 # if optional_key in ["nfo_file", "nfo"] and "nfo_file" in torrent_info:
@@ -949,9 +885,7 @@ def format_title(json_config, torrent_info):
         for key, val in torrent_title_translation.items():
             formatted_title = formatted_title.replace(key, val)
 
-    logging.info(
-        f"Torrent title after formatting and translations: {formatted_title}"
-    )
+    logging.info(f"Torrent title after formatting and translations: {formatted_title}")
     # Finally save the "formatted_title" into torrent_info which later will get passed to the dict "tracker_settings"
     # which is used to store the payload for the actual POST upload request
     return str(formatted_title[1:])
@@ -973,9 +907,7 @@ def __add_applicable_tags(torrent_info: Dict, group: str, subkey: str):
         torrent_info["tag_grouping"] if "tag_grouping" in torrent_info else {}
     )
     if group in tag_grouping and subkey in tag_grouping[group]:
-        logging.info(
-            f"[Tags] Adding tags for group '{group}' and subkey '{subkey}'"
-        )
+        logging.info(f"[Tags] Adding tags for group '{group}' and subkey '{subkey}'")
         torrent_info["tags"].extend(tag_grouping[group][subkey])
         torrent_info["tags"] = sorted(torrent_info["tags"])
 
@@ -1052,16 +984,14 @@ def generate_all_applicable_tags(torrent_info):
         torrent_info,
         "audio",
         "dualaudio"
-        if "dualaudio" in torrent_info
-        and torrent_info["dualaudio"] == "Dual-Audio"
+        if "dualaudio" in torrent_info and torrent_info["dualaudio"] == "Dual-Audio"
         else None,
     )
     __add_applicable_tags(
         torrent_info,
         "audio",
         "multiaudio"
-        if "multiaudio" in torrent_info
-        and torrent_info["multiaudio"] == "Multi"
+        if "multiaudio" in torrent_info and torrent_info["multiaudio"] == "Multi"
         else None,
     )
 
@@ -1072,10 +1002,7 @@ def generate_all_applicable_tags(torrent_info):
         torrent_info["edition"] if "edition" in torrent_info else None,
     )
 
-    if (
-        "argument_tags" in torrent_info
-        and torrent_info["argument_tags"] is not None
-    ):
+    if "argument_tags" in torrent_info and torrent_info["argument_tags"] is not None:
         logging.info("[Tags] Adding any custom tags from argument to tags.")
         torrent_info["tags"].extend(torrent_info["argument_tags"])
         torrent_info["tags"] = sorted(torrent_info["tags"])

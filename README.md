@@ -331,6 +331,7 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
+- [X] Issue#155: Free-leech flag changes for Unit3d v7.0+
 
 ### v3.1.4
 - [ ] EPIC: GG-Bot Auto Uploader
