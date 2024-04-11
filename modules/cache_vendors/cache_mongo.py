@@ -67,7 +67,7 @@ class Mongo:
         ):
             MONGO_URL = (
                 f"mongodb://{self.config.CACHE_USERNAME}:{self.config.CACHE_PASSWORD}"
-                f"@{self.config.CACHE_HOST}:{self.config.CACHE_PORT}/{self.config.CACHE_DATABASE} "
+                f"@{self.config.CACHE_HOST}:{self.config.CACHE_PORT}/{self.config.CACHE_DATABASE}"
             )
         else:
             MONGO_URL = f"mongodb://{self.config.CACHE_HOST}:{self.config.CACHE_PORT}/{self.config.CACHE_DATABASE}"
