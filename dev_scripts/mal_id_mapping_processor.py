@@ -16,11 +16,11 @@ class AnimeListIdMapper:
 
     def _write_to_file(self, mapping):
         print("Persisting processed mapping...")
-        for provider, mapping in mapping.items():
+        for provider, mapping_data in mapping.items():
             with open(
                 self.output_file_name.replace("PROVIDER_ID", provider), "w"
             ) as output_file:
-                json.dump(mapping, output_file)
+                json.dump(mapping_data, output_file)
 
     def _download_latest_mapping(self):
         print("Downloading latest mapping...")

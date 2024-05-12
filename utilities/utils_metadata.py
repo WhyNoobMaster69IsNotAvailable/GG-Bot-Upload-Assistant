@@ -32,6 +32,7 @@ from modules.constants import (
     TVDB_TO_MAL_MAPPING,
 )
 
+
 console = Console()
 
 
@@ -148,6 +149,7 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
         selected_tmdb_results = 0
         selected_tmdb_results_data = []
         for possible_match in search_tmdb_request.json()["results"]:
+
             result_num += 1  # This counter is used so that when we prompt a user to select a match, we know which one they are referring to
             # here we just associate the number count ^^ with each results TMDB ID
             result_dict[str(result_num)] = possible_match["id"]
@@ -339,9 +341,9 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
             if tmdb_external_ids is None
             else tmdb_external_ids
         )
-        tmdb_external_ids[
-            "tvmaze"
-        ] = "0"  # initializing tvmaze id as 0. if user is uploading a tv show we'll try to resolve this.
+        tmdb_external_ids["tvmaze"] = (
+            "0"  # initializing tvmaze id as 0. if user is uploading a tv show we'll try to resolve this.
+        )
 
         # with imdb and tvdb we can attempt to get the tvmaze id.
         if content_type in ["episode", "tv"]:  # getting TVmaze ID
@@ -899,15 +901,19 @@ def _get_external_ids_from_tmdb(content_type, tmdb):
             return None
         else:
             return {
-                "imdb": str(tmdb_response["imdb_id"])
-                if "imdb_id" in tmdb_response
-                and tmdb_response["imdb_id"] is not None
-                else "0",
+                "imdb": (
+                    str(tmdb_response["imdb_id"])
+                    if "imdb_id" in tmdb_response
+                    and tmdb_response["imdb_id"] is not None
+                    else "0"
+                ),
                 "tmdb": str(tmdb_response["id"]),
-                "tvdb": str(tmdb_response["tvdb_id"])
-                if "tvdb_id" in tmdb_response
-                and tmdb_response["tvdb_id"] is not None
-                else "0",
+                "tvdb": (
+                    str(tmdb_response["tvdb_id"])
+                    if "tvdb_id" in tmdb_response
+                    and tmdb_response["tvdb_id"] is not None
+                    else "0"
+                ),
             }
     except Exception as e:
         logging.exception(
@@ -935,14 +941,18 @@ def _get_external_ids_from_tvmaze(tvmaze):
         else:
             return {
                 "tvmaze": str(tvmaze_response["id"]),
-                "tvdb": str(tvmaze_response["externals"]["thetvdb"])
-                if "thetvdb" in tvmaze_response["externals"]
-                and tvmaze_response["externals"]["thetvdb"] is not None
-                else "0",
-                "imdb": tvmaze_response["externals"]["imdb"]
-                if "thetvdb" in tvmaze_response["externals"]
-                and tvmaze_response["externals"]["imdb"] is not None
-                else "0",
+                "tvdb": (
+                    str(tvmaze_response["externals"]["thetvdb"])
+                    if "thetvdb" in tvmaze_response["externals"]
+                    and tvmaze_response["externals"]["thetvdb"] is not None
+                    else "0"
+                ),
+                "imdb": (
+                    tvmaze_response["externals"]["imdb"]
+                    if "thetvdb" in tvmaze_response["externals"]
+                    and tvmaze_response["externals"]["imdb"] is not None
+                    else "0"
+                ),
             }
     except Exception as e:
         logging.exception(
@@ -1082,6 +1092,7 @@ def fill_database_ids(
                 )
 
             if torrent_info["type"] == "episode":
+
                 if "tvmaze" in ids_present and any(
                     x in ids_missing and torrent_info[x] == "0"
                     for x in ["imdb", "tvdb"]
