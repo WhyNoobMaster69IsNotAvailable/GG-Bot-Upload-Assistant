@@ -70,7 +70,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
             <td><strong>Site Name</strong></td>
         </th>
         <tr style="text-align: center">
-            <td rowspan="17"><strong>UNIT3D</strong></td>
+            <td rowspan="18"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
             <td><strong><a href="https://asiancinema.me">AsianCinema</a></strong></td>
         </tr>
@@ -137,6 +137,10 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
         <tr style="text-align: center">
             <td><strong>OTW</strong></td>
             <td><strong><a href="https://oldtoons.world">OldToonsWorld</a></strong></td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>SHRI</strong></td>
+            <td><strong><a href="https://shareisland.org">Shareisland</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td rowspan="1"><strong>XBTIT</strong></td>
@@ -323,15 +327,16 @@ pip install -r requirements/requirements.txt
 <br>
 
 # Roadmap
-### v3.1.3
+### v3.1.4
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
+- [ ] Fixed BLU announce URL
 - [ ] Template based custom description
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
 
-### v3.1.4
+### v3.1.5
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
 - [ ] Issue#96: DVD Remux not supported
@@ -391,9 +396,21 @@ This project exists thanks to all the people who contribute.
 <a href="https://gitlab.com/ZMarkC" title="Mark C">
   <img width="50" src="https://secure.gravatar.com/avatar/2ac42c0f350e5f33c63f9a0c9e364b616fcf152a7866fd03e755a06c925da957?s=192&d=identicon">
 </a>
+<a href="https://gitlab.com/tiberio87" title="Tiberio">
+  <img width="50" src="https://secure.gravatar.com/avatar/c98e56cdb1de7d72892ec848d2ed2f84351d9b555ee63b34a82e26e7cf837c49?s=384&d=identicon">
+</a>
 <br>
 
 # Change Log
+## **3.1.3**
+    New Trackers
+        * Shareisland -> [@tiberio87]
+
+    Bug Fixes
+        * Issue#155: Free-leech flag changes for Unit3d v7.0+
+
+<br>
+
 ## **3.1.2**
     New Trackers
         * OldToonsWorld -> [@ZMarkC]
