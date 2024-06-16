@@ -143,6 +143,10 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
             <td><strong><a href="https://shareisland.org">Shareisland</a></strong></td>
         </tr>
         <tr style="text-align: center">
+            <td><strong>VHD</strong></td>
+            <td><strong><a href="https://vision-hd.org">Vision-HD</a></strong></td>
+        </tr>
+        <tr style="text-align: center">
             <td rowspan="1"><strong>XBTIT</strong></td>
             <td><strong>TSP</strong></td>
             <td><strong><a href="https://thesceneplace.com/">TheScenePlace</a></strong></td>
