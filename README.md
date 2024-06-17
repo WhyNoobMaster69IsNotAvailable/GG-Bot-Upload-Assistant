@@ -70,7 +70,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
             <td><strong>Site Name</strong></td>
         </th>
         <tr style="text-align: center">
-            <td rowspan="18"><strong>UNIT3D</strong></td>
+            <td rowspan="19"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
             <td><strong><a href="https://asiancinema.me">AsianCinema</a></strong></td>
         </tr>
@@ -141,6 +141,10 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
         <tr style="text-align: center">
             <td><strong>SHRI</strong></td>
             <td><strong><a href="https://shareisland.org">Shareisland</a></strong></td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>VHD</strong></td>
+            <td><strong><a href="https://vision-hd.org">Vision-HD</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td rowspan="1"><strong>XBTIT</strong></td>
@@ -327,7 +331,7 @@ pip install -r requirements/requirements.txt
 <br>
 
 # Roadmap
-### v3.1.4
+### v3.1.5
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
 - [ ] Fixed BLU announce URL
@@ -336,7 +340,7 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
 
-### v3.1.5
+### v3.1.6
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
 - [ ] Issue#96: DVD Remux not supported
@@ -399,9 +403,18 @@ This project exists thanks to all the people who contribute.
 <a href="https://gitlab.com/tiberio87" title="Tiberio">
   <img width="50" src="https://secure.gravatar.com/avatar/c98e56cdb1de7d72892ec848d2ed2f84351d9b555ee63b34a82e26e7cf837c49?s=384&d=identicon">
 </a>
+<a href="https://gitlab.com/marcusnyrog" title="ddaarree">
+  <img width="50" src="https://gitlab.com/uploads/-/system/user/avatar/21731497/avatar.png?width=800">
+</a>
 <br>
 
 # Change Log
+## **3.1.4**
+    New Trackers
+        * Vision-HD -> [@marcusnyrog]
+
+<br>
+
 ## **3.1.3**
     New Trackers
         * Shareisland -> [@tiberio87]
