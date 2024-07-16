@@ -1,8 +1,8 @@
 {
     "name": "DesiTorrents",
     "url": "https://torrent.desi",
-    "upload_form": "https://torrent.desi/api/torrents/upload?api_token={api_key}",
-    "torrents_search": "https://torrent.desi/api/torrents/filter?api_token={api_key}",
+    "upload_form": "https://torrent.desi/api/v1/torrents/upload?api_token={api_key}",
+    "torrents_search": "https://torrent.desi/api/v1/torrents/filter?api_token={api_key}",
     "source": "DesiTorrents",
     "platform": "UNIT3D",
     "bbcode_line_break": "\n",
