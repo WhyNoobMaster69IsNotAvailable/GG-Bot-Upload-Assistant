@@ -70,7 +70,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
             <td><strong>Site Name</strong></td>
         </th>
         <tr style="text-align: center">
-            <td rowspan="19"><strong>UNIT3D</strong></td>
+            <td rowspan="20"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
             <td><strong><a href="https://asiancinema.me">AsianCinema</a></strong></td>
         </tr>
@@ -145,6 +145,10 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
         <tr style="text-align: center">
             <td><strong>VHD</strong></td>
             <td><strong><a href="https://vision-hd.org">Vision-HD</a></strong></td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>DL</strong></td>
+            <td><strong><a href="https://darkland.top">DarkLand</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td rowspan="1"><strong>XBTIT</strong></td>
@@ -333,6 +337,7 @@ pip install -r requirements/requirements.txt
 # Roadmap
 ### v3.1.5
 - [X] Fixed Torrent.desi api -> [@highlamb]
+- [X] New Tracker: DarkLand -> [@darklandy]
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
 - [ ] Fixed BLU announce URL
@@ -409,6 +414,9 @@ This project exists thanks to all the people who contribute.
 </a>
 <a href="https://gitlab.com/highlamb" title="highlamb">
   <img width="50" src="https://secure.gravatar.com/avatar/8ec7d3297d389bb0d08c857323479fd28106fce82a29205410386017ee70b22c?s=384&d=identicon">
+</a>
+<a href="https://gitlab.com/darklandy" title="darklandy">
+  <img width="50" src="https://secure.gravatar.com/avatar/8624204464a8601f14cc20bfb8526b1a5dbf7bca7b7f6138a32bbc9e04ec6a7c?s=384&d=identicon">
 </a>
 <br>
 
