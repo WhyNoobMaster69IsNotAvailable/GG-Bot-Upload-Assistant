@@ -332,6 +332,7 @@ pip install -r requirements/requirements.txt
 
 # Roadmap
 ### v3.1.5
+- [X] Fixed Torrent.desi api -> [@highlamb]
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
 - [ ] Fixed BLU announce URL
@@ -405,6 +406,9 @@ This project exists thanks to all the people who contribute.
 </a>
 <a href="https://gitlab.com/marcusnyrog" title="ddaarree">
   <img width="50" src="https://gitlab.com/uploads/-/system/user/avatar/21731497/avatar.png?width=800">
+</a>
+<a href="https://gitlab.com/highlamb" title="highlamb">
+  <img width="50" src="https://secure.gravatar.com/avatar/8ec7d3297d389bb0d08c857323479fd28106fce82a29205410386017ee70b22c?s=384&d=identicon">
 </a>
 <br>
 
