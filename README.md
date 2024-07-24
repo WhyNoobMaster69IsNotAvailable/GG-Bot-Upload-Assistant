@@ -241,7 +241,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
         </tr>
         <tr>
             <td>10</td>
-            <td>PT Screens</td
+            <td>ptscreens</td
         </tr>
 
     </tbody>
