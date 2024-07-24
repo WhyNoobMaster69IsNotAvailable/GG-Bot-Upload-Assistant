@@ -131,6 +131,8 @@ class GGBotImageHostManager:
             return SnappieImageHost(image_path=image_path)
         if image_host == "lensdump":
             return LensdumpImageHost(image_path=image_path)
+        if image_host == "ptscreens":
+            return PTScreensImageHost(image_path=image_path)
         if image_host == "imgbox":
             return ImgboxImageHost(
                 image_path=image_path, torrent_title=self.torrent_title
