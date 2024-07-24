@@ -25,6 +25,7 @@ from modules.image_hosts.vendor.chevereto.freeimage import FreeImageImageHost
 from modules.image_hosts.vendor.chevereto.imgbb import ImgbbImageHost
 from modules.image_hosts.vendor.chevereto.imgfi import ImgFiImageHost
 from modules.image_hosts.vendor.chevereto.lensdump import LensdumpImageHost
+from modules.image_hosts.vendor.chevereto.ptscreens import PTScreensImageHost
 from modules.image_hosts.vendor.chevereto.snappie import SnappieImageHost
 from modules.image_hosts.vendor.dummy import DummyImageHost
 from modules.image_hosts.vendor.imgbox import ImgboxImageHost
