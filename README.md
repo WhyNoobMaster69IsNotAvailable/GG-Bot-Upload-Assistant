@@ -340,10 +340,7 @@ pip install -r requirements/requirements.txt
 <br>
 
 # Roadmap
-### v3.1.5
-- [X] New Image host PTScreens -> [@PTScreens]
-- [X] Fixed Torrent.desi api -> [@highlamb]
-- [X] New Tracker: DarkLand -> [@darklandy]
+### v3.1.6
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
 - [ ] Fixed BLU announce URL
@@ -352,7 +349,7 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
 
-### v3.1.6
+### v3.1.7
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
 - [ ] Issue#96: DVD Remux not supported
@@ -430,6 +427,18 @@ This project exists thanks to all the people who contribute.
 <br>
 
 # Change Log
+## **3.1.5**
+    New Image host 
+        * PTScreens -> [@PTScreens]
+        
+    New Tracker
+        * DarkLand -> [@darklandy]
+    
+    Bug Fixes
+        * Fixed Torrent.desi api -> [@highlamb]
+
+<br>
+
 ## **3.1.4**
     New Trackers
         * Vision-HD -> [@marcusnyrog]
