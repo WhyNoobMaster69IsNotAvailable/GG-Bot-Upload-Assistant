@@ -341,6 +341,7 @@ pip install -r requirements/requirements.txt
 
 # Roadmap
 ### v3.1.5
+- [X] New Image host PTScreens -> [@PTScreens]
 - [X] Fixed Torrent.desi api -> [@highlamb]
 - [X] New Tracker: DarkLand -> [@darklandy]
 - [ ] New Tracker: UHDBits
@@ -422,6 +423,9 @@ This project exists thanks to all the people who contribute.
 </a>
 <a href="https://gitlab.com/darklandy" title="darklandy">
   <img width="50" src="https://secure.gravatar.com/avatar/8624204464a8601f14cc20bfb8526b1a5dbf7bca7b7f6138a32bbc9e04ec6a7c?s=384&d=identicon">
+</a>
+<a href="https://gitlab.com/PTScreens" title="PTScreens">
+  <img width="50" src="https://secure.gravatar.com/avatar/8468e07fddc384b050fc961496d7ad25e9738d0e4034da78048305c57a054684?s=384&d=identicon">
 </a>
 <br>
 
