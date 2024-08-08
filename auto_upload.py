@@ -43,7 +43,6 @@ from rich.traceback import install
 
 import utilities.utils_basic as basic_utilities
 import utilities.utils_bdinfo as bdinfo_utilities
-import utilities.utils_dupes as dupe_utilities
 import utilities.utils_metadata as metadata_utilities
 from modules.constants import (
     COOKIES_DUMP_DIR,
@@ -68,6 +67,7 @@ from modules.constants import (
     CUSTOM_TEXT_COMPONENTS,
 )
 from utilities.utils import GenericUtils
+from utilities.utils_dupes import DupeUtils
 from utilities.utils_miscellaneous import MiscellaneousUtils
 import utilities.utils_translation as translation_utilities
 from modules.config import UploadAssistantConfig, TrackerConfig
@@ -369,7 +369,7 @@ def check_for_dupes_in_tracker(tracker, temp_tracker_api_key):
 
     # Call the function that will search each site for dupes and return a similarity percentage, if it exceeds what the user sets in config.env we skip the upload
     try:
-        return dupe_utilities.search_for_dupes_api(
+        return DupeUtils().search_for_dupes_api(
             tracker=tracker,
             search_site=acronym_to_tracker[str(tracker).lower()],
             imdb=torrent_info["imdb"],

@@ -62,6 +62,7 @@ from modules.constants import (
     BLURAY_REGIONS_MAP,
 )
 from utilities.utils import GenericUtils
+from utilities.utils_dupes import DupeUtils
 from utilities.utils_miscellaneous import MiscellaneousUtils
 import utilities.utils_translation as translation_utilities
 from modules.cache import CacheFactory, CacheVendor, Cache
@@ -73,7 +74,6 @@ from modules.visor.server import Server
 # Method that will search for dupes in trackers.
 from modules.template_schema_validator import TemplateSchemaValidator
 from modules.torrent_client import Clients, TorrentClientFactory
-from utilities.utils_dupes import search_for_dupes_api
 from utilities.utils_reupload import (
     AutoReUploaderManager,
     TorrentFailureStatus,
@@ -389,7 +389,7 @@ def check_for_dupes_in_tracker(tracker, temp_tracker_api_key):
 
     # Call the function that will search each site for dupes and return a similarity percentage, if it exceeds what the user sets in config.env we skip the upload
     try:
-        return search_for_dupes_api(
+        return DupeUtils().search_for_dupes_api(
             tracker=tracker,
             search_site=acronym_to_tracker[str(tracker).lower()],
             imdb=torrent_info["imdb"],
