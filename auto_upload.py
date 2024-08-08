@@ -41,7 +41,6 @@ from rich.prompt import Confirm, Prompt
 from rich.table import Table
 from rich.traceback import install
 
-import utilities.utils_basic as basic_utilities
 import utilities.utils_bdinfo as bdinfo_utilities
 import utilities.utils_metadata as metadata_utilities
 from modules.constants import (
@@ -67,6 +66,7 @@ from modules.constants import (
     CUSTOM_TEXT_COMPONENTS,
 )
 from utilities.utils import GenericUtils
+from utilities.utils_basic import BasicUtils
 from utilities.utils_dupes import DupeUtils
 from utilities.utils_miscellaneous import MiscellaneousUtils
 import utilities.utils_translation as translation_utilities
@@ -485,7 +485,7 @@ def identify_type_and_basic_info(full_path, guess_it_result):
             complete_season,
             individual_episodes,
             daily_episodes,
-        ) = basic_utilities.basic_get_episode_basic_details(guess_it_result)
+        ) = BasicUtils().basic_get_episode_basic_details(guess_it_result)
         torrent_info["s00e00"] = s00e00
         torrent_info["season_number"] = season_number
         torrent_info["episode_number"] = episode_number
@@ -525,7 +525,7 @@ def identify_type_and_basic_info(full_path, guess_it_result):
             torrent_info["raw_video_file"] = raw_video_file
             torrent_info["largest_playlist"] = largest_playlist
         else:
-            raw_video_file = basic_utilities.basic_get_raw_video_file(
+            raw_video_file = BasicUtils().basic_get_raw_video_file(
                 torrent_info["upload_media"]
             )
             if raw_video_file is not None:
@@ -613,7 +613,7 @@ def identify_type_and_basic_info(full_path, guess_it_result):
     logging.debug(
         f"[Main] Torrent info just before MediaInfo generation. \n {pformat(torrent_info)}"
     )
-    media_info_result = basic_utilities.basic_get_mediainfo(parse_me)
+    media_info_result = BasicUtils().basic_get_mediainfo(parse_me)
 
     if args.disc:
         # for full disk uploads the bdinfo summary itself will be set as the `mediainfo_summary`
@@ -638,7 +638,7 @@ def identify_type_and_basic_info(full_path, guess_it_result):
             imdb,
             _,
             torrent_info["subtitles"],
-        ) = basic_utilities.basic_get_mediainfo_summary(media_info_result.to_data())
+        ) = BasicUtils().basic_get_mediainfo_summary(media_info_result.to_data())
         torrent_info["mediainfo_summary"] = mediainfo_summary
         if tmdb != "0":
             # we will get movie/12345 or tv/12345 => we only need 12345 part.
@@ -743,7 +743,7 @@ def analyze_video_file(missing_value, media_info):
 
     # ------------ Save mediainfo to txt ------------ #
     if missing_value == "mediainfo":
-        return basic_utilities.basic_get_missing_mediainfo(
+        return BasicUtils().basic_get_missing_mediainfo(
             torrent_info,
             parse_me,
             MEDIAINFO_FILE_PATH.format(
@@ -754,7 +754,7 @@ def analyze_video_file(missing_value, media_info):
 
     # ------------------- Source ------------------- #
     if missing_value == "source":
-        source, source_type = basic_utilities.basic_get_missing_source(
+        source, source_type = BasicUtils().basic_get_missing_source(
             torrent_info, args.disc, auto_mode, missing_value
         )
         torrent_info["source"] = source
@@ -763,7 +763,7 @@ def analyze_video_file(missing_value, media_info):
 
     # ---------------- Video Resolution ---------------- #
     if missing_value == "screen_size":
-        return basic_utilities.basic_get_missing_screen_size(
+        return BasicUtils().basic_get_missing_screen_size(
             torrent_info,
             args.disc,
             media_info_video_track,
@@ -773,7 +773,7 @@ def analyze_video_file(missing_value, media_info):
 
     # ---------------- Audio Channels ---------------- #
     if missing_value == "audio_channels":
-        return basic_utilities.basic_get_missing_audio_channels(
+        return BasicUtils().basic_get_missing_audio_channels(
             torrent_info,
             args.disc,
             auto_mode,
@@ -784,7 +784,7 @@ def analyze_video_file(missing_value, media_info):
 
     # ---------------- Audio Codec ---------------- #
     if missing_value == "audio_codec":
-        audio_codec, atmos = basic_utilities.basic_get_missing_audio_codec(
+        audio_codec, atmos = BasicUtils().basic_get_missing_audio_codec(
             torrent_info=torrent_info,
             is_disc=args.disc,
             auto_mode=auto_mode,
@@ -808,7 +808,7 @@ def analyze_video_file(missing_value, media_info):
             hdr,
             video_codec,
             pymediainfo_video_codec,
-        ) = basic_utilities.basic_get_missing_video_codec(
+        ) = BasicUtils().basic_get_missing_video_codec(
             torrent_info=torrent_info,
             is_disc=args.disc,
             auto_mode=auto_mode,
@@ -970,7 +970,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
         torrent_info["sd"] = 1
 
     # --------- Dual Audio / Multi / Commentary --------- #
-    media_info_result = basic_utilities.basic_get_mediainfo(file_to_parse)
+    media_info_result = BasicUtils().basic_get_mediainfo(file_to_parse)
     original_language = (
         torrent_info["tmdb_metadata"]["original_language"]
         if torrent_info["tmdb_metadata"] is not None
