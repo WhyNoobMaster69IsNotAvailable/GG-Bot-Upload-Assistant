@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from tests.test_utilities import TestUtils
-from utilities.utils import files_for_batch_processing, validate_batch_mode
+from utilities.utils import GenericUtils
 
 working_folder = Path(__file__).resolve().parent.parent.parent.parent
 temp_working_dir = "/tests/working_folder"
@@ -46,7 +46,7 @@ def test_files_for_batch_processing():
         os.path.join(batch_folder, "subdir1", "file4.mkv"),
         os.path.join(batch_folder, "subdir2", "file6.mp4"),
     ]
-    obtained_list = files_for_batch_processing([batch_folder])
+    obtained_list = GenericUtils.files_for_batch_processing([batch_folder])
     assert len(obtained_list) == len(expected_output)
     assert set(obtained_list) == set(expected_output)
 
@@ -54,19 +54,19 @@ def test_files_for_batch_processing():
 def test_files_for_batch_processing_empty_path():
     input_path = []
     expected_output = []
-    assert files_for_batch_processing(input_path) == expected_output
+    assert GenericUtils.files_for_batch_processing(input_path) == expected_output
 
 
 def test_files_for_batch_processing_nonexistent_path():
     input_path = [f"{batch_folder}/nonexistent/path"]
     expected_output = []
-    assert files_for_batch_processing(input_path) == expected_output
+    assert GenericUtils.files_for_batch_processing(input_path) == expected_output
 
 
 def test_files_for_batch_processing_invalid_extension():
     input_path = [f"{batch_folder}/subdir3"]
     expected_output = []
-    assert files_for_batch_processing(input_path) == expected_output
+    assert GenericUtils.files_for_batch_processing(input_path) == expected_output
 
 
 @pytest.fixture
@@ -76,7 +76,7 @@ def metadata_ids():
 
 def test_validate_batch_mode_returns_true_if_batch_mode_is_false(metadata_ids):
     assert (
-        validate_batch_mode(
+        GenericUtils().validate_batch_mode(
             batch_mode=False, path=["/some/path"], metadata_ids=metadata_ids
         )
         is True
@@ -86,7 +86,7 @@ def test_validate_batch_mode_returns_true_if_batch_mode_is_false(metadata_ids):
 def test_validate_batch_mode_returns_false_if_batch_mode_is_true_and_metadata_ids_is_not_empty():
     metadata_ids = {"id_1": "123", "id_2": "456"}
     assert (
-        validate_batch_mode(
+        GenericUtils().validate_batch_mode(
             batch_mode=True, path=["/some/path"], metadata_ids=metadata_ids
         )
         is False
@@ -97,10 +97,10 @@ def test_validate_batch_mode_returns_false_if_batch_mode_is_true_and_path_has_mu
     metadata_ids,
 ):
     with patch(
-        "utilities.utils._log_error_and_exit_batch_and_multiple_path"
+        "utilities.utils.GenericUtils._log_error_and_exit_batch_and_multiple_path"
     ) as mock_error_func:
         assert (
-            validate_batch_mode(
+            GenericUtils().validate_batch_mode(
                 batch_mode=True,
                 path=["/path1", "/path2"],
                 metadata_ids=metadata_ids,
@@ -114,11 +114,11 @@ def test_validate_batch_mode_returns_false_if_batch_mode_is_true_and_path_is_not
     metadata_ids,
 ):
     with patch("os.path.isdir") as mock_isdir, patch(
-        "utilities.utils._log_error_and_exit_batch_and_file_path"
+        "utilities.utils.GenericUtils._log_error_and_exit_batch_and_file_path"
     ) as mock_error_func:
         mock_isdir.return_value = False
         assert (
-            validate_batch_mode(
+            GenericUtils().validate_batch_mode(
                 batch_mode=True,
                 path=["/path/to/file"],
                 metadata_ids=metadata_ids,
@@ -134,7 +134,7 @@ def test_validate_batch_mode_returns_true_if_batch_mode_is_true_and_path_has_one
     with patch("os.path.isdir") as mock_isdir:
         mock_isdir.return_value = True
         assert (
-            validate_batch_mode(
+            GenericUtils().validate_batch_mode(
                 batch_mode=True,
                 path=["/path/to/directory"],
                 metadata_ids=metadata_ids,

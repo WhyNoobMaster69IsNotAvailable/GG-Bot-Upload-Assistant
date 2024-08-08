@@ -22,7 +22,7 @@ from rich.console import Console
 
 from modules.config import UploaderConfig
 from modules.constants import WORKING_DIR
-from utilities.utils import normalize_for_system_path
+from utilities.utils import GenericUtils
 
 console = Console()
 
@@ -511,7 +511,7 @@ def choose_right_tracker_keys(
                     # Make sure you select the right .torrent file
                     if translation_key == "dot_torrent":
                         tracker_settings[config["translation"]["dot_torrent"]] = (
-                            f'{WORKING_DIR.format(base_path=working_folder)}{torrent_info["working_folder"]}{tracker}-{normalize_for_system_path(torrent_info["torrent_title"])}.torrent'
+                            f'{WORKING_DIR.format(base_path=working_folder)}{torrent_info["working_folder"]}{tracker}-{GenericUtils.normalize_for_system_path(torrent_info["torrent_title"])}.torrent'
                         )
 
                 # The reason why we keep this elif statement here is because the conditional right above is also technically a "string"

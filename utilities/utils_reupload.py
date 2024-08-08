@@ -24,7 +24,7 @@ from typing import Dict, Tuple, Union, Any
 from modules.cache import Cache
 from modules.config import ReUploaderConfig
 from modules.torrent_client import TorrentClient
-from utilities.utils import get_and_validate_configured_trackers
+from utilities.utils import GenericUtils
 
 TORRENT_DB_KEY_PREFIX = "ReUpload::Torrent"
 JOB_REPO_DB_KEY_PREFIX = "ReUpload::JobRepository"
@@ -137,9 +137,7 @@ class AutoReUploaderManager:
             "possible_matches": "None",
         }
         # when this attempt becomes greater than 3, the torrent will be marked as UNKNOWN_FAILURE
-        self.cache.save(
-            f'{TORRENT_DB_KEY_PREFIX}::{torrent["hash"]}', init_data
-        )
+        self.cache.save(f'{TORRENT_DB_KEY_PREFIX}::{torrent["hash"]}', init_data)
         logging.debug(
             f'[AutoReUploaderManager::initialize_torrent_data] Successfully initialized torrent data in cache for {torrent["name"]} '
         )
@@ -161,9 +159,7 @@ class AutoReUploaderManager:
 
     def update_torrent_status(self, info_hash, status):
         # data will always be present
-        existing_data = self.cache.get(f"{TORRENT_DB_KEY_PREFIX}::{info_hash}")[
-            0
-        ]
+        existing_data = self.cache.get(f"{TORRENT_DB_KEY_PREFIX}::{info_hash}")[0]
         logging.debug(
             f'[ReUploadUtils] Updating status of `{info_hash}` from `{existing_data["status"]}` to `{status}`'
         )
@@ -173,9 +169,7 @@ class AutoReUploaderManager:
 
     def update_torrent_field(self, info_hash, field, data, is_json):
         # data will always be present
-        existing_data = self.cache.get(f"{TORRENT_DB_KEY_PREFIX}::{info_hash}")[
-            0
-        ]
+        existing_data = self.cache.get(f"{TORRENT_DB_KEY_PREFIX}::{info_hash}")[0]
         if is_json and data is not None:
             data = json.dumps(data)
         if field not in existing_data:
@@ -252,18 +246,10 @@ class AutoReUploaderManager:
         # checking whether we got any data or whether it was an empty dict
         cache_tmdb_metadata = "tmdb" not in movie_db
 
-        movie_db["tmdb"] = (
-            torrent_info["tmdb"] if "tmdb" in torrent_info else "0"
-        )
-        movie_db["imdb"] = (
-            torrent_info["imdb"] if "imdb" in torrent_info else "0"
-        )
-        movie_db["tvmaze"] = (
-            torrent_info["tvmaze"] if "tvmaze" in torrent_info else "0"
-        )
-        movie_db["tvdb"] = (
-            torrent_info["tvdb"] if "tvdb" in torrent_info else "0"
-        )
+        movie_db["tmdb"] = torrent_info["tmdb"] if "tmdb" in torrent_info else "0"
+        movie_db["imdb"] = torrent_info["imdb"] if "imdb" in torrent_info else "0"
+        movie_db["tvmaze"] = torrent_info["tvmaze"] if "tvmaze" in torrent_info else "0"
+        movie_db["tvdb"] = torrent_info["tvdb"] if "tvdb" in torrent_info else "0"
         movie_db["mal"] = torrent_info["mal"] if "mal" in torrent_info else "0"
         movie_db["title"] = original_title
         movie_db["year"] = original_year
@@ -284,9 +270,7 @@ class AutoReUploaderManager:
         return movie_db
 
     @staticmethod
-    def get_external_moviedb_id(
-        movie_db, torrent_info, cached_data, required_id
-    ):
+    def get_external_moviedb_id(movie_db, torrent_info, cached_data, required_id):
         # in case of tmdb id, we need to give the highest priority to the golden data obtained from the user via
         # GG-BOT Visor If bot wants tmdb id, and we have data in cached data (for currently uploading torrent) then
         # we return it. Otherwise, we go for the cached movieDB data (from another torrent) and finally we get the
@@ -302,9 +286,7 @@ class AutoReUploaderManager:
             required_id in movie_db
         ):  # TODO need to figure out why None is saved in metadata db
             external_db_id = (
-                str(movie_db[required_id])
-                if movie_db[required_id] is not None
-                else ""
+                str(movie_db[required_id]) if movie_db[required_id] is not None else ""
             )
         elif required_id in torrent_info:
             external_db_id = (
@@ -315,9 +297,7 @@ class AutoReUploaderManager:
         return external_db_id
 
     def get_processable_torrents(self):
-        logging.info(
-            "[ReUploadUtils] Listing latest torrents status from client"
-        )
+        logging.info("[ReUploadUtils] Listing latest torrents status from client")
         # listing all the torrents that needs to be re-uploaded
         torrents = self.client.list_torrents()
 
@@ -328,9 +308,7 @@ class AutoReUploaderManager:
         )
 
         # listing out only the completed torrents and eliminating unprocessable torrents based on cached data
-        logging.debug(
-            f"[ReUploadUtils] Torrent data from client: {pformat(torrents)}"
-        )
+        logging.debug(f"[ReUploadUtils] Torrent data from client: {pformat(torrents)}")
         torrents = list(
             filter(
                 lambda torrent: not self.is_un_processable_data_present_in_cache(
@@ -358,13 +336,9 @@ class AutoReUploaderManager:
 
         # Just in case the user didn't end the path with a forward slash...
         host_path = f"{self.uploader_accessible_path}/".replace("//", "/")
-        remote_path = f"{self.torrent_client_accessible_path}/".replace(
-            "//", "/"
-        )
+        remote_path = f"{self.torrent_client_accessible_path}/".replace("//", "/")
         logging.info(f"[ReUploadUtils] Host path of the torrent: {host_path}")
-        logging.info(
-            f"[ReUploadUtils] Remote path of the torrent: {remote_path}"
-        )
+        logging.info(f"[ReUploadUtils] Remote path of the torrent: {remote_path}")
 
         translated_path = str(torrent_path).replace(remote_path, host_path)
         # And finally log the changes
@@ -398,7 +372,7 @@ class AutoReUploaderManager:
             logging.info(
                 f"[ReUploadUtils] Dynamic trackers obtained from the torrent {torrent['name']} are {dynamic_trackers}"
             )
-            return get_and_validate_configured_trackers(
+            return GenericUtils().get_and_validate_configured_trackers(
                 trackers=dynamic_trackers,
                 all_trackers=False,
                 api_keys_dict=api_keys_dict,
@@ -485,9 +459,7 @@ class AutoReUploaderManager:
         # for testing purpose we just return the status obtained from cache
         return torrent_status
 
-    def mark_torrent_failure(
-        self, info_hash: str, status: TorrentFailureStatus
-    ):
+    def mark_torrent_failure(self, info_hash: str, status: TorrentFailureStatus):
         self.update_torrent_field(info_hash, "status", status, False)
         self.update_torrent_field(
             info_hash,
@@ -502,15 +474,11 @@ class AutoReUploaderManager:
     def update_jobs_and_torrent_status(
         self,
         info_hash: str,
-        tracker_status_map: Dict[
-            str, Tuple[TrackerUploadStatus, Union[Dict, Any]]
-        ],
+        tracker_status_map: Dict[str, Tuple[TrackerUploadStatus, Union[Dict, Any]]],
     ) -> None:
         # saving tracker status to job repo
         for trkr, response in tracker_status_map.items():
-            self._save_job_repo_entry(
-                info_hash, trkr, JobStatus.FAILED, response[1]
-            )
+            self._save_job_repo_entry(info_hash, trkr, JobStatus.FAILED, response[1])
 
         torrent_status = self.get_client_label_for_torrent(tracker_status_map)
         if torrent_status is None:
@@ -519,9 +487,7 @@ class AutoReUploaderManager:
 
     @staticmethod
     def get_client_label_for_torrent(
-        tracker_status_map: Dict[
-            str, Tuple[TrackerUploadStatus, Union[Dict, Any]]
-        ]
+        tracker_status_map: Dict[str, Tuple[TrackerUploadStatus, Union[Dict, Any]]],
     ) -> Union[str, None]:
         if all(
             status[0] == TrackerUploadStatus.SUCCESS

@@ -26,10 +26,7 @@ from imdb import Cinemagoer
 from rich.console import Console
 from rich.prompt import Prompt
 
-from utilities.utils import (
-    prepare_headers_for_tracker,
-    write_custom_user_inputs_to_description,
-)
+from utilities.utils import GenericUtils
 from modules.config import PTPImgConfig, TrackerConfig
 from modules.tfa.tfa import get_totp_token
 
@@ -96,15 +93,11 @@ def fix_10_bit_tag(torrent_info, tracker_settings, __):
         )
         return
 
-    logging.info(
-        f"[CustomActions][PTP] Original remaster_title: {remaster_title}"
-    )
+    logging.info(f"[CustomActions][PTP] Original remaster_title: {remaster_title}")
     remaster_title = remaster_title.replace("10-bit / ", "")
     remaster_title = remaster_title.replace(" / 10-bit", "")
     remaster_title = remaster_title.replace(" / 10-bit / ", " / ")
-    logging.info(
-        f"[CustomActions][PTP] Stripped remaster_title: {remaster_title}"
-    )
+    logging.info(f"[CustomActions][PTP] Stripped remaster_title: {remaster_title}")
     tracker_settings["remaster_title"] = remaster_title
 
 
@@ -112,7 +105,7 @@ def check_for_existing_group(torrent_info, tracker_settings, tracker_config):
     # group_check_url = tracker_config["dupes"]["url_format"].format(search_url=str(tracker_config["torrents_search"]), imdb=torrent_info["imdb"])
     group_check_url = f"https://passthepopcorn.me/ajax.php?imdb={torrent_info['imdb_with_tt']}&action=torrent_info&fast=1"
 
-    headers = prepare_headers_for_tracker(
+    headers = GenericUtils.prepare_headers_for_tracker(
         tracker_config["dupes"]["technical_jargons"],
         "PTP",
         TrackerConfig("PTP").API_KEY,
@@ -136,9 +129,9 @@ def check_for_existing_group(torrent_info, tracker_settings, tracker_config):
             )
             # to upload a release to an existing group, we need add group information to param
             # updating the `upload_form` url in tracker_config
-            tracker_config[
-                "upload_form"
-            ] = f'{tracker_config["upload_form"]}?groupid={groupID}'
+            tracker_config["upload_form"] = (
+                f'{tracker_config["upload_form"]}?groupid={groupID}'
+            )
             # along with this we also add the group to tracker settings
             tracker_settings["groupid"] = groupID
         else:
@@ -225,11 +218,7 @@ def check_for_existing_group(torrent_info, tracker_settings, tracker_config):
                         user_overview = console.input(
                             f"Please provide the plot / overview of {torrent_info['title']}\n"
                         )
-                        overview = (
-                            user_overview
-                            if len(user_overview) > 0
-                            else overview
-                        )
+                        overview = user_overview if len(user_overview) > 0 else overview
             else:
                 logging.info(
                     f"[CustomAction][PTP] Overview obtained from PTP for this release: {overview}"
@@ -272,9 +261,7 @@ def _rehost_to_ptpimg(
 
 def rehost_screens_to_ptpimg(torrent_info, tracker_settings, _):
     if "screenshots_data" not in torrent_info:
-        logging.info(
-            "[CustomActions][PTP] No screenshots available for re-hosting"
-        )
+        logging.info("[CustomActions][PTP] No screenshots available for re-hosting")
         return
 
     # checking whether the "screenshots_data" have `ptp_rehosted`. If present, then we will
@@ -282,9 +269,7 @@ def rehost_screens_to_ptpimg(torrent_info, tracker_settings, _):
     console.print(
         "[bold magenta] Re-hosting non ptpimg screenshots to ptpimg[/bold magenta]"
     )
-    logging.info(
-        "[CustomActions][PTP] Re-uploading non-ptpimg screenshots to ptpimg"
-    )
+    logging.info("[CustomActions][PTP] Re-uploading non-ptpimg screenshots to ptpimg")
     screenshots_data = json.load(open(torrent_info["screenshots_data"]))
 
     if (
@@ -368,7 +353,7 @@ def rewrite_description(torrent_info, tracker_settings, tracker_config):
         "custom_user_inputs" in torrent_info
         and torrent_info["custom_user_inputs"] is not None
     ):
-        write_custom_user_inputs_to_description(
+        GenericUtils.write_custom_user_inputs_to_description(
             torrent_info=torrent_info,
             description_file_path=ptp_description_file,
             config=tracker_config,
@@ -442,9 +427,7 @@ def get_ptp_type(torrent_info, tracker_settings, _):
             else []
         )
         if torrent_info["type"] == "movie":
-            duration_in_minutes = int(
-                (int(torrent_info["duration"]) / 6) / 10000
-            )
+            duration_in_minutes = int((int(torrent_info["duration"]) / 6) / 10000)
             if duration_in_minutes >= 45:
                 tracker_settings["type"] = "Feature Film"
             else:
@@ -514,25 +497,17 @@ def _no_subs_in_release(subtitles=None):
 
 def add_trumpable_flags(torrent_info, tracker_settings, tracker_config):
     is_non_english_release = _is_non_english_release(torrent_info)
-    is_english_subs_present = _is_english_subs_present(
-        tracker_settings["subtitles[]"]
-    )
+    is_english_subs_present = _is_english_subs_present(tracker_settings["subtitles[]"])
     no_subs_in_release = _no_subs_in_release(tracker_settings["subtitles[]"])
 
     trumpable = None
-    logging.debug(
-        f"[CustomActions][PTP] Non english release: {is_non_english_release}"
-    )
+    logging.debug(f"[CustomActions][PTP] Non english release: {is_non_english_release}")
     logging.debug(
         f"[CustomActions][PTP] English subs present: {is_english_subs_present}"
     )
-    logging.debug(
-        f"[CustomActions][PTP] No subs in release: {no_subs_in_release}"
-    )
+    logging.debug(f"[CustomActions][PTP] No subs in release: {no_subs_in_release}")
     # for all non-english release if there are no subtitles or if english subtitle is not present
-    if is_non_english_release and (
-        no_subs_in_release or not is_english_subs_present
-    ):
+    if is_non_english_release and (no_subs_in_release or not is_english_subs_present):
         logging.info(
             "[CustomActions][PTP] Trumpable release. Getting trumpable tag from user"
         )
@@ -545,7 +520,7 @@ def add_trumpable_flags(torrent_info, tracker_settings, tracker_config):
 
 
 def _get_trumpable_flags():
-    trumpable_values = {"Hardcoded Subs (Full)": 4, "No English Subs": 14}
+    # trumpable_values = {"Hardcoded Subs (Full)": 4, "No English Subs": 14}
     console.print("[red]Possible trumpable release.[/red]")
     console.print("1. Hardcoded Subs")
     console.print("2. No English Subs")
@@ -616,9 +591,7 @@ def add_subtitle_information(torrent_info, tracker_settings, _):
         ("Persian", "fa", "far"): 52,
     }
 
-    logging.info(
-        "[CustomActions][PTP] Adding subtitles information to tracker payload"
-    )
+    logging.info("[CustomActions][PTP] Adding subtitles information to tracker payload")
     available_subtitles = []
     # TODO: test the performance impact of this nested looping.
     # If its too bad, then opt to denormalize data
@@ -728,10 +701,7 @@ def get_crsf_token(torrent_info, tracker_settings, tracker_config):
             "keeplogged": "1",
         }
         # adding tfa code if user has tfa enabled
-        if (
-            tracker_env_config.get_config_as_boolean("PTP_2FA_ENABLED", False)
-            is True
-        ):
+        if tracker_env_config.get_config_as_boolean("PTP_2FA_ENABLED", False) is True:
             data["TfaType"] = "normal"
             logging.info(
                 "[CustomActions][PTP] User has 2FA enabled. Trying to generate TOTP code."

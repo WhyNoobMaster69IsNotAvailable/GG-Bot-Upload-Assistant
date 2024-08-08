@@ -20,8 +20,8 @@ import logging
 import requests
 from rich.console import Console
 
-from utilities.utils import write_custom_user_inputs_to_description
 from modules.config import TrackerConfig
+from utilities.utils import GenericUtils
 
 console = Console()
 
@@ -88,9 +88,7 @@ def _get_tags(imdb_tags, tmdb_tags):
 
 
 def check_for_existing_group(torrent_info, tracker_settings, tracker_config):
-    logging.info(
-        "[CustomActions][GPW] Checking whether group exists on tracker"
-    )
+    logging.info("[CustomActions][GPW] Checking whether group exists on tracker")
 
     base_url = f'{tracker_config["upload_form"].replace("{api_key}", TrackerConfig("GPW").API_KEY).replace("&action=upload", "")}'
     check_group_params = (
@@ -103,9 +101,7 @@ def check_for_existing_group(torrent_info, tracker_settings, tracker_config):
     check_group_url = f"{base_url}{check_group_params}"
     try:
         group_response = requests.get(check_group_url).json()
-        logging.debug(
-            f"[CustomActions][GPW] Group check response: {group_response}"
-        )
+        logging.debug(f"[CustomActions][GPW] Group check response: {group_response}")
         if (
             group_response["status"] == "failure"
             and group_response["erro"] == "Group not found"
@@ -182,9 +178,13 @@ def check_for_existing_group(torrent_info, tracker_settings, tracker_config):
                 tracker_settings["tags"] = tags
                 # ------- Tags -------
 
-                tracker_settings["maindesc"] = auto_fill_metadata["MainPlot"]  # English description
-                tracker_settings["desc"] = auto_fill_metadata.get("Plot",auto_fill_metadata["MainPlot"])
-                  # Chinese description
+                tracker_settings["maindesc"] = auto_fill_metadata[
+                    "MainPlot"
+                ]  # English description
+                tracker_settings["desc"] = auto_fill_metadata.get(
+                    "Plot", auto_fill_metadata["MainPlot"]
+                )
+                # Chinese description
 
                 # filling the personnel details
                 tracker_settings["artist_ids[]"] = []
@@ -334,9 +334,7 @@ def add_subtitle_information(torrent_info, tracker_settings, tracker_config):
         ("Persian", "fa", "far"): "persian",
     }
 
-    logging.info(
-        "[CustomActions][GPW] Adding subtitles information to tracker payload"
-    )
+    logging.info("[CustomActions][GPW] Adding subtitles information to tracker payload")
     available_subtitles = []
     tracker_settings["subtitle_type"] = 1  # softcoded subtitle
     # TODO: how to detect and tag a hardcoded subtitle
@@ -412,9 +410,7 @@ def _filter_gpw_supported_urls(url):
 
 def rehost_screens(torrent_info, tracker_settings, tracker_config):
     if "screenshots_data" not in torrent_info:
-        logging.info(
-            "[CustomActions][GPW] No screenshots available for re-hosting"
-        )
+        logging.info("[CustomActions][GPW] No screenshots available for re-hosting")
         return
 
     # checking whether the "screenshots_data" have `ptp_rehosted`. If present, then we will
@@ -503,7 +499,7 @@ def rewrite_description(torrent_info, tracker_settings, tracker_config):
         "custom_user_inputs" in torrent_info
         and torrent_info["custom_user_inputs"] is not None
     ):
-        write_custom_user_inputs_to_description(
+        GenericUtils.write_custom_user_inputs_to_description(
             torrent_info=torrent_info,
             description_file_path=gpw_description_file,
             config=tracker_config,
