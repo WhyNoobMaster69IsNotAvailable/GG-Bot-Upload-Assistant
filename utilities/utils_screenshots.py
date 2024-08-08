@@ -34,7 +34,7 @@ from modules.constants import (
 )
 from modules.image_hosts.image_host_manager import GGBotImageHostManager
 from modules.image_hosts.image_upload_status import GGBotImageUploadStatus
-from utilities.utils import normalize_for_system_path
+from utilities.utils import GenericUtils
 
 # For more control over rich terminal content, import and construct a Console object.
 console = Console()
@@ -79,7 +79,7 @@ class GGBotScreenshotManager:
         self.upload_media = upload_media
         self.duration = duration
         self.num_of_screenshots: int = UploaderConfig().NO_OF_SCREENSHOTS
-        self.torrent_title = normalize_for_system_path(torrent_title)
+        self.torrent_title = GenericUtils.normalize_for_system_path(torrent_title)
         self.image_host_manager = GGBotImageHostManager(self.torrent_title)
 
         self.bb_code_images_path = BB_CODE_IMAGES_PATH.format(
@@ -116,7 +116,7 @@ class GGBotScreenshotManager:
 
     def _skip_screenshot_generation(self) -> bool:
         # user has provided the `skip_screenshots` in the command line arguments.
-        # Hence we are going to skip taking screenshots
+        # Hence, we are going to skip taking screenshots
         logging.info(
             "[GGBotScreenshotManager::generate_screenshots] User has provided the `skip_screenshots` argument. "
             "Hence continuing without screenshots."
@@ -208,9 +208,7 @@ class GGBotScreenshotManager:
                 f"instead of taking new one: {self.torrent_title} - ({timestamp}).png"
             )
 
-    def _get_timestamp_outfile_tuple(
-        self, ss_timestamps
-    ) -> List[Tuple[str, str]]:
+    def _get_timestamp_outfile_tuple(self, ss_timestamps) -> List[Tuple[str, str]]:
         return [
             (
                 timestamp,
@@ -243,9 +241,7 @@ class GGBotScreenshotManager:
             duration=int(self.duration),
             num_of_screenshots=self.num_of_screenshots,
         )
-        timestamp_outfile_tuple = self._get_timestamp_outfile_tuple(
-            ss_timestamps
-        )
+        timestamp_outfile_tuple = self._get_timestamp_outfile_tuple(ss_timestamps)
         self._generate_screenshots(timestamp_outfile_tuple)
 
         console.print("Finished taking screenshots!\n", style="sea_green3")
@@ -282,16 +278,12 @@ class GGBotScreenshotManager:
             "data_images": "",
         }
         for outfile in timestamp_outfile_tuple:
-            images_data[
-                "data_images"
-            ] = f'{outfile[1]}\n{images_data["data_images"]}'
+            images_data["data_images"] = f'{outfile[1]}\n{images_data["data_images"]}'
         return images_data
 
     def _upload_screenshots(self, timestamp_outfile_tuple: List[Tuple]) -> bool:
         images_data = self._get_init_images_data(timestamp_outfile_tuple)
-        logging.info(
-            "[Screenshots] Starting to upload screenshots to image hosts."
-        )
+        logging.info("[Screenshots] Starting to upload screenshots to image hosts.")
         console.print(
             f"Image host order: [chartreuse1]{' [bold blue]:arrow_right:[/bold blue] '.join(self.image_host_manager.image_hosts)}[/chartreuse1]",
             style="Bold Blue",
@@ -300,29 +292,25 @@ class GGBotScreenshotManager:
         for tuple_item in track(
             timestamp_outfile_tuple, description="Uploading screenshots..."
         ):
-            status: GGBotImageUploadStatus = (
-                self.image_host_manager.upload_screenshots(
-                    image_path=tuple_item[1]
-                )
+            status: GGBotImageUploadStatus = self.image_host_manager.upload_screenshots(
+                image_path=tuple_item[1]
             )
             if status.status:
                 successfully_uploaded_image_count += 1
-                images_data[
-                    "bbcode_images"
-                ] = f'{status.bb_code_medium_thumb} {images_data["bbcode_images"]}'
-                images_data[
-                    "bbcode_images_nothumb"
-                ] = f'{status.bb_code_medium} {images_data["bbcode_images_nothumb"]}'
-                images_data[
-                    "bbcode_thumb_nothumb"
-                ] = f'{status.bb_code_thumb} {images_data["bbcode_thumb_nothumb"]}'
-                images_data[
-                    "url_images"
-                ] = f'{status.image_url}\n{images_data["url_images"]}'
+                images_data["bbcode_images"] = (
+                    f'{status.bb_code_medium_thumb} {images_data["bbcode_images"]}'
+                )
+                images_data["bbcode_images_nothumb"] = (
+                    f'{status.bb_code_medium} {images_data["bbcode_images_nothumb"]}'
+                )
+                images_data["bbcode_thumb_nothumb"] = (
+                    f'{status.bb_code_thumb} {images_data["bbcode_thumb_nothumb"]}'
+                )
+                images_data["url_images"] = (
+                    f'{status.image_url}\n{images_data["url_images"]}'
+                )
 
-        logging.info(
-            "[Screenshots] Uploaded screenshots. Saving urls and bbcodes..."
-        )
+        logging.info("[Screenshots] Uploaded screenshots. Saving urls and bbcodes...")
         self._save_screenshot_upload_data(images_data)
 
         if len(timestamp_outfile_tuple) == successfully_uploaded_image_count:

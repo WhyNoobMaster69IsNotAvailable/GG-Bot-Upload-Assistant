@@ -26,7 +26,7 @@ from rich.prompt import Prompt
 from rich.table import Table
 
 from modules.config import UploadAssistantConfig
-from utilities.utils import write_file_contents_to_log_as_debug
+from utilities.utils import GenericUtils
 
 console = Console()
 
@@ -34,9 +34,7 @@ console = Console()
 def bdinfo_validate_bdinfo_script_for_bare_metal(bdinfo_script):
     # Verify that the bdinfo script exists only when executed on bare metal / VM instead of container
     # The containerized version has bdinfo packed inside.
-    if not UploadAssistantConfig().CONTAINERIZED and not os.path.isfile(
-        bdinfo_script
-    ):
+    if not UploadAssistantConfig().CONTAINERIZED and not os.path.isfile(bdinfo_script):
         logging.critical(
             "[BDInfoUtils] You've specified the '-disc' arg but have not supplied a valid bdinfo script path in config.env"
         )
@@ -88,7 +86,7 @@ def bdinfo_get_video_codec_from_bdinfo(bdinfo):
                     f"[BDInfoUtils] Adding proper HDR Format `{hdr}` to torrent info"
                 )
     logging.info(
-        f"[BDInfoUtils] `video_codec` identifed from bdinfo as {bdinfo['video'][0]['codec']}"
+        f"[BDInfoUtils] `video_codec` identified from bdinfo as {bdinfo['video'][0]['codec']}"
     )
     # video codec is taken from the first track
     return dv, hdr, bdinfo["video"][0]["codec"]
@@ -105,13 +103,13 @@ def bdinfo_get_audio_codec_from_bdinfo(bdinfo, audio_codec_dict):
     for audio_track in bdinfo["audio"]:
         if "atmos" in audio_track and len(audio_track["atmos"]) != 0:
             logging.info(
-                f"[BDInfoUtils] `atmos` identifed from bdinfo as {audio_track['atmos']}"
+                f"[BDInfoUtils] `atmos` identified from bdinfo as {audio_track['atmos']}"
             )
             atmos = "Atmos"
             break
 
     logging.info(
-        f"[BDInfoUtils] `audio_codec` identifed from bdinfo as {bdinfo['audio'][0]['codec']}"
+        f"[BDInfoUtils] `audio_codec` identified from bdinfo as {bdinfo['audio'][0]['codec']}"
     )
     for key in audio_codec_dict.keys():
         if str(bdinfo["audio"][0]["codec"].strip()) == key:
@@ -139,7 +137,7 @@ def bdinfo_get_audio_channels_from_bdinfo(bdinfo):
         elif int(audio_track["channels"][0:1]) > int(audio_channel[0:1]):
             audio_channel = audio_track["channels"]
     logging.info(
-        f"[BDInfoUtils] `audio_channels` identifed from bdinfo as {audio_channel}"
+        f"[BDInfoUtils] `audio_channels` identified from bdinfo as {audio_channel}"
     )
     return audio_channel
 
@@ -159,17 +157,13 @@ def bdinfo_get_largest_playlist(bdinfo_script, auto_mode, upload_media):
 
     bdinfo_output_split = str(
         " ".join(
-            str(
-                subprocess.check_output([bdinfo_script, upload_media, "-l"])
-            ).split()
+            str(subprocess.check_output([bdinfo_script, upload_media, "-l"])).split()
         )
     ).split(" ")
     logging.debug(
         f"[BDInfoUtils] BDInfo output split from of list command: ---{bdinfo_output_split}--- "
     )
-    all_mpls_playlists = re.findall(
-        r"\d\d\d\d\d\.MPLS", str(bdinfo_output_split)
-    )
+    all_mpls_playlists = re.findall(r"\d\d\d\d\d\.MPLS", str(bdinfo_output_split))
 
     dict_of_playlist_length_size = {}
     dict_of_playlist_info_list = []  # list of dict
@@ -177,9 +171,7 @@ def bdinfo_get_largest_playlist(bdinfo_script, auto_mode, upload_media):
     for index, mpls_playlist in enumerate(bdinfo_output_split):
         if mpls_playlist in all_mpls_playlists:
             playlist_details = {}
-            playlist_details["no"] = bdinfo_output_split[index - 2].replace(
-                "\\n", ""
-            )
+            playlist_details["no"] = bdinfo_output_split[index - 2].replace("\\n", "")
             playlist_details["group"] = bdinfo_output_split[index - 1]
             playlist_details["file"] = bdinfo_output_split[index]
             playlist_details["length"] = bdinfo_output_split[index + 1]
@@ -206,16 +198,10 @@ def bdinfo_get_largest_playlist(bdinfo_script, auto_mode, upload_media):
         bdinfo_list_table = Table(
             box=box.SQUARE, title="BDInfo Playlists", title_style="bold #be58bf"
         )
-        bdinfo_list_table.add_column(
-            "Playlist #", justify="center", style="#38ACEC"
-        )
+        bdinfo_list_table.add_column("Playlist #", justify="center", style="#38ACEC")
         bdinfo_list_table.add_column("Group", justify="center", style="#38ACEC")
-        bdinfo_list_table.add_column(
-            "Playlist File", justify="center", style="#38ACEC"
-        )
-        bdinfo_list_table.add_column(
-            "Duration", justify="center", style="#38ACEC"
-        )
+        bdinfo_list_table.add_column("Playlist File", justify="center", style="#38ACEC")
+        bdinfo_list_table.add_column("Duration", justify="center", style="#38ACEC")
         bdinfo_list_table.add_column(
             "Estimated Bytes", justify="center", style="#38ACEC"
         )
@@ -261,9 +247,7 @@ def bdinfo_get_largest_playlist(bdinfo_script, auto_mode, upload_media):
     else:
         largest_playlist_value = max(dict_of_playlist_length_size.values())
         largest_playlist = list(dict_of_playlist_length_size.keys())[
-            list(dict_of_playlist_length_size.values()).index(
-                largest_playlist_value
-            )
+            list(dict_of_playlist_length_size.values()).index(largest_playlist_value)
         ]
         logging.info(
             f"[BDInfoUtils] Largest playlist obtained from bluray disc: {largest_playlist}"
@@ -307,7 +291,7 @@ def bdinfo_generate_and_parse_bdinfo(bdinfo_script, torrent_info, debug):
         logging.debug(
             "[BDInfoUtils] ::::::::::::::::::::::::::::: Dumping the BDInfo Quick Summary :::::::::::::::::::::::::::::"
         )
-        write_file_contents_to_log_as_debug(torrent_info["mediainfo"])
+        GenericUtils.write_file_contents_to_log_as_debug(torrent_info["mediainfo"])
     return parse_bdinfo(torrent_info["mediainfo"])
 
 
@@ -350,24 +334,18 @@ def parse_bdinfo(bdinfo_location):
         lines = file_contents.readlines()
         for line in lines:
             line = line.strip()
-            line = (
-                line.replace("*", "").strip() if line.startswith("*") else line
-            )
+            line = line.replace("*", "").strip() if line.startswith("*") else line
             # Playlist: 00001.MPLS              ==> 00001.MPLS
             if line.startswith("Playlist:"):
                 bdinfo["playlist"] = line.split(":", 1)[1].strip()
             # Disc Size: 58,624,087,121 bytes   ==> 54.597935752011836
             elif line.startswith("Disc Size:"):
-                size = (
-                    line.split(":", 1)[1].replace("bytes", "").replace(",", "")
-                )
+                size = line.split(":", 1)[1].replace("bytes", "").replace(",", "")
                 size = float(size) / float(1 << 30)
                 bdinfo["size"] = size
             # Length: 1:37:17.831               ==> 1:37:17
             elif line.startswith("Length:"):
-                bdinfo["length"] = (
-                    line.split(":", 1)[1].split(".", 1)[0].strip()
-                )
+                bdinfo["length"] = line.split(":", 1)[1].split(".", 1)[0].strip()
             elif line.startswith("Video:"):
                 """
                 video_components: examples [video_components_dict is the mapping of these components and their indexes]
@@ -390,9 +368,7 @@ def parse_bdinfo(bdinfo_location):
                 video_components = line.split(":", 1)[1].split("/")
                 video_metadata = {}
                 for index, component in enumerate(video_components):
-                    video_metadata[
-                        video_components_dict[index]
-                    ] = component.strip()
+                    video_metadata[video_components_dict[index]] = component.strip()
                 if "HEVC" in video_metadata["codec"]:
                     video_metadata["codec"] = "HEVC"
                 elif "AVC" in video_metadata["codec"]:
@@ -429,9 +405,7 @@ def parse_bdinfo(bdinfo_location):
                         audio_metadata["atmos"] = codec_split[1].strip()
                         component = codec_split[0].strip()
 
-                    audio_metadata[
-                        audio_components_dict[index]
-                    ] = component.strip()
+                    audio_metadata[audio_components_dict[index]] = component.strip()
 
                 bdinfo["audio"].append(audio_metadata)
             # Disc Title: Venom: Let There Be Carnage - 4K Ultra HD

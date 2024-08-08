@@ -5,10 +5,10 @@ from pathlib import Path
 
 import pytest
 
-import utilities.utils as utils
 from modules.custom_actions.spd_actions import update_torrent_info_hash
 from modules.torrent_generator.torf_generator import GGBOTTorrent
 from tests.test_utilities import TestUtils
+from utilities.utils import GenericUtils
 
 working_folder = Path(__file__).resolve().parent.parent.parent.parent
 temp_working_dir = "/tests/working_folder"
@@ -30,12 +30,12 @@ def run_around_test():
     if Path(folder).is_dir():
         TestUtils.clean_up(folder)
 
-    Path(f"{folder}/temp_upload/{utils.get_hash('some_name')}").mkdir(
+    Path(f"{folder}/temp_upload/{GenericUtils.get_hash('some_name')}").mkdir(
         parents=True, exist_ok=True
     )
     shutil.copy(
         f"{working_folder}/tests/resources/torrent/SPD-atorrent.torrent",
-        f"{folder}/temp_upload/{utils.get_hash('some_name')}/SPD-atorrent.torrent",
+        f"{folder}/temp_upload/{GenericUtils.get_hash('some_name')}/SPD-atorrent.torrent",
     )
     yield
     TestUtils.clean_up(folder)
@@ -43,10 +43,10 @@ def run_around_test():
 
 def test_update_torrent_info_hash_no_torrent_file():
     os.remove(
-        f"{working_folder}{temp_working_dir}/temp_upload/{utils.get_hash('some_name')}/SPD-atorrent.torrent"
+        f"{working_folder}{temp_working_dir}/temp_upload/{GenericUtils.get_hash('some_name')}/SPD-atorrent.torrent"
     )
     update_torrent_info_hash(
-        {"working_folder": utils.get_hash("some_name")},
+        {"working_folder": GenericUtils.get_hash("some_name")},
         {},
         {},
         f"{working_folder}{temp_working_dir}",
@@ -55,7 +55,7 @@ def test_update_torrent_info_hash_no_torrent_file():
     spd_present = bkp_spd_present = False
     spd_file = bkp_spd_file = None
     for file in glob.glob(
-        f"{working_folder}{temp_working_dir}/temp_upload/{utils.get_hash('some_name')}"
+        f"{working_folder}{temp_working_dir}/temp_upload/{GenericUtils.get_hash('some_name')}"
         + r"/*.torrent"
     ):
         if "/SPD-atorrent.torrent" in file:
@@ -70,7 +70,7 @@ def test_update_torrent_info_hash_no_torrent_file():
 
 def test_update_torrent_info_hash():
     update_torrent_info_hash(
-        {"working_folder": utils.get_hash("some_name")},
+        {"working_folder": GenericUtils.get_hash("some_name")},
         {},
         {},
         f"{working_folder}{temp_working_dir}",
@@ -79,7 +79,7 @@ def test_update_torrent_info_hash():
     spd_present = bkp_spd_present = False
     spd_file = bkp_spd_file = None
     for file in glob.glob(
-        f"{working_folder}{temp_working_dir}/temp_upload/{utils.get_hash('some_name')}"
+        f"{working_folder}{temp_working_dir}/temp_upload/{GenericUtils.get_hash('some_name')}"
         + r"/*.torrent"
     ):
         if "/SPD-atorrent.torrent" in file:
