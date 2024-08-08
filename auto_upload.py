@@ -46,7 +46,7 @@ import utilities.utils_basic as basic_utilities
 import utilities.utils_bdinfo as bdinfo_utilities
 import utilities.utils_dupes as dupe_utilities
 import utilities.utils_metadata as metadata_utilities
-import utilities.utils_miscellaneous as miscellaneous_utilities
+from utilities.utils_miscellaneous import MiscellaneousUtils
 import utilities.utils_translation as translation_utilities
 from modules.config import UploadAssistantConfig, TrackerConfig
 from modules.constants import *
@@ -397,7 +397,7 @@ def identify_type_and_basic_info(full_path, guess_it_result):
 
     torrent_info["title"] = guess_it_result["title"]
     if (
-        "year" in guess_it_result
+            "year" in guess_it_result
     ):  # Most TV Shows don't have the year included in the filename
         torrent_info["year"] = str(guess_it_result["year"])
 
@@ -608,10 +608,10 @@ def identify_type_and_basic_info(full_path, guess_it_result):
             "[Main] Full Disk Upload. Setting bdinfo summary as mediainfo summary"
         )
         with open(
-            MEDIAINFO_FILE_PATH.format(
-                base_path=working_folder,
-                sub_folder=torrent_info["working_folder"],
-            ),
+                MEDIAINFO_FILE_PATH.format(
+                    base_path=working_folder,
+                    sub_folder=torrent_info["working_folder"],
+                ),
         ) as summary:
             bdInfo_summary = summary.read()
             torrent_info["mediainfo_summary"] = bdInfo_summary
@@ -631,7 +631,7 @@ def identify_type_and_basic_info(full_path, guess_it_result):
         torrent_info["mediainfo_summary"] = mediainfo_summary
         if tmdb != "0":
             # we will get movie/12345 or tv/12345 => we only need 12345 part.
-            tmdb = tmdb[tmdb.find("/") + 1 :] if tmdb.find("/") >= 0 else tmdb
+            tmdb = tmdb[tmdb.find("/") + 1:] if tmdb.find("/") >= 0 else tmdb
             args.tmdb = [
                 tmdb
             ]  # saving this to args, so that this value will be used in the `fill_database_ids` method
@@ -838,7 +838,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     if "source_type" not in torrent_info:
         torrent_info[
             "source_type"
-        ] = miscellaneous_utilities.miscellaneous_identify_source_type(
+        ] = MiscellaneousUtils.identify_source_type(
             torrent_info["raw_file_name"], auto_mode, torrent_info["source"]
         )
 
@@ -848,7 +848,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
         (
             torrent_info["web_source"],
             torrent_info["web_source_name"],
-        ) = miscellaneous_utilities.miscellaneous_identify_web_streaming_source(
+        ) = MiscellaneousUtils.identify_web_streaming_source(
             STREAMING_SERVICES_MAP.format(base_path=working_folder),
             STREAMING_SERVICES_REVERSE_MAP.format(base_path=working_folder),
             torrent_info["raw_file_name"],
@@ -862,7 +862,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     # repacks
     torrent_info[
         "repack"
-    ] = miscellaneous_utilities.miscellaneous_identify_repacks(
+    ] = MiscellaneousUtils.identify_repacks(
         torrent_info["raw_file_name"]
     )
 
@@ -870,7 +870,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     if torrent_info["source_type"] == "bluray_disc":
         torrent_info[
             "bluray_disc_type"
-        ] = miscellaneous_utilities.miscellaneous_identify_bluray_disc_type(
+        ] = MiscellaneousUtils.identify_bluray_disc_type(
             torrent_info["screen_size"], torrent_info["upload_media"]
         )
 
@@ -920,9 +920,9 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
         # Dolby vision (filename detection)
         # we only need to do this if user is having an older version of mediainfo, which can't detect dv
         if (
-            "dv" not in torrent_info
-            or torrent_info["dv"] is None
-            or len(torrent_info["dv"]) < 1
+                "dv" not in torrent_info
+                or torrent_info["dv"] is None
+                or len(torrent_info["dv"]) < 1
         ):
             if any(x == word for x in ["dv", "dovi"]):
                 logging.info("Detected Dolby Vision from the filename")
@@ -930,13 +930,13 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
 
     # trying to check whether Do-Vi exists in the title, again needed only for older versions of mediainfo
     if (
-        "dv" not in torrent_info
-        or torrent_info["dv"] is None
-        or len(torrent_info["dv"]) < 1
+            "dv" not in torrent_info
+            or torrent_info["dv"] is None
+            or len(torrent_info["dv"]) < 1
     ):
         if (
-            "do" in hdr_hybrid_remux_keyword_search
-            and "vi" in hdr_hybrid_remux_keyword_search
+                "do" in hdr_hybrid_remux_keyword_search
+                and "vi" in hdr_hybrid_remux_keyword_search
         ):
             torrent_info["dv"] = "DV"
             logging.info(
@@ -947,7 +947,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     # https://github.com/Radarr/Radarr/blob/5799b3dc4724dcc6f5f016e8ce4f57cc1939682b/src/NzbDrone.Core/Parser/Parser.cs#L21
     torrent_info[
         "edition"
-    ] = miscellaneous_utilities.miscellaneous_identify_bluray_edition(
+    ] = MiscellaneousUtils.identify_bluray_edition(
         torrent_info["upload_media"]
     )
 
@@ -959,7 +959,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
         (
             scene,
             release_group,
-        ) = miscellaneous_utilities.miscellaneous_perform_scene_group_capitalization(
+        ) = MiscellaneousUtils.perform_scene_group_capitalization(
             SCENE_GROUPS_MAP.format(base_path=working_folder), torrent_info
         )
         torrent_info["release_group"] = release_group
@@ -981,7 +981,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
         dual,
         multi,
         commentary,
-    ) = miscellaneous_utilities.fill_dual_multi_and_commentary(
+    ) = MiscellaneousUtils.fill_dual_multi_and_commentary(
         original_language, media_info_result.audio_tracks
     )
     torrent_info["dualaudio"] = dual
@@ -992,7 +992,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     (
         torrent_info["language_str"],
         torrent_info["language_str_if_foreign"],
-    ) = miscellaneous_utilities.get_upload_original_language_title(
+    ) = MiscellaneousUtils.get_upload_original_language_title(
         torrent_info["tmdb_metadata"]
     )
 
@@ -1005,13 +1005,13 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     # Video bit-depth information
     torrent_info[
         "bit_depth"
-    ] = miscellaneous_utilities.miscellaneous_get_bit_depth(
+    ] = MiscellaneousUtils.get_bit_depth(
         media_info_result.video_tracks[0]
     )
     # Video bit-depth information
 
     # Detecting Anamorphic Video
-    miscellaneous_utilities.detect_anamorphic_video_and_pixel_ratio(
+    MiscellaneousUtils.detect_anamorphic_video_and_pixel_ratio(
         media_info_result.video_tracks[0]
     )
     # Detecting Anamorphic Video
@@ -1073,7 +1073,7 @@ def upload_to_site(upload_to, tracker_api_key):
     if config["technical_jargons"]["authentication_mode"] == "API_KEY":
         pass  # headers = None
     elif (
-        config["technical_jargons"]["authentication_mode"] == "API_KEY_PAYLOAD"
+            config["technical_jargons"]["authentication_mode"] == "API_KEY_PAYLOAD"
     ):
         # api key needs to be added in payload. the key in payload for api key can be obtained from `auth_payload_key`
         payload[
@@ -1182,7 +1182,7 @@ def upload_to_site(upload_to, tracker_api_key):
                     payload[
                         f"{key}[]"
                         if config["technical_jargons"]["payload_type"]
-                        == "MULTI-PART"
+                           == "MULTI-PART"
                         else key
                     ] = screenshot_array
                     logging.debug(
@@ -1379,8 +1379,8 @@ def upload_to_site(upload_to, tracker_api_key):
                     )
             elif "status" in response.json():
                 if (
-                    str(response.json()["status"]).lower() == "true"
-                    or str(response.json()["status"]).lower() == "success"
+                        str(response.json()["status"]).lower() == "true"
+                        or str(response.json()["status"]).lower() == "success"
                 ):
                     logging.info(
                         "[TrackerUpload] Upload to {} was a success!".format(
@@ -1582,9 +1582,9 @@ if upload_assistant_config.CONTAINERIZED and upload_assistant_config.BD_SUPPORT:
     bdinfo_script = "bdinfocli"
 
 if (
-    args.disc
-    and upload_assistant_config.CONTAINERIZED
-    and not upload_assistant_config.BD_SUPPORT
+        args.disc
+        and upload_assistant_config.CONTAINERIZED
+        and not upload_assistant_config.BD_SUPPORT
 ):
     logging.fatal(
         "[Main] User tried to upload Full Disk from an unsupported image!. Stopping upload process."
@@ -1716,14 +1716,14 @@ if not auto_mode:
 # if one of these "assert/quit" statements get triggered, then it will quit the entire script instead of just moving on to the next file in the list 'upload_queue'
 # ---------- Batch mode prep ---------- #
 if not utils.validate_batch_mode(
-    batch_mode=args.batch,
-    path=args.path,
-    metadata_ids={
-        "tmdb": args.tmdb,
-        "imdb": args.imdb,
-        "tvmaze": args.tvmaze,
-        "tvdb": args.tvdb,
-    },
+        batch_mode=args.batch,
+        path=args.path,
+        metadata_ids={
+            "tmdb": args.tmdb,
+            "imdb": args.imdb,
+            "tvmaze": args.tvmaze,
+            "tvdb": args.tvdb,
+        },
 ):
     sys.exit()
 
@@ -1788,10 +1788,10 @@ for file in upload_queue:
     # -------- Basic info --------
     # So now we can start collecting info about the file/folder that was supplied to us (Step 1)
     if (
-        identify_type_and_basic_info(
-            torrent_info["upload_media"], guess_it_result
-        )
-        == "skip_to_next_file"
+            identify_type_and_basic_info(
+                torrent_info["upload_media"], guess_it_result
+            )
+            == "skip_to_next_file"
     ):
         # If there is an issue with the file & we can't upload we use this check to skip the current file & move on
         # to the next (if exists)
@@ -1856,7 +1856,7 @@ for file in upload_queue:
         torrent_info["edition"] = user_input_edition
 
     if not auto_mode and Confirm.ask(
-        "Do you want to add custom texts to torrent description?", default=False
+            "Do you want to add custom texts to torrent description?", default=False
     ):
         logging.debug(
             "[Main] User decided to add custom text to torrent description. Handing control to custom_user_input module"
@@ -1873,9 +1873,9 @@ for file in upload_queue:
     # This releases is sourced from `web_source_name`
     # TODO: for now we are adding this only if user has not provided any custom descriptions
     if (
-        "web_source_name" in torrent_info
-        and torrent_info["web_source_name"] is not None
-        and "custom_user_inputs" not in torrent_info
+            "web_source_name" in torrent_info
+            and torrent_info["web_source_name"] is not None
+            and "custom_user_inputs" not in torrent_info
     ):
         torrent_info["custom_user_inputs"] = add_item_to_custom_texts(
             CUSTOM_TEXT_COMPONENTS.format(base_path=working_folder),
@@ -2011,8 +2011,8 @@ for file in upload_queue:
 
         # checking for banned groups. If this group is banned in this tracker, then we stop
         if (
-            "banned_groups" in config
-            and torrent_info["release_group"] in config["banned_groups"]
+                "banned_groups" in config
+                and torrent_info["release_group"] in config["banned_groups"]
         ):
             torrent_info[f"{tracker}_upload_status"] = False
             logging.fatal(
@@ -2042,7 +2042,7 @@ for file in upload_queue:
         bbcode_line_break = config["bbcode_line_break"]
 
         # -------- Add custom descriptions to description.txt --------
-        utils.write_cutsom_user_inputs_to_description(
+        utils.write_custom_user_inputs_to_description(
             torrent_info=torrent_info,
             description_file_path=DESCRIPTION_FILE_PATH.format(
                 base_path=working_folder,
@@ -2087,8 +2087,8 @@ for file in upload_queue:
         # dupe check need not be performed if user provided only one tracker.
         # in cases where only one tracker is provided, dupe check will be performed prior to taking screenshots.
         if (
-            upload_assistant_config.CHECK_FOR_DUPES
-            and len(upload_to_trackers) > 1
+                upload_assistant_config.CHECK_FOR_DUPES
+                and len(upload_to_trackers) > 1
         ):
             console.line(count=2)
             console.rule(
@@ -2127,9 +2127,9 @@ for file in upload_queue:
         # If the type is a movie, then we only include the `raw_video_file` for torrent file creation.
         # If type is an episode, then we'll create torrent file for the the `upload_media` which could be an single episode or a season folder
         if (
-            args.allow_multiple_files == False
-            and torrent_info["type"] == "movie"
-            and "raw_video_file" in torrent_info
+                args.allow_multiple_files == False
+                and torrent_info["type"] == "movie"
+                and "raw_video_file" in torrent_info
         ):
             torrent_media = torrent_info["raw_video_file"]
         else:
@@ -2153,15 +2153,15 @@ for file in upload_queue:
         # This function takes the info we have the dict torrent_info and associates with the right key/values needed for us to use X trackers API
         # if for some reason the upload cannot be performed to the specific tracker, the method returns "STOP"
         if (
-            translation_utilities.choose_right_tracker_keys(
-                config,
-                tracker_settings,
-                tracker,
-                torrent_info,
-                args,
-                working_folder,
-            )
-            == "STOP"
+                translation_utilities.choose_right_tracker_keys(
+                    config,
+                    tracker_settings,
+                    tracker,
+                    torrent_info,
+                    args,
+                    working_folder,
+                )
+                == "STOP"
         ):
             upload_report[tracker]["upload"] = "Failed"
             upload_report[tracker][
@@ -2178,8 +2178,8 @@ for file in upload_queue:
 
         # once the uploader finishes filling all the details as per the template, users can override values with custom actions.
         if (
-            "custom_actions" in config["technical_jargons"]
-            and len(config["technical_jargons"]["custom_actions"]) > 0
+                "custom_actions" in config["technical_jargons"]
+                and len(config["technical_jargons"]["custom_actions"]) > 0
         ):
             try:
                 for action in config["technical_jargons"]["custom_actions"]:
@@ -2233,8 +2233,8 @@ for file in upload_queue:
             upload_report[tracker]["post_message"] = "Upload Failed"
 
         if (
-            torrent_info[f"{tracker}_upload_status"] is True
-            and "success_processor" in config["technical_jargons"]
+                torrent_info[f"{tracker}_upload_status"] is True
+                and "success_processor" in config["technical_jargons"]
         ):
             logging.info(
                 f"[Main] Upload to tracker {tracker} is successful and success processor is configured"
@@ -2262,7 +2262,7 @@ for file in upload_queue:
         tracker_settings_table.add_column("Value", justify="left")
 
         for tracker_settings_key, tracker_settings_value in sorted(
-            tracker_settings.items()
+                tracker_settings.items()
         ):
             # Add torrent_info data to each row
             tracker_settings_table.add_row(

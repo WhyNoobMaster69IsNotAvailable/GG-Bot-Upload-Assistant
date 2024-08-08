@@ -20,7 +20,7 @@ import logging
 import requests
 from rich.console import Console
 
-from utilities.utils import write_cutsom_user_inputs_to_description
+from utilities.utils import write_custom_user_inputs_to_description
 from modules.config import TrackerConfig
 
 console = Console()
@@ -503,7 +503,7 @@ def rewrite_description(torrent_info, tracker_settings, tracker_config):
         "custom_user_inputs" in torrent_info
         and torrent_info["custom_user_inputs"] is not None
     ):
-        write_cutsom_user_inputs_to_description(
+        write_custom_user_inputs_to_description(
             torrent_info=torrent_info,
             description_file_path=gpw_description_file,
             config=tracker_config,

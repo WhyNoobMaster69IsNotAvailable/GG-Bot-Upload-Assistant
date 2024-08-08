@@ -58,7 +58,7 @@ def get_hash(string):
     return hashed.hexdigest()
 
 
-def write_cutsom_user_inputs_to_description(
+def write_custom_user_inputs_to_description(
     torrent_info,
     description_file_path,
     config,
@@ -71,8 +71,9 @@ def write_cutsom_user_inputs_to_description(
         "custom_user_inputs" in torrent_info
         and torrent_info["custom_user_inputs"] is not None
     ):
-        # If the user is uploading to multiple sites we don't want to keep appending to the same description.txt file so remove it each time and write clean bbcode to it
-        #  (Note, this doesn't delete bbcode_images.txt so you aren't uploading the same images multiple times)
+        # If the user is uploading to multiple sites we don't want to keep appending to the same description.txt file
+        # so remove it each time and write clean bbcode to it (Note, this doesn't delete bbcode_images.txt so you
+        # aren't uploading the same images multiple times)
         if os.path.isfile(description_file_path):
             os.remove(description_file_path)
 
@@ -82,8 +83,9 @@ def write_cutsom_user_inputs_to_description(
             logging.debug(
                 "[CustomUserInputs] User has provided custom inputs for torrent description"
             )
-            # here we iterate through all the custom inputs provided by the user
-            # then we check whether this component is supported by the target tracker. If tracker supports it then the `key` will be present in the tracker config.
+            # here we iterate through all the custom inputs provided by the user then we check whether this component
+            # is supported by the target tracker. If tracker supports it then the `key` will be present in the
+            # tracker config.
             with open(description_file_path, "a") as description:
                 description_components = config["description_components"]
                 logging.debug(

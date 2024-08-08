@@ -42,7 +42,7 @@ from rich.traceback import install
 import utilities.utils as utils
 import utilities.utils_basic as basic_utilities
 import utilities.utils_metadata as metadata_utilities
-import utilities.utils_miscellaneous as miscellaneous_utilities
+from utilities.utils_miscellaneous import MiscellaneousUtils
 import utilities.utils_translation as translation_utilities
 from modules.cache import CacheFactory, CacheVendor, Cache
 from modules.config import ReUploaderConfig, TrackerConfig
@@ -1168,7 +1168,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     if "source_type" not in torrent_info:
         torrent_info[
             "source_type"
-        ] = miscellaneous_utilities.miscellaneous_identify_source_type(
+        ] = MiscellaneousUtils.identify_source_type(
             torrent_info["raw_file_name"], auto_mode, torrent_info["source"]
         )
 
@@ -1178,7 +1178,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
         (
             torrent_info["web_source"],
             torrent_info["web_source_name"],
-        ) = miscellaneous_utilities.miscellaneous_identify_web_streaming_source(
+        ) = MiscellaneousUtils.identify_web_streaming_source(
             STREAMING_SERVICES_MAP.format(base_path=working_folder),
             STREAMING_SERVICES_REVERSE_MAP.format(base_path=working_folder),
             torrent_info["raw_file_name"],
@@ -1191,7 +1191,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     # repacks
     torrent_info[
         "repack"
-    ] = miscellaneous_utilities.miscellaneous_identify_repacks(
+    ] = MiscellaneousUtils.identify_repacks(
         torrent_info["raw_file_name"]
     )
 
@@ -1199,7 +1199,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     if torrent_info["source_type"] == "bluray_disc":
         torrent_info[
             "bluray_disc_type"
-        ] = miscellaneous_utilities.miscellaneous_identify_bluray_disc_type(
+        ] = MiscellaneousUtils.identify_bluray_disc_type(
             torrent_info["screen_size"], torrent_info["upload_media"]
         )
 
@@ -1274,7 +1274,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     # https://github.com/Radarr/Radarr/blob/5799b3dc4724dcc6f5f016e8ce4f57cc1939682b/src/NzbDrone.Core/Parser/Parser.cs#L21
     torrent_info[
         "edition"
-    ] = miscellaneous_utilities.miscellaneous_identify_bluray_edition(
+    ] = MiscellaneousUtils.identify_bluray_edition(
         torrent_info["upload_media"]
     )
 
@@ -1285,7 +1285,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
         (
             scene,
             release_group,
-        ) = miscellaneous_utilities.miscellaneous_perform_scene_group_capitalization(
+        ) = MiscellaneousUtils.perform_scene_group_capitalization(
             SCENE_GROUPS_MAP.format(base_path=working_folder), torrent_info
         )
         torrent_info["release_group"] = release_group
@@ -1307,7 +1307,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
         dual,
         multi,
         commentary,
-    ) = miscellaneous_utilities.fill_dual_multi_and_commentary(
+    ) = MiscellaneousUtils.fill_dual_multi_and_commentary(
         original_language, media_info_result.audio_tracks
     )
     torrent_info["dualaudio"] = dual
@@ -1318,7 +1318,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     (
         torrent_info["language_str"],
         torrent_info["language_str_if_foreign"],
-    ) = miscellaneous_utilities.get_upload_original_language_title(
+    ) = MiscellaneousUtils.get_upload_original_language_title(
         torrent_info["tmdb_metadata"]
     )
 
@@ -1332,13 +1332,13 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     # Video bit-depth information
     torrent_info[
         "bit_depth"
-    ] = miscellaneous_utilities.miscellaneous_get_bit_depth(
+    ] = MiscellaneousUtils.get_bit_depth(
         media_info_result.video_tracks[0]
     )
     # Video bit-depth information
 
     # Detecting Anamorphic Video
-    miscellaneous_utilities.detect_anamorphic_video_and_pixel_ratio(
+    MiscellaneousUtils.detect_anamorphic_video_and_pixel_ratio(
         media_info_result.video_tracks[0]
     )
     # Detecting Anamorphic Video

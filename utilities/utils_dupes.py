@@ -720,7 +720,7 @@ def search_for_dupes_api(
     )
     for onsite_title in list(existing_release_types.keys()):
         their_is_repack_or_proper = miscellaneous_identify_repacks(onsite_title)
-        # if we have a reapck
+        # if we have a repack
         if is_repack_or_proper is not None:
             if their_is_repack_or_proper is None:  # 1.a
                 logging.debug(

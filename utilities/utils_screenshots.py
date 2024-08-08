@@ -116,7 +116,7 @@ class GGBotScreenshotManager:
 
     def _skip_screenshot_generation(self) -> bool:
         # user has provided the `skip_screenshots` in the command line arguments.
-        # Hence we are going to skip taking screenshots
+        # Hence, we are going to skip taking screenshots
         logging.info(
             "[GGBotScreenshotManager::generate_screenshots] User has provided the `skip_screenshots` argument. "
             "Hence continuing without screenshots."

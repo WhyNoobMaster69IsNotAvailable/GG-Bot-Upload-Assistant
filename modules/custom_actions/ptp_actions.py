@@ -28,7 +28,7 @@ from rich.prompt import Prompt
 
 from utilities.utils import (
     prepare_headers_for_tracker,
-    write_cutsom_user_inputs_to_description,
+    write_custom_user_inputs_to_description,
 )
 from modules.config import PTPImgConfig, TrackerConfig
 from modules.tfa.tfa import get_totp_token
@@ -368,7 +368,7 @@ def rewrite_description(torrent_info, tracker_settings, tracker_config):
         "custom_user_inputs" in torrent_info
         and torrent_info["custom_user_inputs"] is not None
     ):
-        write_cutsom_user_inputs_to_description(
+        write_custom_user_inputs_to_description(
             torrent_info=torrent_info,
             description_file_path=ptp_description_file,
             config=tracker_config,
