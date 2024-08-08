@@ -15,8 +15,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from pathlib import Path
-import utilities.utils as utils
 
+from utilities.utils import GenericUtils
 
 working_folder = Path(__file__).resolve().parent.parent.parent.parent
 
@@ -28,31 +28,31 @@ def test_get_torrent_client_for_cross_seeding(mocker):
         return_value=mock_client,
     )
     mocker.patch("os.getenv", side_effect=__post_processing_cross_seed)
-    assert utils.get_torrent_client_if_needed() == mock_client
+    assert GenericUtils.get_torrent_client_if_needed() == mock_client
 
 
 def test_get_torrent_client_for_no_post_processing(mocker):
     mocker.patch("os.getenv", side_effect=__post_processing_no_post_processing)
-    assert utils.get_torrent_client_if_needed() == None
+    assert GenericUtils.get_torrent_client_if_needed() is None
 
 
 def test_get_torrent_client_for_watch_folder(mocker):
     mocker.patch("os.getenv", side_effect=__post_processing_watch_folder)
-    assert utils.get_torrent_client_if_needed() == None
+    assert GenericUtils.get_torrent_client_if_needed() is None
 
 
 def test_client_upload_movie_folder_with_translation_sad_path(mocker):
     torrent_info = {}
-    torrent_info[
-        "raw_file_name"
-    ] = "Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA"
-    torrent_info[
-        "raw_video_file"
-    ] = "/gg-bot-upload-assistant/files/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA.mkv"
-    torrent_info[
-        "upload_media"
-    ] = "/gg-bot-upload-assistant/files/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA/"
-    torrent_info[f"TRACKER_upload_status"] = True
+    torrent_info["raw_file_name"] = (
+        "Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA"
+    )
+    torrent_info["raw_video_file"] = (
+        "/gg-bot-upload-assistant/files/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA.mkv"
+    )
+    torrent_info["upload_media"] = (
+        "/gg-bot-upload-assistant/files/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA/"
+    )
+    torrent_info["TRACKER_upload_status"] = True
     torrent_info["type"] = "movie"
     torrent_info["working_folder"] = "test_working_folder/"
     tracker = "TRACKER"
@@ -63,25 +63,25 @@ def test_client_upload_movie_folder_with_translation_sad_path(mocker):
     )
     mock_client = mocker.patch("modules.torrent_client.TorrentClient")
     assert (
-        utils.perform_post_processing(
+        GenericUtils().perform_post_processing(
             torrent_info, mock_client, working_folder, tracker
         )
-        == False
+        is False
     )
 
 
 def test_invalid_processing_mode(mocker):
     torrent_info = {}
-    torrent_info[
-        "raw_file_name"
-    ] = "Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA"
-    torrent_info[
-        "raw_video_file"
-    ] = "/gg-bot-upload-assistant/files/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA.mkv"
-    torrent_info[
-        "upload_media"
-    ] = "/gg-bot-upload-assistant/files/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA/"
-    torrent_info[f"TRACKER_upload_status"] = True
+    torrent_info["raw_file_name"] = (
+        "Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA"
+    )
+    torrent_info["raw_video_file"] = (
+        "/gg-bot-upload-assistant/files/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA.mkv"
+    )
+    torrent_info["upload_media"] = (
+        "/gg-bot-upload-assistant/files/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA/"
+    )
+    torrent_info["TRACKER_upload_status"] = True
     torrent_info["type"] = "movie"
     torrent_info["working_folder"] = "test_working_folder/"
     tracker = "TRACKER"
@@ -89,25 +89,25 @@ def test_invalid_processing_mode(mocker):
     mocker.patch("os.getenv", side_effect=__invalid_processing_mode_side_effect)
     mock_client = mocker.patch("modules.torrent_client.TorrentClient")
     assert (
-        utils.perform_post_processing(
+        GenericUtils().perform_post_processing(
             torrent_info, mock_client, working_folder, tracker
         )
-        == False
+        is False
     )
 
 
 def test_no_client_upload(mocker):
     torrent_info = {}
-    torrent_info[
-        "raw_file_name"
-    ] = "Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA"
-    torrent_info[
-        "raw_video_file"
-    ] = "/gg-bot-upload-assistant/files/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA.mkv"
-    torrent_info[
-        "upload_media"
-    ] = "/gg-bot-upload-assistant/files/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA/"
-    torrent_info[f"TRACKER_upload_status"] = True
+    torrent_info["raw_file_name"] = (
+        "Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA"
+    )
+    torrent_info["raw_video_file"] = (
+        "/gg-bot-upload-assistant/files/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA.mkv"
+    )
+    torrent_info["upload_media"] = (
+        "/gg-bot-upload-assistant/files/Varathan.2018.1080p.Blu-ray.Remux.AVC.DTS-HD.MA.5.1-FAFDA/"
+    )
+    torrent_info["TRACKER_upload_status"] = True
     torrent_info["type"] = "movie"
     torrent_info["working_folder"] = "test_working_folder/"
     tracker = "TRACKER"
@@ -115,10 +115,10 @@ def test_no_client_upload(mocker):
     mocker.patch("os.getenv", side_effect=__no_cross_seed_side_effect)
     mock_client = mocker.patch("modules.torrent_client.TorrentClient")
     assert (
-        utils.perform_post_processing(
+        GenericUtils().perform_post_processing(
             torrent_info, mock_client, working_folder, tracker
         )
-        == False
+        is False
     )
 
 

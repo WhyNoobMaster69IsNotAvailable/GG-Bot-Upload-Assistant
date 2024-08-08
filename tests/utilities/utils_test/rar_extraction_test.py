@@ -18,8 +18,8 @@ import shutil
 import pytest
 
 from pathlib import Path
-import utilities.utils as utils
 
+from utilities.utils import GenericUtils
 
 working_folder = Path(__file__).resolve().parent.parent.parent.parent
 temp_working_dir = "/tests/working_folder"
@@ -57,17 +57,17 @@ def run_around_tests():
 
 def test_check_for_dir_and_extract_rars_file():
     file_path = "tests/working_folder/rar/data.rar"
-    assert utils.check_for_dir_and_extract_rars(file_path) == (True, file_path)
+    assert GenericUtils.check_for_dir_and_extract_rars(file_path) == (True, file_path)
 
 
 def test_check_for_dir_and_extract_rars_non_rar_folder():
     file_path = "tests/working_folder/media/"
-    assert utils.check_for_dir_and_extract_rars(file_path) == (True, file_path)
+    assert GenericUtils.check_for_dir_and_extract_rars(file_path) == (True, file_path)
 
 
 def test_check_for_dir_and_extract_rars_rar_folder():
     file_path = "tests/working_folder/rar/"
-    assert utils.check_for_dir_and_extract_rars(file_path) == (
+    assert GenericUtils.check_for_dir_and_extract_rars(file_path) == (
         True,
         "tests/working_folder/rar/something.mkv",
     )
@@ -76,4 +76,4 @@ def test_check_for_dir_and_extract_rars_rar_folder():
 def test_check_for_dir_and_extract_rars_no_rar_installed(mocker):
     file_path = "tests/working_folder/rar/"
     mocker.patch("os.path.isfile", return_value=False)
-    assert utils.check_for_dir_and_extract_rars(file_path) == (False, file_path)
+    assert GenericUtils.check_for_dir_and_extract_rars(file_path) == (False, file_path)

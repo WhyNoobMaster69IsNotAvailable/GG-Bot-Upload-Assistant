@@ -41,15 +41,36 @@ from rich.prompt import Confirm, Prompt
 from rich.table import Table
 from rich.traceback import install
 
-import utilities.utils as utils
 import utilities.utils_basic as basic_utilities
 import utilities.utils_bdinfo as bdinfo_utilities
 import utilities.utils_dupes as dupe_utilities
 import utilities.utils_metadata as metadata_utilities
+from modules.constants import (
+    COOKIES_DUMP_DIR,
+    ASSISTANT_LOG,
+    ASSISTANT_CONFIG,
+    SITE_TEMPLATES_DIR,
+    TRACKER_ACRONYMS,
+    TRACKER_API_KEYS,
+    ASSISTANT_SAMPLE_CONFIG,
+    BLURAY_REGIONS_MAP,
+    MEDIAINFO_FILE_PATH,
+    DESCRIPTION_FILE_PATH,
+    SCREENSHOTS_RESULT_FILE_PATH,
+    TEMPLATE_SCHEMA_LOCATION,
+    VALIDATED_SITE_TEMPLATES_DIR,
+    WORKING_DIR,
+    SCENE_GROUPS_MAP,
+    AUDIO_CODECS_MAP,
+    STREAMING_SERVICES_MAP,
+    STREAMING_SERVICES_REVERSE_MAP,
+    TAG_GROUPINGS,
+    CUSTOM_TEXT_COMPONENTS,
+)
+from utilities.utils import GenericUtils
 from utilities.utils_miscellaneous import MiscellaneousUtils
 import utilities.utils_translation as translation_utilities
 from modules.config import UploadAssistantConfig, TrackerConfig
-from modules.constants import *
 
 # Method that will search for dupes in trackers.
 from modules.template_schema_validator import TemplateSchemaValidator
@@ -118,7 +139,7 @@ acronym_to_tracker = json.load(
 )
 
 # the `prepare_tracker_api_keys_dict` prepares the api_keys_dict and also does mandatory property validations
-api_keys_dict = utils.prepare_and_validate_tracker_api_keys_dict(
+api_keys_dict = GenericUtils.prepare_and_validate_tracker_api_keys_dict(
     TRACKER_API_KEYS.format(base_path=working_folder)
 )
 
@@ -178,9 +199,7 @@ common_args.add_argument(
 
 # Less commonly used args (Not essential for most)
 uncommon_args = parser.add_argument_group("Less Common Arguments")
-uncommon_args.add_argument(
-    "-title", nargs=1, help="Custom title provided by the user"
-)
+uncommon_args.add_argument("-title", nargs=1, help="Custom title provided by the user")
 uncommon_args.add_argument(
     "-type", nargs=1, help="Use to manually specify 'movie' or 'tv'"
 )
@@ -397,7 +416,7 @@ def identify_type_and_basic_info(full_path, guess_it_result):
 
     torrent_info["title"] = guess_it_result["title"]
     if (
-            "year" in guess_it_result
+        "year" in guess_it_result
     ):  # Most TV Shows don't have the year included in the filename
         torrent_info["year"] = str(guess_it_result["year"])
 
@@ -410,7 +429,7 @@ def identify_type_and_basic_info(full_path, guess_it_result):
     # keys_we_need_torrent_info = ['screen_size', 'source', 'audio_channels']
     keys_we_need_torrent_info = ["screen_size", "source"]
 
-    if utils.has_user_provided_type(args.type):
+    if GenericUtils.has_user_provided_type(args.type):
         torrent_info["type"] = torrent_info["type"] = (
             "episode" if args.type[0] == "tv" else "movie"
         )
@@ -446,7 +465,7 @@ def identify_type_and_basic_info(full_path, guess_it_result):
         elif torrent_info["source"] == "TV":
             torrent_info["source"] = "SDTV"
 
-    torrent_info["release_group"] = utils.sanitize_release_group_from_guessit(
+    torrent_info["release_group"] = GenericUtils.sanitize_release_group_from_guessit(
         torrent_info
     )
 
@@ -480,9 +499,7 @@ def identify_type_and_basic_info(full_path, guess_it_result):
     if os.path.isdir(torrent_info["upload_media"]):
         # Add trailing forward slash if missing
         if not str(torrent_info["upload_media"]).endswith("/"):
-            torrent_info[
-                "upload_media"
-            ] = f'{str(torrent_info["upload_media"])}/'
+            torrent_info["upload_media"] = f'{str(torrent_info["upload_media"])}/'
 
         # the episode/file that we select will be stored under "raw_video_file" (full path + episode/file name)
 
@@ -492,9 +509,7 @@ def identify_type_and_basic_info(full_path, guess_it_result):
         # First check to see if we are uploading a 'raw bluray disc'
         if args.disc:
             # validating presence of bdinfo script for bare metal
-            bdinfo_utilities.bdinfo_validate_bdinfo_script_for_bare_metal(
-                bdinfo_script
-            )
+            bdinfo_utilities.bdinfo_validate_bdinfo_script_for_bare_metal(bdinfo_script)
             # validating presence of BDMV/STREAM/
             bdinfo_utilities.bdinfo_validate_presence_of_bdmv_stream(
                 torrent_info["upload_media"]
@@ -554,9 +569,7 @@ def identify_type_and_basic_info(full_path, guess_it_result):
         torrent_info["mediainfo"] = MEDIAINFO_FILE_PATH.format(
             base_path=working_folder, sub_folder=torrent_info["working_folder"]
         )
-        torrent_info[
-            "bdinfo"
-        ] = bdinfo_utilities.bdinfo_generate_and_parse_bdinfo(
+        torrent_info["bdinfo"] = bdinfo_utilities.bdinfo_generate_and_parse_bdinfo(
             bdinfo_script, torrent_info, args.debug
         )  # TODO handle non-happy paths
         logging.debug(
@@ -608,10 +621,10 @@ def identify_type_and_basic_info(full_path, guess_it_result):
             "[Main] Full Disk Upload. Setting bdinfo summary as mediainfo summary"
         )
         with open(
-                MEDIAINFO_FILE_PATH.format(
-                    base_path=working_folder,
-                    sub_folder=torrent_info["working_folder"],
-                ),
+            MEDIAINFO_FILE_PATH.format(
+                base_path=working_folder,
+                sub_folder=torrent_info["working_folder"],
+            ),
         ) as summary:
             bdInfo_summary = summary.read()
             torrent_info["mediainfo_summary"] = bdInfo_summary
@@ -625,13 +638,11 @@ def identify_type_and_basic_info(full_path, guess_it_result):
             imdb,
             _,
             torrent_info["subtitles"],
-        ) = basic_utilities.basic_get_mediainfo_summary(
-            media_info_result.to_data()
-        )
+        ) = basic_utilities.basic_get_mediainfo_summary(media_info_result.to_data())
         torrent_info["mediainfo_summary"] = mediainfo_summary
         if tmdb != "0":
             # we will get movie/12345 or tv/12345 => we only need 12345 part.
-            tmdb = tmdb[tmdb.find("/") + 1:] if tmdb.find("/") >= 0 else tmdb
+            tmdb = tmdb[tmdb.find("/") + 1 :] if tmdb.find("/") >= 0 else tmdb
             args.tmdb = [
                 tmdb
             ]  # saving this to args, so that this value will be used in the `fill_database_ids` method
@@ -777,9 +788,7 @@ def analyze_video_file(missing_value, media_info):
             torrent_info=torrent_info,
             is_disc=args.disc,
             auto_mode=auto_mode,
-            audio_codec_file_path=AUDIO_CODECS_MAP.format(
-                base_path=working_folder
-            ),
+            audio_codec_file_path=AUDIO_CODECS_MAP.format(base_path=working_folder),
             media_info_audio_track=media_info_audio_track,
             parse_me=parse_me,
             missing_value=missing_value,
@@ -818,9 +827,7 @@ def analyze_video_file(missing_value, media_info):
             logging.info(
                 "[BasicUtils] If `--force_pymediainfo` or `-fpm` is provided as argument, PyMediaInfo video_codec will be used, else regex extracted video_codec will be used"
             )
-        return (
-            pymediainfo_video_codec if args.force_pymediainfo else video_codec
-        )
+        return pymediainfo_video_codec if args.force_pymediainfo else video_codec
 
 
 def identify_miscellaneous_details(guess_it_result, file_to_parse):
@@ -836,9 +843,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     )
     # ------ Specific Source info ------ #
     if "source_type" not in torrent_info:
-        torrent_info[
-            "source_type"
-        ] = MiscellaneousUtils.identify_source_type(
+        torrent_info["source_type"] = MiscellaneousUtils.identify_source_type(
             torrent_info["raw_file_name"], auto_mode, torrent_info["source"]
         )
 
@@ -860,17 +865,13 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     # We simply use regex for this and will add any matches to the dict 'torrent_info', later when building the final title we add any matches (if they exist) into the title
 
     # repacks
-    torrent_info[
-        "repack"
-    ] = MiscellaneousUtils.identify_repacks(
+    torrent_info["repack"] = MiscellaneousUtils.identify_repacks(
         torrent_info["raw_file_name"]
     )
 
     # --- Bluray disc type --- #
     if torrent_info["source_type"] == "bluray_disc":
-        torrent_info[
-            "bluray_disc_type"
-        ] = MiscellaneousUtils.identify_bluray_disc_type(
+        torrent_info["bluray_disc_type"] = MiscellaneousUtils.identify_bluray_disc_type(
             torrent_info["screen_size"], torrent_info["upload_media"]
         )
 
@@ -920,9 +921,9 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
         # Dolby vision (filename detection)
         # we only need to do this if user is having an older version of mediainfo, which can't detect dv
         if (
-                "dv" not in torrent_info
-                or torrent_info["dv"] is None
-                or len(torrent_info["dv"]) < 1
+            "dv" not in torrent_info
+            or torrent_info["dv"] is None
+            or len(torrent_info["dv"]) < 1
         ):
             if any(x == word for x in ["dv", "dovi"]):
                 logging.info("Detected Dolby Vision from the filename")
@@ -930,13 +931,13 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
 
     # trying to check whether Do-Vi exists in the title, again needed only for older versions of mediainfo
     if (
-            "dv" not in torrent_info
-            or torrent_info["dv"] is None
-            or len(torrent_info["dv"]) < 1
+        "dv" not in torrent_info
+        or torrent_info["dv"] is None
+        or len(torrent_info["dv"]) < 1
     ):
         if (
-                "do" in hdr_hybrid_remux_keyword_search
-                and "vi" in hdr_hybrid_remux_keyword_search
+            "do" in hdr_hybrid_remux_keyword_search
+            and "vi" in hdr_hybrid_remux_keyword_search
         ):
             torrent_info["dv"] = "DV"
             logging.info(
@@ -945,9 +946,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
 
     # use regex (sourced and slightly modified from official radarr repo) to find torrent editions (Extended, Criterion, Theatrical, etc)
     # https://github.com/Radarr/Radarr/blob/5799b3dc4724dcc6f5f016e8ce4f57cc1939682b/src/NzbDrone.Core/Parser/Parser.cs#L21
-    torrent_info[
-        "edition"
-    ] = MiscellaneousUtils.identify_bluray_edition(
+    torrent_info["edition"] = MiscellaneousUtils.identify_bluray_edition(
         torrent_info["upload_media"]
     )
 
@@ -1003,9 +1002,7 @@ def identify_miscellaneous_details(guess_it_result, file_to_parse):
     # Video container information
 
     # Video bit-depth information
-    torrent_info[
-        "bit_depth"
-    ] = MiscellaneousUtils.get_bit_depth(
+    torrent_info["bit_depth"] = MiscellaneousUtils.get_bit_depth(
         media_info_result.video_tracks[0]
     )
     # Video bit-depth information
@@ -1072,13 +1069,9 @@ def upload_to_site(upload_to, tracker_api_key):
     headers = None
     if config["technical_jargons"]["authentication_mode"] == "API_KEY":
         pass  # headers = None
-    elif (
-            config["technical_jargons"]["authentication_mode"] == "API_KEY_PAYLOAD"
-    ):
+    elif config["technical_jargons"]["authentication_mode"] == "API_KEY_PAYLOAD":
         # api key needs to be added in payload. the key in payload for api key can be obtained from `auth_payload_key`
-        payload[
-            config["technical_jargons"]["auth_payload_key"]
-        ] = tracker_api_key
+        payload[config["technical_jargons"]["auth_payload_key"]] = tracker_api_key
     elif config["technical_jargons"]["authentication_mode"] == "BEARER":
         headers = {"Authorization": f"Bearer {tracker_api_key}"}
         logging.info(
@@ -1106,9 +1099,7 @@ def upload_to_site(upload_to, tracker_api_key):
                 f"[TrackerUpload] Header based authentication cannot be done without `header_key` for tracker {upload_to}."
             )
     elif config["technical_jargons"]["authentication_mode"] == "COOKIE":
-        logging.info(
-            "[TrackerUpload] User wants to use cookie based auth for tracker."
-        )
+        logging.info("[TrackerUpload] User wants to use cookie based auth for tracker.")
         if config["technical_jargons"]["cookie"]["provider"] == "custom_action":
             logging.info(
                 f'[TrackerUpload] Cookie Provider: [{config["technical_jargons"]["cookie"]["provider"]}] => [{config["technical_jargons"]["cookie"]["data"]}]'
@@ -1116,14 +1107,12 @@ def upload_to_site(upload_to, tracker_api_key):
 
             logging.info("[TrackerUpload] Loading custom action to get cookie")
             requests_orchestator = requests_orchestator.Session()
-            custom_action = utils.load_custom_actions(action)
+            custom_action = GenericUtils.load_custom_actions(action)
             cookiefile = custom_action(torrent_info, tracker_settings, config)
 
             logging.info("[TrackerUpload] Setting cookie to session")
             # here we are storing the session on the requests_orchestator object
-            requests_orchestator.cookies.update(
-                pickle.load(open(cookiefile, "rb"))
-            )
+            requests_orchestator.cookies.update(pickle.load(open(cookiefile, "rb")))
         else:
             # TODO add support for cookie based authentication
             logging.fatal(
@@ -1181,8 +1170,7 @@ def upload_to_site(upload_to, tracker_api_key):
                         screenshot_array.append(line.strip())
                     payload[
                         f"{key}[]"
-                        if config["technical_jargons"]["payload_type"]
-                           == "MULTI-PART"
+                        if config["technical_jargons"]["payload_type"] == "MULTI-PART"
                         else key
                     ] = screenshot_array
                     logging.debug(
@@ -1216,9 +1204,7 @@ def upload_to_site(upload_to, tracker_api_key):
         elif str(config[req_opt][key]) == "file|base64":
             # file encoded as base64 string
             if os.path.isfile(tracker_settings[key]):
-                logging.debug(
-                    f"[TrackerUpload] Setting file|base64 for key {key}"
-                )
+                logging.debug(f"[TrackerUpload] Setting file|base64 for key {key}")
                 with open(tracker_settings[key], "rb") as binary_file:
                     binary_file_data = binary_file.read()
                     base64_encoded_data = base64.b64encode(binary_file_data)
@@ -1261,9 +1247,7 @@ def upload_to_site(upload_to, tracker_api_key):
         )
 
         review_upload_settings_text_table.add_column("Key", justify="left")
-        review_upload_settings_text_table.add_column(
-            "Value (TEXT)", justify="left"
-        )
+        review_upload_settings_text_table.add_column("Value (TEXT)", justify="left")
         # Insert the data into the table, raw data (no paths)
         for payload_k, payload_v in sorted(payload.items()):
             # Add torrent_info data to each row
@@ -1303,9 +1287,7 @@ def upload_to_site(upload_to, tracker_api_key):
             "Do you want to upload with these settings?", choices=["y", "n"]
         )
         if continue_upload != "y":
-            console.print(
-                f"\nCanceling upload to [bright_red]{upload_to}[/bright_red]"
-            )
+            console.print(f"\nCanceling upload to [bright_red]{upload_to}[/bright_red]")
             logging.error(
                 f"[TrackerUpload] User chose to cancel the upload to {tracker}"
             )
@@ -1330,9 +1312,7 @@ def upload_to_site(upload_to, tracker_api_key):
         logging.info(f"[TrackerUpload] Response Code: {response.status_code}")
         logging.info(f"[TrackerUpload] Response URL: {response.url}")
 
-        console.print(
-            f"\nSite response: [blue]{response.text[0:200]}...[/blue]"
-        )
+        console.print(f"\nSite response: [blue]{response.text[0:200]}...[/blue]")
 
         if response.status_code in (200, 201):
             logging.info(
@@ -1345,7 +1325,7 @@ def upload_to_site(upload_to, tracker_api_key):
                     "[TrackerUpload] Response parsing is of type 'TEXT'. Invoking custom action to parse the response."
                 )
                 try:
-                    custom_action = utils.load_custom_actions(
+                    custom_action = GenericUtils.load_custom_actions(
                         config["technical_jargons"]["response_action"]
                     )
                     upload_status, error_message = custom_action(response)
@@ -1374,18 +1354,14 @@ def upload_to_site(upload_to, tracker_api_key):
                     return True
                 else:
                     console.print("Upload to tracker failed.", style="bold red")
-                    logging.critical(
-                        f"[TrackerUpload] Upload to {upload_to} failed"
-                    )
+                    logging.critical(f"[TrackerUpload] Upload to {upload_to} failed")
             elif "status" in response.json():
                 if (
-                        str(response.json()["status"]).lower() == "true"
-                        or str(response.json()["status"]).lower() == "success"
+                    str(response.json()["status"]).lower() == "true"
+                    or str(response.json()["status"]).lower() == "success"
                 ):
                     logging.info(
-                        "[TrackerUpload] Upload to {} was a success!".format(
-                            upload_to
-                        )
+                        "[TrackerUpload] Upload to {} was a success!".format(upload_to)
                     )
                     console.line(count=2)
                     console.rule(
@@ -1396,16 +1372,12 @@ def upload_to_site(upload_to, tracker_api_key):
                     return True
                 else:
                     console.print("Upload to tracker failed.", style="bold red")
-                    logging.critical(
-                        f"[TrackerUpload] Upload to {upload_to} failed"
-                    )
+                    logging.critical(f"[TrackerUpload] Upload to {upload_to} failed")
                     return False
             elif "success" in str(response.json()).lower():
                 if str(response.json()["success"]).lower() == "true":
                     logging.info(
-                        "[TrackerUpload] Upload to {} was a success!".format(
-                            upload_to
-                        )
+                        "[TrackerUpload] Upload to {} was a success!".format(upload_to)
                     )
                     console.line(count=2)
                     console.rule(
@@ -1416,16 +1388,12 @@ def upload_to_site(upload_to, tracker_api_key):
                     return True
                 else:
                     console.print("Upload to tracker failed.", style="bold red")
-                    logging.critical(
-                        f"[TrackerUpload] Upload to {upload_to} failed"
-                    )
+                    logging.critical(f"[TrackerUpload] Upload to {upload_to} failed")
                     return False
             elif "status" in str(response.json()).lower():
                 if str(response.json()["status"]).lower() == "true":
                     logging.info(
-                        "[TrackerUpload] Upload to {} was a success!".format(
-                            upload_to
-                        )
+                        "[TrackerUpload] Upload to {} was a success!".format(upload_to)
                     )
                     console.line(count=2)
                     console.rule(
@@ -1436,9 +1404,7 @@ def upload_to_site(upload_to, tracker_api_key):
                     return True
                 else:
                     console.print("Upload to tracker failed.", style="bold red")
-                    logging.critical(
-                        f"[TrackerUpload] Upload to {upload_to} failed"
-                    )
+                    logging.critical(f"[TrackerUpload] Upload to {upload_to} failed")
                     return False
             else:
                 console.print("Upload to tracker failed.", style="bold red")
@@ -1500,12 +1466,8 @@ def upload_to_site(upload_to, tracker_api_key):
                 "[TrackerUpload] Status code is not 200, upload might have failed"
             )
     else:
-        logging.info(
-            "[TrackerUpload] Dry-Run mode... Skipping upload to tracker"
-        )
-        console.print(
-            "[bold red] Dry Run Mode [bold red] Skipping upload to tracker"
-        )
+        logging.info("[TrackerUpload] Dry-Run mode... Skipping upload to tracker")
+        console.print("[bold red] Dry Run Mode [bold red] Skipping upload to tracker")
     return False
 
 
@@ -1515,15 +1477,13 @@ def upload_to_site(upload_to, tracker_api_key):
 script_start_time = time.perf_counter()
 
 console.line(count=2)
-utils.display_banner("  Upload  Assistant  ")
+GenericUtils.display_banner("  Upload  Assistant  ")
 console.line(count=1)
 
 # Getting the keys present in the config.env.sample
 # These keys are then used to compare with the env variable keys provided during runtime.
 # Presently we just displays any missing keys, in the future do something more useful with this information
-utils.validate_env_file(
-    ASSISTANT_SAMPLE_CONFIG.format(base_path=working_folder)
-)
+GenericUtils.validate_env_file(ASSISTANT_SAMPLE_CONFIG.format(base_path=working_folder))
 
 logging.info(f" {'-' * 24} Starting new upload {'-' * 24} ")
 
@@ -1539,7 +1499,7 @@ if args.tripleup and args.doubleup:
     sys.exit()
 
 # Dry run mode, mainly intended to be used during development
-args.debug = args.dry_run if args.dry_run == True else args.debug
+args.debug = args.dry_run if args.dry_run is True else args.debug
 
 if args.debug:
     logging.getLogger().setLevel(logging.DEBUG)
@@ -1582,9 +1542,9 @@ if upload_assistant_config.CONTAINERIZED and upload_assistant_config.BD_SUPPORT:
     bdinfo_script = "bdinfocli"
 
 if (
-        args.disc
-        and upload_assistant_config.CONTAINERIZED
-        and not upload_assistant_config.BD_SUPPORT
+    args.disc
+    and upload_assistant_config.CONTAINERIZED
+    and not upload_assistant_config.BD_SUPPORT
 ):
     logging.fatal(
         "[Main] User tried to upload Full Disk from an unsupported image!. Stopping upload process."
@@ -1600,9 +1560,7 @@ if (
         "Full disk uploads are [bold red]NOT PERMITTED[/bold red] in this image.",
         highlight=False,
     )
-    console.print(
-        "If you wish to upload Full disks please consider the following"
-    )
+    console.print("If you wish to upload Full disks please consider the following")
     console.print(
         "1. Run me on a bare metal or VM following the steps mentioned with bdinfo_script property in wiki"
     )
@@ -1624,26 +1582,24 @@ if (
 user_supplied_paths = args.path
 
 # the torrent client instance for cross-seeding
-torrent_client = utils.get_torrent_client_if_needed()
+torrent_client = GenericUtils.get_torrent_client_if_needed()
 
 # creating the schema validator for validating all the template files
 template_validator = TemplateSchemaValidator(
     TEMPLATE_SCHEMA_LOCATION.format(base_path=working_folder)
 )
 # we are going to validate all the built-in templates
-valid_templates = utils.validate_templates_in_path(
+valid_templates = GenericUtils.validate_templates_in_path(
     site_templates_path, template_validator
 )
 # copy all the valid templates to workdir.
-utils.copy_template(
+GenericUtils.copy_template(
     valid_templates,
     site_templates_path,
     VALIDATED_SITE_TEMPLATES_DIR.format(base_path=working_folder),
 )
 # now we set the site templates path to the new temp dir
-site_templates_path = VALIDATED_SITE_TEMPLATES_DIR.format(
-    base_path=working_folder
-)
+site_templates_path = VALIDATED_SITE_TEMPLATES_DIR.format(base_path=working_folder)
 
 if args.load_external_templates:
     logging.info(
@@ -1655,7 +1611,7 @@ if args.load_external_templates:
         valid_ext_templates,
         ext_api_keys_dict,
         ext_acronyms,
-    ) = utils.validate_and_load_external_templates(
+    ) = GenericUtils().validate_and_load_external_templates(
         template_validator, working_folder
     )
     if len(valid_ext_templates) > 0:
@@ -1666,7 +1622,7 @@ if args.load_external_templates:
 # Verify we support the tracker specified
 logging.debug(f"[Main] Trackers provided by user {args.trackers}")
 
-upload_to_trackers = utils.get_and_validate_configured_trackers(
+upload_to_trackers = GenericUtils().get_and_validate_configured_trackers(
     args.trackers, args.all_trackers, api_keys_dict, acronym_to_tracker.keys()
 )
 
@@ -1704,9 +1660,7 @@ if not auto_mode:
             "[Main] User canceled upload when asked to confirm sites to upload to"
         )
         sys.exit(
-            console.print(
-                "\nOK, quitting now..\n", style="bold red", highlight=False
-            )
+            console.print("\nOK, quitting now..\n", style="bold red", highlight=False)
         )
 
 # The user has confirmed what sites to upload to at this point (or auto_mode is set to true)
@@ -1715,15 +1669,15 @@ if not auto_mode:
 # TODO an issue with batch mode currently is that we have a lot of "assert" & sys.exit statements during the prep work we do for each upload,
 # if one of these "assert/quit" statements get triggered, then it will quit the entire script instead of just moving on to the next file in the list 'upload_queue'
 # ---------- Batch mode prep ---------- #
-if not utils.validate_batch_mode(
-        batch_mode=args.batch,
-        path=args.path,
-        metadata_ids={
-            "tmdb": args.tmdb,
-            "imdb": args.imdb,
-            "tvmaze": args.tvmaze,
-            "tvdb": args.tvdb,
-        },
+if not GenericUtils().validate_batch_mode(
+    batch_mode=args.batch,
+    path=args.path,
+    metadata_ids={
+        "tmdb": args.tmdb,
+        "imdb": args.imdb,
+        "tvmaze": args.tvmaze,
+        "tvdb": args.tvdb,
+    },
 ):
     sys.exit()
 
@@ -1733,7 +1687,7 @@ upload_queue = []
 if args.batch:
     logging.info("[Main] Running in batch mode")
     logging.info(f"[Main] Uploading all the items in the folder: {args.path}")
-    upload_queue.extend(utils.files_for_batch_processing([args.path[0]]))
+    upload_queue.extend(GenericUtils.files_for_batch_processing([args.path[0]]))
     logging.info(f"[Main] Upload queue for batch mode {upload_queue}")
 else:
     logging.info("[Main] Running in regular '-path' mode, starting upload now")
@@ -1754,18 +1708,18 @@ for file in upload_queue:
     torrent_info["tag_grouping"] = json.load(
         open(TAG_GROUPINGS.format(base_path=working_folder))
     )
-    torrent_info["argument_tags"] = utils.add_argument_tags(args.tags)
+    torrent_info["argument_tags"] = GenericUtils.add_argument_tags(args.tags)
     torrent_info["tags"] = []
 
     # the working_folder will container a hash value with succeeding /
-    torrent_info["working_folder"] = utils.delete_leftover_files(
+    torrent_info["working_folder"] = GenericUtils().delete_leftover_files(
         working_folder, resume=args.resume, file=file
     )
     torrent_info["base_working_folder"] = working_folder
     torrent_info["cookies_dump"] = cookies_dump
-    torrent_info[
-        "absolute_working_folder"
-    ] = f"{WORKING_DIR.format(base_path=working_folder)}{torrent_info['working_folder']}"
+    torrent_info["absolute_working_folder"] = (
+        f"{WORKING_DIR.format(base_path=working_folder)}{torrent_info['working_folder']}"
+    )
 
     # TODO these are some hardcoded values to be handled at a later point in time
     # setting this to 0 is fine. But need to add support for these eventually.
@@ -1775,23 +1729,21 @@ for file in upload_queue:
     # File we're uploading
     console.print(f"Uploading File/Folder: [bold][blue]{file}[/blue][/bold]")
 
-    rar_file_validation_response = utils.check_for_dir_and_extract_rars(file)
+    rar_file_validation_response = GenericUtils.check_for_dir_and_extract_rars(file)
     if not rar_file_validation_response[0]:
         # Skip this entire 'file upload' & move onto the next (if exists)
         continue
     torrent_info["upload_media"] = rar_file_validation_response[1]
     # Performing guessit on the raw file name and reusing the result instead of calling guessit over and over again
-    guess_it_result = utils.perform_guessit_on_filename(
+    guess_it_result = GenericUtils.perform_guessit_on_filename(
         torrent_info["upload_media"]
     )
 
     # -------- Basic info --------
     # So now we can start collecting info about the file/folder that was supplied to us (Step 1)
     if (
-            identify_type_and_basic_info(
-                torrent_info["upload_media"], guess_it_result
-            )
-            == "skip_to_next_file"
+        identify_type_and_basic_info(torrent_info["upload_media"], guess_it_result)
+        == "skip_to_next_file"
     ):
         # If there is an issue with the file & we can't upload we use this check to skip the current file & move on
         # to the next (if exists)
@@ -1856,7 +1808,7 @@ for file in upload_queue:
         torrent_info["edition"] = user_input_edition
 
     if not auto_mode and Confirm.ask(
-            "Do you want to add custom texts to torrent description?", default=False
+        "Do you want to add custom texts to torrent description?", default=False
     ):
         logging.debug(
             "[Main] User decided to add custom text to torrent description. Handing control to custom_user_input module"
@@ -1873,9 +1825,9 @@ for file in upload_queue:
     # This releases is sourced from `web_source_name`
     # TODO: for now we are adding this only if user has not provided any custom descriptions
     if (
-            "web_source_name" in torrent_info
-            and torrent_info["web_source_name"] is not None
-            and "custom_user_inputs" not in torrent_info
+        "web_source_name" in torrent_info
+        and torrent_info["web_source_name"] is not None
+        and "custom_user_inputs" not in torrent_info
     ):
         torrent_info["custom_user_inputs"] = add_item_to_custom_texts(
             CUSTOM_TEXT_COMPONENTS.format(base_path=working_folder),
@@ -1887,9 +1839,9 @@ for file in upload_queue:
     # Fix some default naming styles
     translation_utilities.fix_default_naming_styles(torrent_info)
 
-    # -------- Dupe check for single tracker uploads --------
-    # If user has provided only one Tracker to upload to, then we do dupe check prior to taking screenshots. [if dupe_check is enabled]
-    # If there are duplicates in the tracker, then we do not waste time taking and uploading screenshots.
+    # -------- Dupe check for single tracker uploads -------- If user has provided only one Tracker to upload to,
+    # then we do dupe check prior to taking screenshots. [if dupe_check is enabled] If there are duplicates in the
+    # tracker, then we do not waste time taking and uploading screenshots.
     upload_report = {}
     if upload_assistant_config.CHECK_FOR_DUPES and len(upload_to_trackers) == 1:
         tracker = upload_to_trackers[0]
@@ -1905,9 +1857,7 @@ for file in upload_queue:
         logging.debug(
             f"[Main] Dumping torrent_info contents to log before dupe check: \n{pformat(torrent_info)}"
         )
-        dupe_check_response = check_for_dupes_in_tracker(
-            tracker, temp_tracker_api_key
-        )
+        dupe_check_response = check_for_dupes_in_tracker(tracker, temp_tracker_api_key)
         # If dupes are present and user decided to stop upload, for single tracker uploads we stop operation immediately
         # True == dupe_found
         # False == no_dupes/continue upload
@@ -1937,9 +1887,7 @@ for file in upload_queue:
         torrent_info.get("raw_video_file", torrent_info["upload_media"])
     ).tracks[1]
 
-    torrent_info["duration"] = str(media_info_duration.duration).split(".", 1)[
-        0
-    ]
+    torrent_info["duration"] = str(media_info_duration.duration).split(".", 1)[0]
     # This is used to evenly space out timestamps for screenshots
     # Call function to actually take screenshots & upload them (different file)
     upload_media_for_screenshot = torrent_info.get(
@@ -1968,16 +1916,15 @@ for file in upload_queue:
         torrent_info["bbcode_images_nothumb"] = screenshots_data[
             "bbcode_images_nothumb"
         ]
-        torrent_info["bbcode_thumb_nothumb"] = screenshots_data[
-            "bbcode_thumb_nothumb"
-        ]
+        torrent_info["bbcode_thumb_nothumb"] = screenshots_data["bbcode_thumb_nothumb"]
         torrent_info["url_images"] = screenshots_data["url_images"]
         torrent_info["data_images"] = screenshots_data["data_images"]
         torrent_info["screenshots_data"] = SCREENSHOTS_RESULT_FILE_PATH.format(
             base_path=working_folder, sub_folder=torrent_info["working_folder"]
         )
 
-    # At this point the only stuff that remains to be done is site specific so we can start a loop here for each site we are uploading to
+    # At this point the only stuff that remains to be done is site specific so we can start a loop here for each site
+    # we are uploading to
     logging.info("[Main] Now starting tracker specific tasks")
     for tracker in upload_to_trackers:
         upload_report[tracker] = {}
@@ -1988,9 +1935,9 @@ for file in upload_queue:
 
         tracker_env_config = TrackerConfig(tracker)
 
-        torrent_info[
-            "shameless_self_promotion"
-        ] = f'Uploaded with {"<3" if str(tracker).upper() in ("BHD", "BHDTV") or os.name == "nt" else "❤"} using GG-BOT Upload Assistant'
+        torrent_info["shameless_self_promotion"] = (
+            f'Uploaded with {"<3" if str(tracker).upper() in ("BHD", "BHDTV") or os.name == "nt" else "❤"} using GG-BOT Upload Assistant'
+        )
 
         temp_tracker_api_key = api_keys_dict[f"{str(tracker).lower()}_api_key"]
         logging.info(f"[Main] Trying to upload to: {tracker}")
@@ -2011,8 +1958,8 @@ for file in upload_queue:
 
         # checking for banned groups. If this group is banned in this tracker, then we stop
         if (
-                "banned_groups" in config
-                and torrent_info["release_group"] in config["banned_groups"]
+            "banned_groups" in config
+            and torrent_info["release_group"] in config["banned_groups"]
         ):
             torrent_info[f"{tracker}_upload_status"] = False
             logging.fatal(
@@ -2028,21 +1975,22 @@ for file in upload_queue:
             upload_report[tracker]["post_message"] = "Upload Was Skipped"
             continue
 
-        # If the user provides this arg with the title right after in double quotes then we automatically use that
-        # If the user does not manually provide the title (Most common) then we pull the renaming template from *.json & use all the info we gathered earlier to generate a title
-        # -------- format the torrent title --------
+        # If the user provides this arg with the title right after in double quotes then we automatically use that If
+        # the user does not manually provide the title (Most common) then we pull the renaming template from *.json &
+        # use all the info we gathered earlier to generate a title -------- format the torrent title --------
         torrent_info["torrent_title"] = (
             str(args.title[0])
             if args.title
             else translation_utilities.format_title(config, torrent_info)
         )
 
-        # (Theory) BHD has a different bbcode parser then BLU/ACM so the line break is different for each site
-        # this is why we set it in each sites *.json file then retrieve it here in this 'for loop' since its different for each site
+        # (Theory) BHD has a different bbcode parser then BLU/ACM so the line break is different for each site this
+        # is why we set it in each sites *.json file then retrieve it here in this 'for loop' since its different for
+        # each site
         bbcode_line_break = config["bbcode_line_break"]
 
         # -------- Add custom descriptions to description.txt --------
-        utils.write_custom_user_inputs_to_description(
+        GenericUtils.write_custom_user_inputs_to_description(
             torrent_info=torrent_info,
             description_file_path=DESCRIPTION_FILE_PATH.format(
                 base_path=working_folder,
@@ -2055,7 +2003,7 @@ for file in upload_queue:
         )
 
         # -------- Add bbcode images to description.txt --------
-        utils.add_bbcode_images_to_description(
+        GenericUtils.add_bbcode_images_to_description(
             torrent_info=torrent_info,
             config=config,
             description_file_path=DESCRIPTION_FILE_PATH.format(
@@ -2066,7 +2014,7 @@ for file in upload_queue:
         )
 
         # -------- Add custom uploader signature to description.txt --------
-        utils.write_uploader_signature_to_description(
+        GenericUtils.write_uploader_signature_to_description(
             description_file_path=DESCRIPTION_FILE_PATH.format(
                 base_path=working_folder,
                 sub_folder=torrent_info["working_folder"],
@@ -2086,10 +2034,7 @@ for file in upload_queue:
         # we take the screenshots and uploads them, then do dupe check for the trackers.
         # dupe check need not be performed if user provided only one tracker.
         # in cases where only one tracker is provided, dupe check will be performed prior to taking screenshots.
-        if (
-                upload_assistant_config.CHECK_FOR_DUPES
-                and len(upload_to_trackers) > 1
-        ):
+        if upload_assistant_config.CHECK_FOR_DUPES and len(upload_to_trackers) > 1:
             console.line(count=2)
             console.rule(
                 f"Dupe Check [bold]({tracker})[/bold]",
@@ -2124,12 +2069,13 @@ for file in upload_queue:
         logging.debug(
             f"[Main] Torrent info just before dot torrent creation. \n {pformat(torrent_info)}"
         )
-        # If the type is a movie, then we only include the `raw_video_file` for torrent file creation.
-        # If type is an episode, then we'll create torrent file for the the `upload_media` which could be an single episode or a season folder
+        # If the type is a movie, then we only include the `raw_video_file` for torrent file creation. If type is an
+        # episode, then we'll create torrent file for the the `upload_media` which could be an single episode or a
+        # season folder
         if (
-                args.allow_multiple_files == False
-                and torrent_info["type"] == "movie"
-                and "raw_video_file" in torrent_info
+            args.allow_multiple_files is False
+            and torrent_info["type"] == "movie"
+            and "raw_video_file" in torrent_info
         ):
             torrent_media = torrent_info["raw_video_file"]
         else:
@@ -2153,20 +2099,18 @@ for file in upload_queue:
         # This function takes the info we have the dict torrent_info and associates with the right key/values needed for us to use X trackers API
         # if for some reason the upload cannot be performed to the specific tracker, the method returns "STOP"
         if (
-                translation_utilities.choose_right_tracker_keys(
-                    config,
-                    tracker_settings,
-                    tracker,
-                    torrent_info,
-                    args,
-                    working_folder,
-                )
-                == "STOP"
+            translation_utilities.choose_right_tracker_keys(
+                config,
+                tracker_settings,
+                tracker,
+                torrent_info,
+                args,
+                working_folder,
+            )
+            == "STOP"
         ):
             upload_report[tracker]["upload"] = "Failed"
-            upload_report[tracker][
-                "message"
-            ] = "Failed to prepare payload for tracker"
+            upload_report[tracker]["message"] = "Failed to prepare payload for tracker"
             upload_report[tracker]["post_process"] = "Skipped"
             upload_report[tracker]["post_message"] = "Upload Was Skipped"
             continue
@@ -2178,13 +2122,13 @@ for file in upload_queue:
 
         # once the uploader finishes filling all the details as per the template, users can override values with custom actions.
         if (
-                "custom_actions" in config["technical_jargons"]
-                and len(config["technical_jargons"]["custom_actions"]) > 0
+            "custom_actions" in config["technical_jargons"]
+            and len(config["technical_jargons"]["custom_actions"]) > 0
         ):
             try:
                 for action in config["technical_jargons"]["custom_actions"]:
                     logging.info(f"[Main] Loading custom action :: {action}")
-                    custom_action = utils.load_custom_actions(action)
+                    custom_action = GenericUtils.load_custom_actions(action)
                     logging.info(
                         f"[Main] Loaded custom action :: {action} :: Executing..."
                     )
@@ -2200,26 +2144,27 @@ for file in upload_queue:
                 console.print(
                     f"[bold red]A custom action [yellow]({action})[/yellow] has failed for this tracker. Skipping upload to {tracker}[/bold red]"
                 )
-                torrent_info[
-                    f"{tracker}_upload_status"
-                ] = False  # to skip Post-Processing steps for this tracker
+                torrent_info[f"{tracker}_upload_status"] = (
+                    False  # to skip Post-Processing steps for this tracker
+                )
                 upload_report[tracker]["upload"] = "Failed"
-                upload_report[tracker][
-                    "message"
-                ] = "Failed to perform a custom action"
+                upload_report[tracker]["message"] = "Failed to perform a custom action"
                 upload_report[tracker]["post_process"] = "Skipped"
                 upload_report[tracker]["post_message"] = "Upload Was Skipped"
                 continue
 
             # TODO save torrent_info before custom actions and restore the original torrent_info.
             # custom actions cannot modify torrent info, only tracker settings and tracker config can be modified
-            # logging.debug("::::::::::::::::::::::::::::: Final 'torrent_info' after 'custom_actions' :::::::::::::::::::::::::::::")
-            # logging.debug(f'\n{pformat(torrent_info)}')
+            logging.debug(
+                "::::::::::::::::::::::::::::: Final 'torrent_info' after 'custom_actions'"
+                ":::::::::::::::::::::::::::::"
+            )
+            logging.debug(f"\n{pformat(torrent_info)}")
 
-        # -------- Upload everything! --------
-        # 1.0 everything we do in this for loop isn't persistent, its specific to each site that you upload to
-        # 1.1 things like screenshots, TMDB/IMDB ID's can & are reused for each site you upload to
-        # 2.0 we take all the info we generated outside of this loop (mediainfo, description, etc) and combine it with tracker specific info and upload it all now
+        # -------- Upload everything! -------- 1.0 everything we do in this for loop isn't persistent, its specific
+        # to each site that you upload to 1.1 things like screenshots, TMDB/IMDB ID's can & are reused for each site
+        # you upload to 2.0 we take all the info we generated outside of this loop (mediainfo, description,
+        # etc) and combine it with tracker specific info and upload it all now
         torrent_info[f"{tracker}_upload_status"] = upload_to_site(
             upload_to=tracker, tracker_api_key=temp_tracker_api_key
         )
@@ -2233,8 +2178,8 @@ for file in upload_queue:
             upload_report[tracker]["post_message"] = "Upload Failed"
 
         if (
-                torrent_info[f"{tracker}_upload_status"] is True
-                and "success_processor" in config["technical_jargons"]
+            torrent_info[f"{tracker}_upload_status"] is True
+            and "success_processor" in config["technical_jargons"]
         ):
             logging.info(
                 f"[Main] Upload to tracker {tracker} is successful and success processor is configured"
@@ -2243,13 +2188,9 @@ for file in upload_queue:
             logging.info(
                 f"[Main] Performing success processor action '{action}' for tracker {tracker}"
             )
-            custom_action = utils.load_custom_actions(action)
-            logging.info(
-                f"[Main] Loaded custom action :: {action} :: Executing..."
-            )
-            custom_action(
-                torrent_info, tracker_settings, config, working_folder
-            )
+            custom_action = GenericUtils.load_custom_actions(action)
+            logging.info(f"[Main] Loaded custom action :: {action} :: Executing...")
+            custom_action(torrent_info, tracker_settings, config, working_folder)
 
         # Tracker Settings
         console.print("\n\n")
@@ -2262,7 +2203,7 @@ for file in upload_queue:
         tracker_settings_table.add_column("Value", justify="left")
 
         for tracker_settings_key, tracker_settings_value in sorted(
-                tracker_settings.items()
+            tracker_settings.items()
         ):
             # Add torrent_info data to each row
             tracker_settings_table.add_row(
@@ -2305,11 +2246,11 @@ for file in upload_queue:
         upload_report[tracker]["post_message"] = "Dry run mode"
     else:
         for tracker in upload_to_trackers:
-            if torrent_info["post_processing_complete"] == True:
+            if torrent_info["post_processing_complete"] is True:
                 upload_report[tracker]["post_process"] = "Success"
                 upload_report[tracker]["post_message"] = ""
-                continue  # this flag is used for watch folder post processing. we need to move only once
-            status = utils.perform_post_processing(
+                continue  # this flag is used for watch folder post-processing. we need to move only once
+            status = GenericUtils().perform_post_processing(
                 torrent_info,
                 torrent_client,
                 working_folder,
@@ -2321,9 +2262,7 @@ for file in upload_queue:
                 upload_report[tracker]["post_message"] = ""
             else:
                 upload_report[tracker]["post_process"] = "Failed"
-                upload_report[tracker][
-                    "post_message"
-                ] = "Post-Processing Failed"
+                upload_report[tracker]["post_message"] = "Post-Processing Failed"
 
     display_upload_report(upload_report)
 
