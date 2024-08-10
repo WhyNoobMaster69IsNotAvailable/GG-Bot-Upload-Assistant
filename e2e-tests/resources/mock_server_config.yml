@@ -1,0 +1,24 @@
+mocks:
+  - url: "/api/test"
+    method: "GET"
+    headers:
+      Content-Type: "application/json"
+    response:
+      status_code: 200
+      body: '{"message": "mocked response 1"}'
+
+  - url: "/api/another"
+    method: "POST"
+    headers:
+      Content-Type: "application/json"
+    response:
+      status_code: 201
+      body: '{"message": "mocked response 2"}'
+
+  - url: "/api/error"
+    method: "GET"
+    headers:
+      Content-Type: "application/json"
+    response:
+      status_code: 404
+      body: '{"error": "Not Found"}'
