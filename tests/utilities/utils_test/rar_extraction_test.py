@@ -74,6 +74,6 @@ def test_check_for_dir_and_extract_rars_rar_folder():
 
 
 def test_check_for_dir_and_extract_rars_no_rar_installed(mocker):
-    file_path = f"{working_folder}/working_folder/rar/"
+    file_path = f"{working_folder}/tests/working_folder/rar/"
     mocker.patch("os.path.isfile", return_value=False)
     assert GenericUtils.check_for_dir_and_extract_rars(file_path) == (False, file_path)
