@@ -56,24 +56,24 @@ def run_around_tests():
 
 
 def test_check_for_dir_and_extract_rars_file():
-    file_path = "tests/working_folder/rar/data.rar"
+    file_path = f"{working_folder}/tests/working_folder/rar/data.rar"
     assert GenericUtils.check_for_dir_and_extract_rars(file_path) == (True, file_path)
 
 
 def test_check_for_dir_and_extract_rars_non_rar_folder():
-    file_path = "tests/working_folder/media/"
+    file_path = f"{working_folder}/tests/working_folder/media/"
     assert GenericUtils.check_for_dir_and_extract_rars(file_path) == (True, file_path)
 
 
 def test_check_for_dir_and_extract_rars_rar_folder():
-    file_path = "tests/working_folder/rar/"
+    file_path = f"{working_folder}/tests/working_folder/rar/"
     assert GenericUtils.check_for_dir_and_extract_rars(file_path) == (
         True,
-        "tests/working_folder/rar/something.mkv",
+        f"{working_folder}/tests/working_folder/rar/something.mkv",
     )
 
 
 def test_check_for_dir_and_extract_rars_no_rar_installed(mocker):
-    file_path = "tests/working_folder/rar/"
+    file_path = f"{working_folder}/working_folder/rar/"
     mocker.patch("os.path.isfile", return_value=False)
     assert GenericUtils.check_for_dir_and_extract_rars(file_path) == (False, file_path)
