@@ -1,3 +1,4 @@
+import base64
 import re
 import time
 from pathlib import Path
@@ -41,6 +42,19 @@ def qbittorrent_container():
 
 
 @pytest.fixture(scope="module")
+def rutorrent_credentials(rutorrent_container):
+    time.sleep(15)  # allowing time for rutorrent container to start and be ready
+
+    yield {
+        "host": rutorrent_container.get_container_host_ip(),
+        "port": rutorrent_container.get_exposed_port(80),
+        "hashed": base64.b64encode("admin:admin".encode("ascii")).decode("ascii"),
+        "username": "admin",
+        "password": "admin",
+    }
+
+
+@pytest.fixture(scope="module")
 def qbittorrent_credentials(qbittorrent_container):
     time.sleep(2)  # allowing time for qbittorrent container to start properly
 
@@ -73,13 +87,17 @@ def qbittorrent_credentials(qbittorrent_container):
     }
 
 
-# @pytest.fixture(scope="module")
-# def rutorrent_container():
-#     container = DockerContainer("linuxserver/rtorrent")
-#     container.with_exposed_ports(5000)
-#     container.start()
-#     yield container
-#     container.stop()
+@pytest.fixture(scope="module")
+def rutorrent_container():
+    container = DockerContainer("romancin/rutorrent:0.9.8-v7.0.1")
+    container.with_exposed_ports(80)
+    container.with_env("PUID", "1001")
+    container.with_env("PGID", "1001")
+    container.with_env("TZ", "UTC")
+    container.with_env("CREATE_SUBDIR_BY_TRACKERS", "NO")
+    container.start()
+    yield container
+    container.stop()
 
 
 @pytest.fixture(scope="module")
@@ -141,12 +159,12 @@ class TestE2ESetup:
 
         assert self.qbt_client.auth_log_in() is None, "Failed to login to qbittorrent"
 
-    # def test_rtorrent_container_setup(self, rtorrent_container):
-    #     host = rtorrent_container.get_container_host_ip()
-    #     port = rtorrent_container.get_exposed_port(5000)
-    #
-    #     response = requests.get(f"http://{host}:{port}")
-    #     assert response.status_code == 200, "rTorrent is not running properly"
+    def test_rutorrent_container_setup(self, rutorrent_credentials):
+        response = requests.get(
+            f"http://{rutorrent_credentials['host']}:{rutorrent_credentials['port']}/plugins/check_port/action.php?init",
+            headers={"Authorization": f"Basic {rutorrent_credentials['hashed']}"},
+        )
+        assert response.status_code == 200, "rTorrent is not running properly"
 
     def test_mock_server_container_setup(self, mock_server):
         response = requests.get("http://example.com/api/test")
