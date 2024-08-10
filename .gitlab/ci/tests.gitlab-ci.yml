@@ -22,10 +22,16 @@
 # ********************************************** #
 # E2E tests for Parent Repo with report generation
 e2e-test:
+  services:
+    - name: docker:dind
+      command: [ "--tls=false" ]
   stage: test
   image: noobmaster669/gg-bot-base:test-latest
   variables:
     SOURCE_DIRECTORY: gg-bot-upload-assistant
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
   script:
     - pip install -r requirements/requirements_test.txt
     - pip freeze > requirements/requirements_test.txt
@@ -89,7 +95,7 @@ unit-test-mr:
   script:
     - pip install -r requirements/requirements_test.txt
     - pip freeze > requirements/requirements_test.txt
-    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml --cov=./ .
+    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml --cov=./ tests/
     - coverage report
     - coverage xml -o coverage.xml
     - sed -i "s=<source>.*${SOURCE_DIRECTORY}</source>=<source>./${SOURCE_DIRECTORY}</source>=g" coverage.xml
