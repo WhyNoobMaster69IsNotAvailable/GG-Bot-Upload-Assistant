@@ -22,3 +22,6 @@ cinemagoer~=2023.5.1
 fastjsonschema~=2.16.2
 mongomock~=4.1.2
 setuptools~=69.2.0
+PyYaml==5.3.1
+testcontainers==4.7.2
+requests-mock==1.12.1
