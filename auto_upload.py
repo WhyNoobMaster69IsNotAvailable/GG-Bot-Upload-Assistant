@@ -27,7 +27,7 @@ import re
 import sys
 import time
 from pprint import pformat
-from typing import Dict
+from typing import Dict, Optional, List
 
 # These packages need to be installed
 import requests
@@ -1544,7 +1544,7 @@ class GGBotUploadAssistant:
             )
         return False
 
-    def start(self):
+    def start(self, custom_paths: Optional[List[str]] = None):
         script_start_time = time.perf_counter()
 
         console.line(count=2)
@@ -1659,7 +1659,7 @@ class GGBotUploadAssistant:
             )
 
         # Set the value of args.path to a variable that we can overwrite with a path translation later (if needed)
-        user_supplied_paths = self.args.path
+        user_supplied_paths = custom_paths or self.args.path
 
         # the torrent client instance for cross-seeding
         torrent_client = GenericUtils.get_torrent_client_if_needed()

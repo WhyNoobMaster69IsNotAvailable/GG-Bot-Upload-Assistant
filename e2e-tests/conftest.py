@@ -11,8 +11,16 @@ from testcontainers.core.container import DockerContainer
 from requests_mock import Mocker
 from testcontainers.core.network import Network
 
-working_folder = Path(__file__).resolve().parent.parent
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 e2e_resources_dir = "/e2e-tests/resources"
+
+
+@pytest.fixture(scope="module", autouse=True)
+def working_folder():
+    yield Path(__file__).resolve().parent.parent
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -121,7 +129,7 @@ def rutorrent_container():
 
 
 @pytest.fixture(scope="module")
-def mock_server_config():
+def mock_server_config(working_folder):
     with open(
         f"{working_folder}{e2e_resources_dir}/mock_server_config.yml", "r"
     ) as file:

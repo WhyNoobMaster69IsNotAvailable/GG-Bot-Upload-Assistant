@@ -129,6 +129,7 @@ RUN \
 	apk add --no-cache --upgrade mktorrent; \
 	apk add --no-cache --upgrade ffmpeg; \
 	apk add --no-cache --upgrade mediainfo; \
+	apk add --no-cache --upgrade libmediainfo; \
 	apk add --no-cache --upgrade curl; \
 	apk add --no-cache --virtual=build-dependencies g++;
 

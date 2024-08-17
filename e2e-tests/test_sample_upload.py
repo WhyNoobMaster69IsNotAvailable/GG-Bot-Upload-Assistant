@@ -3,17 +3,23 @@ import sys
 from unittest import mock
 
 import pytest
-
 from auto_upload import GGBotUploadAssistant
 
 
 class TestGGBotUploadAssistant:
-    @pytest.fixture(scope="class")
-    def set_pymediainfo_path(self):
-        os.environ["LD_LIBRARY_PATH"] = (
-            os.environ.get("LD_LIBRARY_PATH", "")
-            + ":/Applications/MediaInfo.app/Contents/Resource"
-        )
+    @pytest.fixture(scope="class", autouse=True)
+    def test_with_patched_library_path(self):
+        lib_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "libs"))
+
+        with mock.patch("pymediainfo.MediaInfo._get_library_paths") as mock_get_paths:
+            if sys.platform == "darwin":
+                mock_get_paths.return_value = (
+                    os.path.join(lib_dir, "libmediainfo.0.dylib"),
+                    os.path.join(lib_dir, "libmediainfo.dylib"),
+                )
+            else:
+                mock_get_paths.return_value = ("libmediainfo.so.0",)
+            yield
 
     @mock.patch.object(
         sys,
@@ -27,9 +33,14 @@ class TestGGBotUploadAssistant:
             "--auto",
         ],
     )
-    def test_upload(self):
-        assistant = GGBotUploadAssistant("./resources/config-test.env")
-        assistant.start()
+    def test_upload(self, working_folder):
+        filename = f"{working_folder}/e2e-tests/resources/Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv"
+        assert os.path.exists(filename) is True
+
+        assistant = GGBotUploadAssistant(
+            f"{working_folder}/e2e-tests/resources/config-test.env"
+        )
+        assistant.start([filename])
 
         # assert that api_key_dict is loaded
         assert assistant.api_keys_dict != {}
