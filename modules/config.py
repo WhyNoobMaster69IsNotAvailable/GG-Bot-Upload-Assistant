@@ -60,6 +60,12 @@ class BaseUrlConfig(GGBotConfig):
         return self.get_config("tmdb_base_url", "https://api.themoviedb.org")
 
 
+class SentryErrorTrackingConfig(GGBotConfig):
+    @cached_property
+    def ENABLE_SENTRY_ERROR_TRACKING(self):
+        return self.get_config_as_boolean("ENABLE_SENTRY_ERROR_TRACKING", False)
+
+
 class UploaderConfig(GGBotConfig):
     @cached_property
     def CHECK_FOR_DUPES(self):

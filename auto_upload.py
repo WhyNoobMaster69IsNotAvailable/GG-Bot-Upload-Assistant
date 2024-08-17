@@ -31,6 +31,7 @@ from typing import Dict, Optional, List
 
 # These packages need to be installed
 import requests
+import sentry_sdk
 from dotenv import load_dotenv
 from pymediainfo import MediaInfo
 
@@ -43,6 +44,12 @@ from rich.traceback import install
 
 import utilities.utils_bdinfo as bdinfo_utilities
 import utilities.utils_metadata as metadata_utilities
+import utilities.utils_translation as translation_utilities
+from modules.config import (
+    UploadAssistantConfig,
+    TrackerConfig,
+    SentryErrorTrackingConfig,
+)
 from modules.constants import (
     COOKIES_DUMP_DIR,
     ASSISTANT_LOG,
@@ -65,15 +72,13 @@ from modules.constants import (
     TAG_GROUPINGS,
     CUSTOM_TEXT_COMPONENTS,
 )
+
+# Method that will search for dupes in trackers.
+from modules.template_schema_validator import TemplateSchemaValidator
 from utilities.utils import GenericUtils
 from utilities.utils_basic import BasicUtils
 from utilities.utils_dupes import DupeUtils
 from utilities.utils_miscellaneous import MiscellaneousUtils
-import utilities.utils_translation as translation_utilities
-from modules.config import UploadAssistantConfig, TrackerConfig
-
-# Method that will search for dupes in trackers.
-from modules.template_schema_validator import TemplateSchemaValidator
 from utilities.utils_screenshots import GGBotScreenshotManager
 from utilities.utils_torrent import GGBotTorrentCreator
 
@@ -126,20 +131,23 @@ class GGBotUploadAssistant:
         logging.root.addHandler(handler)
         logging.root.setLevel(logging.INFO)
 
-        #
-        # logging.basicConfig(
-        #     filename=ASSISTANT_LOG.format(base_path=working_folder),
-        #     filemode="w",
-        #     encoding="utf-8",
-        #     level=logging.INFO,
-        #     format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
-        # )
-
         # Load the .env file that stores info like the tracker/image host API Keys & other info needed to upload
         if env_file_path is None:
             load_dotenv(ASSISTANT_CONFIG.format(base_path=self.working_folder))
         else:
             load_dotenv(env_file_path)
+
+        sentry_config = SentryErrorTrackingConfig()
+        if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is True:
+            sentry_sdk.init(
+                environment="production",
+                server_name="GG Bot Upload Assistant",
+                dsn="https://glet_b895102140e2b1bd3b2550b446de32f1@observe.gitlab.com:443/errortracking/api/v1/projects/32631784",
+                traces_sample_rate=1.0,
+                profiles_sample_rate=1.0,
+                attach_stacktrace=True,
+                shutdown_timeout=20,
+            )
 
         # By default, we load the templates from site_templates/ path
         # If user has provided load_external_templates argument then we'll update this path to a different one

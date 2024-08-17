@@ -30,6 +30,7 @@ from typing import Dict, Tuple, Any, Union
 # These packages need to be installed
 import requests
 import schedule
+import sentry_sdk
 from dotenv import load_dotenv
 from pymediainfo import MediaInfo
 
@@ -66,7 +67,7 @@ from utilities.utils_dupes import DupeUtils
 from utilities.utils_miscellaneous import MiscellaneousUtils
 import utilities.utils_translation as translation_utilities
 from modules.cache import CacheFactory, CacheVendor, Cache
-from modules.config import ReUploaderConfig, TrackerConfig
+from modules.config import ReUploaderConfig, TrackerConfig, SentryErrorTrackingConfig
 
 # processing modules
 from modules.visor.server import Server
@@ -118,6 +119,18 @@ logging.basicConfig(
 
 # Load the .env file that stores info like the tracker/image host API Keys & other info needed to upload
 load_dotenv(REUPLOADER_CONFIG.format(base_path=working_folder))
+
+sentry_config = SentryErrorTrackingConfig()
+if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is True:
+    sentry_sdk.init(
+        environment="production",
+        server_name="GG Bot Auto Re-uploader",
+        dsn="https://glet_b895102140e2b1bd3b2550b446de32f1@observe.gitlab.com:443/errortracking/api/v1/projects/32631784",
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+        attach_stacktrace=True,
+        shutdown_timeout=20,
+    )
 
 # By default, we load the templates from site_templates/ path
 # If user has provided load_external_templates argument then we'll update this path to a different one
