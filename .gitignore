@@ -139,3 +139,5 @@ dmypy.json
 .pyre/
 entry.py
 tvmaze_search.py
+
+!e2e-tests/resources/*.mkv
