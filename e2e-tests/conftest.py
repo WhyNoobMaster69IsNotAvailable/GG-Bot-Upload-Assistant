@@ -1,4 +1,5 @@
 import base64
+import logging
 import re
 import time
 from pathlib import Path
@@ -14,17 +15,23 @@ working_folder = Path(__file__).resolve().parent.parent
 e2e_resources_dir = "/e2e-tests/resources"
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="module", autouse=True)
 def docker_testing_network():
     network = Network()
     network.create()
+    network_name = network.name
 
+    logging.info(
+        f"[TestContainers] Created new temporary docker network for e2e testing: {network_name}"
+    )
     yield network
-
     network.remove()
+    logging.info(
+        f"[TestContainers] Removed the temporary docker network used for e2e testing: {network_name}"
+    )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="module", autouse=True)
 def qbittorrent_container():
     container = DockerContainer("linuxserver/qbittorrent:4.6.5")
     container.with_bind_ports(50001, 50001)
@@ -35,8 +42,15 @@ def qbittorrent_container():
     container.with_env("TZ", "UTC")
 
     container.start()
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created a qbittorrent container for e2e testing: {container_id}"
+    )
     yield container
     container.stop()
+    logging.info(
+        f"[TestContainers] Removed the qbittorrent container used for e2e testing: {container_id}"
+    )
 
 
 @pytest.fixture(scope="module")
@@ -85,7 +99,7 @@ def qbittorrent_credentials(qbittorrent_container):
     }
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="module", autouse=True)
 def rutorrent_container():
     container = DockerContainer("romancin/rutorrent:0.9.8-v7.0.1")
     container.with_exposed_ports(80)
@@ -94,8 +108,16 @@ def rutorrent_container():
     container.with_env("TZ", "UTC")
     container.with_env("CREATE_SUBDIR_BY_TRACKERS", "NO")
     container.start()
+
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created a rutorrent container for e2e testing: {container_id}"
+    )
     yield container
     container.stop()
+    logging.info(
+        f"[TestContainers] Removed the rutorrent container used for e2e testing: {container_id}"
+    )
 
 
 @pytest.fixture(scope="module")
@@ -134,9 +156,9 @@ def _update_mock_server_based_on_config(server, server_config: Dict) -> None:
             )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="module", autouse=True)
 def mock_server(mock_server_config):
-    with Mocker() as mock:
+    with Mocker(real_http=True) as mock:
         _update_mock_server_based_on_config(
             server=mock, server_config=mock_server_config
         )

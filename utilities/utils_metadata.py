@@ -25,7 +25,7 @@ from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
 
-from modules.config import UploaderConfig, ReUploaderConfig
+from modules.config import UploaderConfig, ReUploaderConfig, BaseUrlConfig
 from modules.constants import (
     TMDB_TO_MAL_MAPPING,
     IMDB_TO_MAL_MAPPING,
@@ -72,6 +72,7 @@ def _return_for_reuploader_and_exit_for_assistant(
 
 def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
     uploader_config = UploaderConfig()
+    base_url_config = BaseUrlConfig()
     # TODO: try to return tvdb id as well from here
     console.line(count=2)
     console.rule("TMDB Search Results", style="red", align="center")
@@ -93,11 +94,11 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
     #
     # if we don't get data for the escaped title request, then we do another request to get data without escaped query.
     logging.info(
-        f"[MetadataUtils] GET Request: https://api.themoviedb.org/3/search/{content_type}?api_key=<REDACTED>&query={escaped_query_title}&page=1&include_adult=false{query_year}"
+        f"[MetadataUtils] GET Request: {base_url_config.TMDB_BASE_URL}/3/search/{content_type}?api_key=<REDACTED>&query={escaped_query_title}&page=1&include_adult=false{query_year}"
     )
     # doing search with escaped title (strict search)
     search_tmdb_request = _do_tmdb_search(
-        f"https://api.themoviedb.org/3/search/{content_type}?api_key={uploader_config.TMDB_API_KEY}&query={escaped_query_title}&page=1&include_adult=false{query_year}"
+        f"{base_url_config.TMDB_BASE_URL}/3/search/{content_type}?api_key={uploader_config.TMDB_API_KEY}&query={escaped_query_title}&page=1&include_adult=false{query_year}"
     )
 
     if search_tmdb_request.ok:
@@ -108,12 +109,10 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
                     escaped_query_title, year
                 )
             )
-            logging.info(
-                "[MetadataUtils] Attempting to do a more liberal TMDB Search"
-            )
+            logging.info("[MetadataUtils] Attempting to do a more liberal TMDB Search")
             # doing request without escaped title (search is not strict)
             search_tmdb_request = _do_tmdb_search(
-                f"https://api.themoviedb.org/3/search/{content_type}?api_key={uploader_config.TMDB_API_KEY}&query={query_title}&page=1&include_adult=false{query_year}"
+                f"{base_url_config.TMDB_BASE_URL}/3/search/{content_type}?api_key={uploader_config.TMDB_API_KEY}&query={query_title}&page=1&include_adult=false{query_year}"
             )
 
             if search_tmdb_request.ok:
@@ -149,7 +148,6 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
         selected_tmdb_results = 0
         selected_tmdb_results_data = []
         for possible_match in search_tmdb_request.json()["results"]:
-
             result_num += 1  # This counter is used so that when we prompt a user to select a match, we know which one they are referring to
             # here we just associate the number count ^^ with each results TMDB ID
             result_dict[str(result_num)] = possible_match["id"]
@@ -170,9 +168,7 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
                 logging.error(
                     f"[MetadataUtils] Title not found on TMDB for TMDB ID: {str(possible_match['id'])}"
                 )
-            logging.info(
-                f"[MetadataUtils] Selected Title: [{title_match_result}]"
-            )
+            logging.info(f"[MetadataUtils] Selected Title: [{title_match_result}]")
             # TODO implement the tmdb title 1:1 comparison here. What the hell is this? what was i thinking when i
             #  created this todo???
 
@@ -274,9 +270,7 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
             logging.info(
                 "[MetadataUtils] Cannot auto select a TMDB id. Marking this upload as TMDB_IDENTIFICATION_FAILED"
             )
-            _return_for_reuploader_and_exit_for_assistant(
-                selected_tmdb_results_data
-            )
+            _return_for_reuploader_and_exit_for_assistant(selected_tmdb_results_data)
 
         # once the loop is done we can show the table to the user
         console.print(tmdb_search_results, justify="center")
@@ -291,8 +285,7 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
         if __is_auto_reuploader():
             reuploader_config = ReUploaderConfig()
             if (
-                selected_tmdb_results
-                <= reuploader_config.TMDB_AUTO_SELECT_THRESHOLD
+                selected_tmdb_results <= reuploader_config.TMDB_AUTO_SELECT_THRESHOLD
                 or reuploader_config.TMDB_AUTO_SELECT_THRESHOLD == 0
             ):
                 console.print("Auto selected the #1 result from TMDB...")
@@ -408,9 +401,7 @@ def _get_external_id(id_site, id_value, external_site, content_type):
     tmdb_id_from_tvdb_redacted = f"https://api.themoviedb.org/3/find/{id_value}?api_key=<REDACTED>&language=en-US&external_source=tvdb_id"
 
     tvmaze_id_from_imdb = f"https://api.tvmaze.com/lookup/shows?imdb={id_value}"
-    tvmaze_id_from_tvdb = (
-        f"https://api.tvmaze.com/lookup/shows?thetvdb={id_value}"
-    )
+    tvmaze_id_from_tvdb = f"https://api.tvmaze.com/lookup/shows?thetvdb={id_value}"
 
     try:
         if external_site == "tvmaze":  # we need tvmaze id
@@ -497,9 +488,7 @@ def _scan_mapping_file_for_mal_id(
 
     try:
         with open(mapping_file_path) as mapping_file:
-            logging.info(
-                f"[MetadataUtils] Trying to get MAL ID from {source} ID"
-            )
+            logging.info(f"[MetadataUtils] Trying to get MAL ID from {source} ID")
             mapping = json.load(mapping_file)
             mal_id = mapping.get(str(identifier))
 
@@ -557,10 +546,10 @@ def search_for_mal_id(*, content_type, tmdb_id, imdb_id, working_folder):
         ):
             temp_map["tvdb"] = str(get_tvdb_id_response["tvdb_id"])
 
-    # We use this small dict to auto fill the right values into the url request below
-    content_type_to_value_dict = {"movie": "tmdb", "tv": "tvdb"}
+    # We use this small dict to autofill the right values into the url request below
+    # content_type_to_value_dict = {"movie": "tmdb", "tv": "tvdb"}
 
-    # Now we we get the MAL ID
+    # Now we get the MAL ID
     temp_map["mal"] = _scan_mappings_for_mal_id(
         tmdb=tmdb_id,
         imdb=imdb_id,
@@ -572,7 +561,7 @@ def search_for_mal_id(*, content_type, tmdb_id, imdb_id, working_folder):
 
 def _fill_tmdb_metadata_to_torrent_info(torrent_info, tmdb_response):
     # --------------------- _fill_tmdb_metadata_to_torrent_info ---------------------
-    # TV shows on TMDB have different keys then movies so we need to set that here
+    # TV shows on TMDB have different keys then movies, so we need to set that here
     content_title = "name" if torrent_info["type"] == "episode" else "title"
 
     tmdb_metadata = dict()
@@ -582,12 +571,8 @@ def _fill_tmdb_metadata_to_torrent_info(torrent_info, tmdb_response):
     tmdb_metadata["title"] = tmdb_response.get(content_title, "")
     tmdb_metadata["overview"] = tmdb_response.get("overview", "")
     tmdb_metadata["original_title"] = tmdb_response.get("original_title", "")
-    tmdb_metadata["original_language"] = tmdb_response.get(
-        "original_language", ""
-    )
-    tmdb_metadata["spoken_languages"] = tmdb_response.get(
-        "spoken_languages", {}
-    )
+    tmdb_metadata["original_language"] = tmdb_response.get("original_language", "")
+    tmdb_metadata["spoken_languages"] = tmdb_response.get("spoken_languages", {})
 
     tmdb_metadata["genres"] = (
         list(map(lambda genre: genre["name"], tmdb_response["genres"]))
@@ -596,14 +581,12 @@ def _fill_tmdb_metadata_to_torrent_info(torrent_info, tmdb_response):
     )
     tmdb_metadata["release_date"] = (
         tmdb_response["release_date"]
-        if "release_date" in tmdb_response
-        and len(tmdb_response["release_date"]) > 0
+        if "release_date" in tmdb_response and len(tmdb_response["release_date"]) > 0
         else ""
     )
     tmdb_metadata["poster"] = (
         f"https://image.tmdb.org/t/p/original{tmdb_response['poster_path']}"
-        if "poster_path" in tmdb_response
-        and len(tmdb_response["poster_path"]) > 0
+        if "poster_path" in tmdb_response and len(tmdb_response["poster_path"]) > 0
         else ""
     )
     tmdb_metadata["tags"] = list(
@@ -616,9 +599,7 @@ def _fill_tmdb_metadata_to_torrent_info(torrent_info, tmdb_response):
     # --------------------- _fill_tmdb_metadata_to_torrent_info ---------------------
 
 
-def _fill_imdb_metadata_to_torrent_info(
-    torrent_info, imdb_response, datasource
-):
+def _fill_imdb_metadata_to_torrent_info(torrent_info, imdb_response, datasource):
     # --------------------- _fill_imdb_metadata_to_torrent_info ---------------------
     if datasource not in ["API", "CINEMAGOER"]:
         # torrent_info["imdb_metadata"] will have None by default. Keeping that same behaviour in this case as well
@@ -631,9 +612,9 @@ def _fill_imdb_metadata_to_torrent_info(
     imdb_metadata["title"] = imdb_response.get("title", "")
     imdb_metadata["original_title"] = imdb_response.get("original title", "")
     imdb_metadata["overview"] = imdb_response.get("plot", [""])[0]
-    imdb_metadata["poster"] = imdb_response.get(
-        "full-size cover url", ""
-    ).replace(".jpg", "._V1_FMjpg_UX750_.jpg")
+    imdb_metadata["poster"] = imdb_response.get("full-size cover url", "").replace(
+        ".jpg", "._V1_FMjpg_UX750_.jpg"
+    )
     imdb_metadata["year"] = str(imdb_response.get("year"))
     imdb_metadata["kind"] = imdb_response.get("kind")
     imdb_metadata["genres"] = imdb_response.get("genres", "")
@@ -649,19 +630,18 @@ def _fill_imdb_metadata_to_torrent_info(
 
 
 def _fill_keywords_in_tmdb_metadata(content_type, torrent_info):
-    get_keywords_url = f"https://api.themoviedb.org/3/{content_type}/{torrent_info['tmdb']}/keywords?api_key={UploaderConfig().TMDB_API_KEY}"
+    base_url_config = BaseUrlConfig()
+    get_keywords_url = f"{base_url_config.TMDB_BASE_URL}/3/{content_type}/{torrent_info['tmdb']}/keywords?api_key={UploaderConfig().TMDB_API_KEY}"
     try:
         logging.info(
-            f"[MetadataUtils] GET Request: https://api.themoviedb.org/3/{content_type}/{torrent_info['tmdb']}/keywords?api_key=<REDACTED>"
+            f"[MetadataUtils] GET Request: {base_url_config.TMDB_BASE_URL}/3/{content_type}/{torrent_info['tmdb']}/keywords?api_key=<REDACTED>"
         )
         keywords_info = requests.get(get_keywords_url).json()
 
         if keywords_info is not None and "status_message" not in keywords_info:
             # now that we got a proper response from tmdb, we need to store the keywords in torrent_info
             # for movies, the keywords will be present in `keywords` and for tv shows it'll be in `results`
-            keywords_attribute = (
-                "results" if content_type == "tv" else "keywords"
-            )
+            keywords_attribute = "results" if content_type == "tv" else "keywords"
             torrent_info["tmdb_metadata"]["keywords"] = list(
                 map(
                     lambda keyword: keyword["name"].lower(),
@@ -683,10 +663,11 @@ def _fill_keywords_in_tmdb_metadata(content_type, torrent_info):
 
 
 def _fill_trailers_in_tmdb_metadata(content_type, torrent_info):
-    get_trailers_url = f"https://api.themoviedb.org/3/{content_type}/{torrent_info['tmdb']}/videos?api_key={UploaderConfig().TMDB_API_KEY}"
+    base_url_config = BaseUrlConfig()
+    get_trailers_url = f"{base_url_config.TMDB_BASE_URL}/3/{content_type}/{torrent_info['tmdb']}/videos?api_key={UploaderConfig().TMDB_API_KEY}"
     try:
         logging.info(
-            f"[MetadataUtils] GET Request: https://api.themoviedb.org/3/{content_type}/{torrent_info['tmdb']}/videos?api_key=<REDACTED>"
+            f"[MetadataUtils] GET Request: {base_url_config.TMDB_BASE_URL}/3/{content_type}/{torrent_info['tmdb']}/videos?api_key=<REDACTED>"
         )
         trailers_info = requests.get(get_trailers_url).json()
 
@@ -741,22 +722,23 @@ def metadata_compare_tmdb_data_local(torrent_info):
     mal = "0"
     torrent_info["tmdb_metadata"] = None
     torrent_info["imdb_metadata"] = None
-
+    base_url_config = BaseUrlConfig()
     content_type = (
         "tv" if torrent_info["type"] == "episode" else torrent_info["type"]
     )  # translation for TMDB API
     # Getting the movie / tv show details from TMDb
-    get_media_info_url = f"https://api.themoviedb.org/3/{content_type}/{torrent_info['tmdb']}?api_key={UploaderConfig().TMDB_API_KEY}"
+    get_media_info_url = f"{base_url_config.TMDB_BASE_URL}/3/{content_type}/{torrent_info['tmdb']}?api_key={UploaderConfig().TMDB_API_KEY}"
 
     try:
         logging.info(
-            f"[MetadataUtils] GET Request: https://api.themoviedb.org/3/{content_type}/{torrent_info['tmdb']}?api_key=<REDACTED>"
+            f"[MetadataUtils] GET Request: {base_url_config.TMDB_BASE_URL}/3/{content_type}/{torrent_info['tmdb']}?api_key=<REDACTED>"
         )
         get_media_info = requests.get(get_media_info_url).json()
         _fill_tmdb_metadata_to_torrent_info(torrent_info, get_media_info)
-    except Exception:
+    except Exception as e:
         logging.exception(
-            "[MetadataUtils] Failed to get TVDB and MAL id from TMDB. Possibly wrong TMDB id."
+            "[MetadataUtils] Failed to get TVDB and MAL id from TMDB. Possibly wrong TMDB id.",
+            exc_info=e,
         )
         return title, year, tvdb, mal
 
@@ -773,9 +755,7 @@ def metadata_compare_tmdb_data_local(torrent_info):
     # Acquire and set the title we get from TMDB here
     if len(torrent_info["tmdb_metadata"]["title"]) > 0:
         title = torrent_info["tmdb_metadata"]["title"]
-        logging.info(
-            f"[MetadataUtils] Using the title we got from TMDB: {title}"
-        )
+        logging.info(f"[MetadataUtils] Using the title we got from TMDB: {title}")
 
     # Set the year (if exists)
     if len(torrent_info["tmdb_metadata"]["release_date"]) > 0:
@@ -795,12 +775,8 @@ def metadata_compare_tmdb_data_local(torrent_info):
     # We'll add the data from IMDB API and Cinemagoer
     try:
         # at this point in processing we don't have imdb without tt. Hence we create that.
-        imdb_details = Cinemagoer().get_movie(
-            torrent_info["imdb"].replace("tt", "")
-        )
-        _fill_imdb_metadata_to_torrent_info(
-            torrent_info, imdb_details, "CINEMAGOER"
-        )
+        imdb_details = Cinemagoer().get_movie(torrent_info["imdb"].replace("tt", ""))
+        _fill_imdb_metadata_to_torrent_info(torrent_info, imdb_details, "CINEMAGOER")
     except Exception as ex:
         logging.exception(
             "[MetadataUtils] Exception occurred while trying to get IMDb data from cinemagoer",
@@ -838,9 +814,7 @@ def _get_external_ids_from_imdb(imdb):
     imdb_external_id_url_redacted = (
         f"https://imdb-api.com/API/ExternalSites/<REDACTED>/{imdb}"
     )
-    logging.info(
-        f"[MetadataUtils] IMDB request url: {imdb_external_id_url_redacted}"
-    )
+    logging.info(f"[MetadataUtils] IMDB request url: {imdb_external_id_url_redacted}")
 
     try:
         imdb_response = requests.get(imdb_external_id_url).json()
@@ -883,10 +857,11 @@ def _get_external_ids_from_imdb(imdb):
 
 def _get_external_ids_from_tmdb(content_type, tmdb):
     content_type = "tv" if content_type == "episode" else content_type
+    base_url_config = BaseUrlConfig()
 
     logging.info("[MetadataUtils] Fetching external ids from TMDB")
-    tmdb_external_id_url = f"https://api.themoviedb.org/3/{content_type}/{tmdb}/external_ids?api_key={UploaderConfig().TMDB_API_KEY}&language=en-US"
-    tmdb_external_id_url_redacted = f"https://api.themoviedb.org/3/{content_type}/{tmdb}/external_ids?api_key=<REDACTED>&language=en-US"
+    tmdb_external_id_url = f"{base_url_config.TMDB_BASE_URL}/3/{content_type}/{tmdb}/external_ids?api_key={UploaderConfig().TMDB_API_KEY}&language=en-US"
+    tmdb_external_id_url_redacted = f"{base_url_config.TMDB_BASE_URL}/3/{content_type}/{tmdb}/external_ids?api_key=<REDACTED>&language=en-US"
     logging.info(
         f"[MetadataUtils] TMDB external ids request url: {tmdb_external_id_url_redacted}"
     )
@@ -926,9 +901,7 @@ def _get_external_ids_from_tmdb(content_type, tmdb):
 def _get_external_ids_from_tvmaze(tvmaze):
     logging.info("[MetadataUtils] Fetching external ids from TVMAZE")
     tvmaze_external_ids_url = f"https://api.tvmaze.com/shows/{tvmaze}"
-    logging.info(
-        f"[MetadataUtils] TVMAZE request url: {tvmaze_external_ids_url}"
-    )
+    logging.info(f"[MetadataUtils] TVMAZE request url: {tvmaze_external_ids_url}")
 
     try:
         tvmaze_response = requests.get(tvmaze_external_ids_url).json()
@@ -1004,16 +977,14 @@ def fill_database_ids(
         if media_id_val[0] is not None and len(media_id_val[0]) > 1:
             # We have one more check here to verify that the "tt" is included for the IMDB ID (TMDB won't accept it
             # if it doesn't)
-            if media_id_key == "imdb" and not str(
-                media_id_val[0]
-            ).lower().startswith("tt"):
+            if media_id_key == "imdb" and not str(media_id_val[0]).lower().startswith(
+                "tt"
+            ):
                 torrent_info[media_id_key] = f"tt{media_id_val[0]}"
             else:
                 torrent_info[media_id_key] = media_id_val[0]
 
-    if all(
-        x in torrent_info and torrent_info[x] != "0" for x in metadata_providers
-    ):
+    if all(x in torrent_info and torrent_info[x] != "0" for x in metadata_providers):
         # This means both the TVMAZE, TMDB & IMDB ID are already in the torrent_info dict
         logging.info(
             "[MetadataUtils] TMDB, TVmaze, TVDB & IMDB ID have been identified from media_info, so no need to make any TMDB API request"
@@ -1032,9 +1003,7 @@ def fill_database_ids(
         )
         ids_missing = [id for id in metadata_providers if id not in ids_present]
 
-        logging.info(
-            f"[MetadataUtils] We have {ids_present} with us currently."
-        )
+        logging.info(f"[MetadataUtils] We have {ids_present} with us currently.")
         logging.info(
             f"[MetadataUtils] We are missing {ids_missing} starting External Database API requests now"
         )
@@ -1066,8 +1035,7 @@ def fill_database_ids(
         for _ in range(0, 2):
             # Filling all the database ids from the external id requests
             if "imdb" in ids_present and any(
-                x in ids_missing and torrent_info[x] == "0"
-                for x in ["tmdb", "tvdb"]
+                x in ids_missing and torrent_info[x] == "0" for x in ["tmdb", "tvdb"]
             ):
                 # if imdb is available and imdb api is enabled, then we make a request to imdb api and gets the list of external ids
                 _fill_ids_from_external_response(
@@ -1078,8 +1046,7 @@ def fill_database_ids(
                 )
 
             if "tmdb" in ids_present and any(
-                x in ids_missing and torrent_info[x] == "0"
-                for x in ["imdb", "tvdb"]
+                x in ids_missing and torrent_info[x] == "0" for x in ["imdb", "tvdb"]
             ):
                 # calling the get external ids api of themoviedb and filling it metadata
                 _fill_ids_from_external_response(
@@ -1092,7 +1059,6 @@ def fill_database_ids(
                 )
 
             if torrent_info["type"] == "episode":
-
                 if "tvmaze" in ids_present and any(
                     x in ids_missing and torrent_info[x] == "0"
                     for x in ["imdb", "tvdb"]
@@ -1139,14 +1105,9 @@ def fill_database_ids(
                                 ids_present,
                             )
 
-                        if (
-                            torrent_info["tvmaze"] != "0"
-                            and "imdb" in ids_missing
-                        ):
+                        if torrent_info["tvmaze"] != "0" and "imdb" in ids_missing:
                             _fill_ids_from_external_response(
-                                _get_external_ids_from_tvmaze(
-                                    torrent_info["tvmaze"]
-                                ),
+                                _get_external_ids_from_tvmaze(torrent_info["tvmaze"]),
                                 torrent_info,
                                 ids_missing,
                                 ids_present,
@@ -1231,17 +1192,13 @@ def fill_database_ids(
             logging.error(
                 "[MetadataUtils] Could not get TMDB id from the user provided ids. Fallbacking to TMDB search by title & year"
             )
-            possible_matches = _search_and_get_possible_matches(
-                torrent_info, auto_mode
-            )
+            possible_matches = _search_and_get_possible_matches(torrent_info, auto_mode)
 
     else:
         logging.error(
-            "[MetadataUtils] No ids provided by user / mediainfo. Fallbacking to TMDB search by title & year"
+            "[MetadataUtils] No ids provided by user / mediainfo. Falling back to TMDB search by title & year"
         )
-        possible_matches = _search_and_get_possible_matches(
-            torrent_info, auto_mode
-        )
+        possible_matches = _search_and_get_possible_matches(torrent_info, auto_mode)
 
     return possible_matches
 

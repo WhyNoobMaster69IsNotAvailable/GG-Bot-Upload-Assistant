@@ -54,6 +54,12 @@ class GGBotConfig(ABC):
         return self._get_property_as_boolean(key, default)
 
 
+class BaseUrlConfig(GGBotConfig):
+    @cached_property
+    def TMDB_BASE_URL(self):
+        return self.get_config("tmdb_base_url", "https://api.themoviedb.org")
+
+
 class UploaderConfig(GGBotConfig):
     @cached_property
     def CHECK_FOR_DUPES(self):
@@ -81,9 +87,7 @@ class UploaderConfig(GGBotConfig):
 
     @cached_property
     def REUPLOADER(self):
-        return (
-            self._get_property("tmdb_result_auto_select_threshold") is not None
-        )
+        return self._get_property("tmdb_result_auto_select_threshold") is not None
 
     @property
     def TMDB_API_KEY(self):
@@ -99,15 +103,11 @@ class UploaderConfig(GGBotConfig):
 
     @property
     def UPLOADER_PATH(self):
-        return self._get_property(
-            "uploader_accessible_path", "__MISCONFIGURED_PATH__"
-        )
+        return self._get_property("uploader_accessible_path", "__MISCONFIGURED_PATH__")
 
     @property
     def TORRENT_CLIENT_PATH(self):
-        return self._get_property(
-            "client_accessible_path", "__MISCONFIGURED_PATH__"
-        )
+        return self._get_property("client_accessible_path", "__MISCONFIGURED_PATH__")
 
     @property
     def NO_OF_SCREENSHOTS(self) -> int:
@@ -304,9 +304,7 @@ class VisorConfig(APIKeyConfig, GGBotConfig):
         if self.api_key is None:
             global generated_api_key
             if generated_api_key is None:
-                generated_api_key = str(
-                    binascii.hexlify(os.urandom(16)), "UTF-8"
-                )
+                generated_api_key = str(binascii.hexlify(os.urandom(16)), "UTF-8")
                 print(f"Generated visor server api key: {generated_api_key}")
             self.api_key = generated_api_key
 

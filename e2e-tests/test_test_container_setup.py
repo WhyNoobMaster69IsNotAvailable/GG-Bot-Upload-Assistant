@@ -35,3 +35,14 @@ class TestE2ESetup:
         response = requests.get("http://example.com/api/error")
         assert response.status_code == 404
         assert response.json() == {"error": "Not Found"}
+
+        response = requests.get(
+            "http://example.com/3/search/movie?api_key=PLACEHOLDER_API_KEY&query='Deadpool & Wolverine'&page=1&include_adult=false&year=2024"
+        )
+        assert response.status_code == 200
+        json_data = response.json()
+
+        assert "page" in json_data
+        assert "results" in json_data
+        assert "total_pages" in json_data
+        assert "total_results" in json_data
