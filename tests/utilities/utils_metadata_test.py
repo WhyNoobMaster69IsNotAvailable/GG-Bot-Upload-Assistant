@@ -444,6 +444,8 @@ def __env_auto_uploader(param, default=None):
         return "DUMMY_API_KEY"
     if param == "tmdb_base_url":
         return "https://api.themoviedb.org"
+    if param == "tvmaze_base_url":
+        return "https://api.tvmaze.com"
     if param == "tmdb_result_auto_select_threshold":
         return 5
     return None
