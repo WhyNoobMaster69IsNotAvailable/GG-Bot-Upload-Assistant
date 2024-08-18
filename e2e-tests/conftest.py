@@ -16,6 +16,8 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 e2e_resources_dir = "/e2e-tests/resources"
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -145,7 +147,6 @@ def _update_mock_server_based_on_config(server, server_config: Dict) -> None:
         response_text = mock_item["response"]["body"]
         status_code = mock_item["response"]["status_code"]
 
-        # Register the mock response
         if method == "get":
             server.get(
                 url, text=response_text, status_code=status_code, headers=headers

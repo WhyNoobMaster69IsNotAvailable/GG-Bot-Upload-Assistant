@@ -59,6 +59,10 @@ class BaseUrlConfig(GGBotConfig):
     def TMDB_BASE_URL(self):
         return self.get_config("tmdb_base_url", "https://api.themoviedb.org")
 
+    @cached_property
+    def TVMAZE_BASE_URL(self):
+        return self.get_config("tvmaze_base_url", "https://api.tvmaze.com")
+
 
 class SentryErrorTrackingConfig(GGBotConfig):
     @cached_property

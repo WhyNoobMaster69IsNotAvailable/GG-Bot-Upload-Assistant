@@ -330,7 +330,7 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
         # once we got tmdb id, we can then call tmdb external to get the data for imdb and tvdb
         tmdb_external_ids = _get_external_ids_from_tmdb(content_type, tmdb)
         tmdb_external_ids = (
-            {"tmdb": tmdb, "imdb": "0"}
+            {"tmdb": tmdb, "imdb": "0", "tvdb": "0"}
             if tmdb_external_ids is None
             else tmdb_external_ids
         )
@@ -394,14 +394,19 @@ def _get_external_id(id_site, id_value, external_site, content_type):
     # translation for TMDB API
     content_type = "tv" if content_type == "episode" else content_type
     uploader_config = UploaderConfig()
+    base_url_config = BaseUrlConfig()
 
-    tmdb_id_from_imdb = f"https://api.themoviedb.org/3/find/{id_value}?api_key={uploader_config.TMDB_API_KEY}&language=en-US&external_source=imdb_id"
-    tmdb_id_from_imdb_redacted = f"https://api.themoviedb.org/3/find/{id_value}?api_key=<REDACTED>&language=en-US&external_source=imdb_id"
-    tmdb_id_from_tvdb = f"https://api.themoviedb.org/3/find/{id_value}?api_key={uploader_config.TMDB_API_KEY}&language=en-US&external_source=tvdb_id"
-    tmdb_id_from_tvdb_redacted = f"https://api.themoviedb.org/3/find/{id_value}?api_key=<REDACTED>&language=en-US&external_source=tvdb_id"
+    tmdb_id_from_imdb = f"{base_url_config.TMDB_BASE_URL}/3/find/{id_value}?api_key={uploader_config.TMDB_API_KEY}&language=en-US&external_source=imdb_id"
+    tmdb_id_from_imdb_redacted = f"{base_url_config.TMDB_BASE_URL}/3/find/{id_value}?api_key=<REDACTED>&language=en-US&external_source=imdb_id"
+    tmdb_id_from_tvdb = f"{base_url_config.TMDB_BASE_URL}/3/find/{id_value}?api_key={uploader_config.TMDB_API_KEY}&language=en-US&external_source=tvdb_id"
+    tmdb_id_from_tvdb_redacted = f"{base_url_config.TMDB_BASE_URL}/3/find/{id_value}?api_key=<REDACTED>&language=en-US&external_source=tvdb_id"
 
-    tvmaze_id_from_imdb = f"https://api.tvmaze.com/lookup/shows?imdb={id_value}"
-    tvmaze_id_from_tvdb = f"https://api.tvmaze.com/lookup/shows?thetvdb={id_value}"
+    tvmaze_id_from_imdb = (
+        f"{base_url_config.TVMAZE_BASE_URL}/lookup/shows?imdb={id_value}"
+    )
+    tvmaze_id_from_tvdb = (
+        f"{base_url_config.TVMAZE_BASE_URL}/lookup/shows?thetvdb={id_value}"
+    )
 
     try:
         if external_site == "tvmaze":  # we need tvmaze id
