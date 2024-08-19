@@ -346,6 +346,7 @@ pip install -r requirements/requirements.txt
 - [X] Code Refactoring
 - [X] E2E Tests
 - [X] Fixed BLU announce URL
+- [X] Added more scene groups & streaming services -> [@tiberio87]
 
 
 ### v3.1.7
