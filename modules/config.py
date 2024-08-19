@@ -18,6 +18,7 @@ import binascii
 import os
 from abc import ABC, abstractmethod, ABCMeta
 from functools import cached_property
+from typing import Optional
 
 from modules.exceptions.exception import GGBotUploaderException
 
@@ -52,6 +53,11 @@ class GGBotConfig(ABC):
 
     def get_config_as_boolean(self, key, default: bool = False) -> bool:
         return self._get_property_as_boolean(key, default)
+
+
+class MetadataConfig(GGBotConfig):
+    def get_base_url(self, provider_id: str, default: Optional[str] = None):
+        return self.get_config(f"{provider_id}_base_url", default)
 
 
 class BaseUrlConfig(GGBotConfig):
@@ -102,6 +108,10 @@ class UploaderConfig(GGBotConfig):
     @property
     def TMDB_API_KEY(self):
         return self._get_property("TMDB_API_KEY")
+
+    @property
+    def TVDB_API_KEY(self):
+        return self._get_property("TVDB_API_KEY")
 
     @property
     def IMDB_API_KEY(self):
