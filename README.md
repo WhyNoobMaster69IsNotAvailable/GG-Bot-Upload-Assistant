@@ -341,15 +341,23 @@ pip install -r requirements/requirements.txt
 
 # Roadmap
 ### v3.1.6
+- [X] Updated MAL database
+- [X] Added support for GitLab Sentry error and exception tracking
+- [X] Code Refactoring
+- [X] E2E Tests
+- [X] Fixed BLU announce URL
+
+
+### v3.1.7
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
-- [ ] Fixed BLU announce URL
 - [ ] Template based custom description
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
 
-### v3.1.7
+
+### v3.1.8
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
 - [ ] Issue#96: DVD Remux not supported
@@ -428,12 +436,12 @@ This project exists thanks to all the people who contribute.
 
 # Change Log
 ## **3.1.5**
-    New Image host 
+    New Image host
         * PTScreens -> [@PTScreens]
-        
+
     New Tracker
         * DarkLand -> [@darklandy]
-    
+
     Bug Fixes
         * Fixed Torrent.desi api -> [@highlamb]
 
