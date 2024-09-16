@@ -84,7 +84,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
         </tr>
         <tr style="text-align: center">
             <td><strong>BLU</strong></td>
-            <td><strong><a href="https://blutopia.xyz">Blutopia</a></strong></td>
+            <td><strong><a href="https://blutopia.cc">Blutopia</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td><strong>R4E</strong></td>
