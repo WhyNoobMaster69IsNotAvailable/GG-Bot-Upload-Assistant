@@ -124,7 +124,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
         </tr>
         <tr style="text-align: center">
             <td><strong>FNP</strong></td>
-            <td><strong><a href="https://fearnopeer.com">Fearnooper</a></strong></td>
+            <td><strong><a href="https://fearnopeer.com">FearNoPeer</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td><strong>ULCX</strong></td>
@@ -164,11 +164,6 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
             <td><strong>TBDev</strong></td>
             <td><strong>SPD</strong></td>
             <td><strong><a href="https://speedapp.io/">SpeedApp</a></strong></td>
-        </tr>
-        <tr style="text-align: center">
-            <td><strong>TorrentDB</strong></td>
-            <td><strong>TDB</strong></td>
-            <td><strong><a href="https://torrentdb.net/">TorrentDB</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td><strong>BIT-HDTV</strong></td>
