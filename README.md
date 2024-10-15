@@ -374,6 +374,7 @@ pip install -r requirements/requirements.txt
     - [ ] RetroFlix
     - [ ] PirateTheNet
 - [ ] Add support for DVDs
+- [ ] Add support for sports related contents
 
 <br>
 
