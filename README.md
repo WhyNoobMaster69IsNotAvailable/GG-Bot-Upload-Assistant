@@ -339,7 +339,7 @@ pip install -r requirements/requirements.txt
 <br>
 
 # Roadmap
-### v3.1.6
+### v3.1.7
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
 - [ ] Fixed BLU announce URL
@@ -348,7 +348,7 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
 
-### v3.1.7
+### v3.1.8
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
 - [ ] Issue#96: DVD Remux not supported
@@ -424,9 +424,19 @@ This project exists thanks to all the people who contribute.
 <a href="https://gitlab.com/PTScreens" title="PTScreens">
   <img width="50" src="https://secure.gravatar.com/avatar/8468e07fddc384b050fc961496d7ad25e9738d0e4034da78048305c57a054684?s=384&d=identicon">
 </a>
+<a href="https://gitlab.com/docd00m" title="docd00m">
+  <img width="50" src="https://secure.gravatar.com/avatar/66e2c00e011c17171cda87a7b5a92895014efff92854043e457b48ae6942345b?s=1600&d=identicon">
+</a>
 <br>
 
 # Change Log
+## **3.1.6**
+    New Tracker
+        * Yoinked -> [@docd00m]
+    
+
+<br>
+
 ## **3.1.5**
     New Image host 
         * PTScreens -> [@PTScreens]
