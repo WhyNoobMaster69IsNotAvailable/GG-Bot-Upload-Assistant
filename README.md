@@ -432,7 +432,19 @@ This project exists thanks to all the people who contribute.
 ## **3.1.6**
     New Tracker
         * Yoinked -> [@docd00m]
-    
+
+    New Features
+        * Added more scene groups & streaming services -> [@tiberio87]
+        * Added support for GitLab Sentry error and exception tracking
+
+    Bug Fixes
+        * Fixed BLU announce URL
+
+    Underhood Changes
+        * Code Refactoring
+        * E2E Tests
+        * Updated MAL database
+
 
 <br>
 
