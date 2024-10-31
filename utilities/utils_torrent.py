@@ -25,7 +25,7 @@ from modules.torrent_generator.mktorrent_generator import (
 )
 from modules.torrent_generator.torf_generator import GGBotTorfTorrentGenerator
 from modules.torrent_generator.torrent_editor import GGBotTorrentEditor
-from utilities.utils import normalize_for_system_path
+from utilities.utils import GenericUtils
 
 
 def _callback_progress(torrent, filepath, pieces_done, pieces_total):
@@ -49,9 +49,7 @@ def _print_progress_bar(
     fill="█",
     print_end="\r",
 ):
-    percent = ("{0:." + str(decimals) + "f}").format(
-        100 * (iteration / float(total))
-    )
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filled_length = int(length * iteration // total)
     bar = fill * filled_length + "-" * (length - filled_length)
     print(f"\r{prefix} |{bar}| {percent}% {suffix}", end=print_end)
@@ -76,7 +74,7 @@ class GGBotTorrentCreator:
         self.working_dir = WORKING_DIR.format(base_path=working_folder)
         self.hash_prefix = hash_prefix
         self.media = media
-        self.torrent_title = normalize_for_system_path(torrent_title)
+        self.torrent_title = GenericUtils.normalize_for_system_path(torrent_title)
         self.announce = announce_urls
         self.source = source
         self.tracker = tracker
@@ -84,12 +82,8 @@ class GGBotTorrentCreator:
 
     def generate_dot_torrent(self):
         logging.info("[DotTorrentGeneration] Creating the .torrent file now")
-        logging.info(
-            f"[DotTorrentGeneration] Primary announce url: {self.announce[0]}"
-        )
-        logging.info(
-            f"[DotTorrentGeneration] Source field in info `{self.source}`"
-        )
+        logging.info(f"[DotTorrentGeneration] Primary announce url: {self.announce[0]}")
+        logging.info(f"[DotTorrentGeneration] Source field in info `{self.source}`")
 
         if self.torrent_file_exist:
             self._edit_existing_torrent()
@@ -101,16 +95,12 @@ class GGBotTorrentCreator:
         logging.info(
             "[DotTorrentGeneration] Generating new .torrent file since old ones doesn't exist"
         )
-        torrent_generator: GGBotTorrentGeneratorBase = (
-            self._get_torrent_generator()
-        )
+        torrent_generator: GGBotTorrentGeneratorBase = self._get_torrent_generator()
         torrent_generator.generate_torrent()
         torrent_generator.do_post_generation_task()
 
     def _edit_existing_torrent(self):
-        torrent_editor = GGBotTorrentEditor(
-            f"{self.working_dir}{self.hash_prefix}"
-        )
+        torrent_editor = GGBotTorrentEditor(f"{self.working_dir}{self.hash_prefix}")
         torrent_editor.edit_torrent(
             announce=self.announce,
             tracker=self.tracker,
@@ -120,9 +110,7 @@ class GGBotTorrentCreator:
 
     @property
     def torrent_file_exist(self):
-        return (
-            len(glob.glob(f"{self.working_dir}{self.hash_prefix}*.torrent")) > 0
-        )
+        return len(glob.glob(f"{self.working_dir}{self.hash_prefix}*.torrent")) > 0
 
     def _get_torrent_generator(self):
         if self.use_mktorrent:

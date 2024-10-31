@@ -17,14 +17,12 @@
 import pytest
 
 from pathlib import Path
-import utilities.utils as utils
 
+from utilities.utils import GenericUtils
 
 working_folder = Path(__file__).resolve().parent.parent.parent.parent
 temp_working_dir = "/tests/working_folder"
-dummy_for_guessit = (
-    "Movie.Name.2017.1080p.BluRay.Remux.AVC.DTS.5.1-RELEASE_GROUP"
-)
+dummy_for_guessit = "Movie.Name.2017.1080p.BluRay.Remux.AVC.DTS.5.1-RELEASE_GROUP"
 
 
 def touch(file_path):
@@ -99,6 +97,6 @@ def run_around_tests():
     ],
 )
 def test_perform_guessit_on_filename(input_path, expected):
-    guessit_result = utils.perform_guessit_on_filename(input_path)
+    guessit_result = GenericUtils.perform_guessit_on_filename(input_path)
     for key, value in expected.items():
-        assert guessit_result[key] == expected[key]
+        assert guessit_result[key] == value

@@ -1,7 +1,7 @@
 from modules.config import TrackerConfig
 import logging
 
-from utilities.utils import write_cutsom_user_inputs_to_description
+from utilities.utils import write_custom_user_inputs_to_description
 
 
 def add_announce_pid_to_payload(torrent_info, tracker_settings, tracker_config):
@@ -33,7 +33,7 @@ def rewrite_description(torrent_info, tracker_settings, tracker_config):
         "custom_user_inputs" in torrent_info
         and torrent_info["custom_user_inputs"] is not None
     ):
-        write_cutsom_user_inputs_to_description(
+        write_custom_user_inputs_to_description(
             torrent_info=torrent_info,
             description_file_path=tl_description_file,
             config=tracker_config,

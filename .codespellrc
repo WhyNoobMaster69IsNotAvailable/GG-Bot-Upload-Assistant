@@ -1,4 +1,4 @@
 [codespell]
-ignore-words-list=te,th,tha,writters,succesfully,erro
-skip=*.po
+ignore-words-list=te,th,tha,writters,succesfully,erro,foregin
+skip=*.po,parameters/*.json
 exclude-file=.codespellrc

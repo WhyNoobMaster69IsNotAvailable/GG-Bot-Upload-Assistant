@@ -42,22 +42,22 @@ def __reuploader_dynamic_mode(param, default=None):
 
 
 def test_init_rutorrent(mocker):
-    mock_api_call = mocker.patch("requests.post")
+    mocker.patch("requests.post")
     mocker.patch("os.getenv", side_effect=__reuploader_default_mode)
     rutorrent = Rutorrent()
 
-    assert rutorrent.dynamic_tracker_selection == False
+    assert rutorrent.dynamic_tracker_selection is False
     assert rutorrent.target_label == "GG_BOT_TEST_LABEL"
     assert rutorrent.seed_label == "GG_BOT_CROSS_SEED_TEST"
     assert rutorrent.source_label == "GG_BOT_CROSS_SEED_TEST_Source"
 
 
 def test_init_rutorrent_dynamic_reuploader(mocker):
-    mock_api_call = mocker.patch("requests.post")
+    mocker.patch("requests.post")
     mocker.patch("os.getenv", side_effect=__reuploader_dynamic_mode)
     rutorrent = Rutorrent()
 
-    assert rutorrent.dynamic_tracker_selection == True
+    assert rutorrent.dynamic_tracker_selection is True
     assert rutorrent.target_label == "GGBOT"
     assert rutorrent.seed_label == "GG_BOT_CROSS_SEED_TEST"
     assert rutorrent.source_label == "GG_BOT_CROSS_SEED_TEST_Source"
@@ -88,7 +88,7 @@ def test_init_rutorrent_dynamic_reuploader(mocker):
     ],
 )
 def test_get_dynamic_trackers(torrent, expected, mocker):
-    mock_api_call = mocker.patch("requests.post")
+    mocker.patch("requests.post")
     mocker.patch("os.getenv", side_effect=__reuploader_dynamic_mode)
     rutorrent = Rutorrent()
     assert rutorrent.get_dynamic_trackers(torrent) == expected
@@ -101,19 +101,13 @@ def test_get_dynamic_trackers(torrent, expected, mocker):
         pytest.param({"category": "SomeOtherLabel"}, [], id="wrong_label"),
         pytest.param({"category": ""}, [], id="no_label"),
         pytest.param({"category": "GGBOT::"}, [], id="no_trackers_provided"),
-        pytest.param(
-            {"category": "GGBOT::TSP::ATH"}, [], id="two_trackers_provided"
-        ),
-        pytest.param(
-            {"category": "GGBOT::TSP::ATH::"}, [], id="two_trackers_provided"
-        ),
-        pytest.param(
-            {"category": "GGBOT::spd::ath::"}, [], id="two_trackers_provided"
-        ),
+        pytest.param({"category": "GGBOT::TSP::ATH"}, [], id="two_trackers_provided"),
+        pytest.param({"category": "GGBOT::TSP::ATH::"}, [], id="two_trackers_provided"),
+        pytest.param({"category": "GGBOT::spd::ath::"}, [], id="two_trackers_provided"),
     ],
 )
 def test_get_dynamic_trackers_when_disabled(torrent, expected, mocker):
-    mock_api_call = mocker.patch("requests.post")
+    mocker.patch("requests.post")
     mocker.patch("os.getenv", side_effect=__reuploader_default_mode)
     rutorrent = Rutorrent()
     assert rutorrent.get_dynamic_trackers(torrent) == expected

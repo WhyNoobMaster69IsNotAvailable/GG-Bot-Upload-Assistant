@@ -24,7 +24,7 @@ from pathlib import Path
 from werkzeug.serving import make_server
 from flask import Flask, jsonify, request, abort
 
-from utilities.utils_dupes import *
+from utilities.utils_dupes import DupeUtils
 
 
 working_folder = Path(__file__).resolve().parent.parent.parent
@@ -127,25 +127,19 @@ def run_around_tests():
     source_destination_api_key_based = (
         f"{working_folder}/tests/resources/dupes/templates/api_key_based.json"
     )
-    destination_api_key_based = (
-        f"{working_folder}/site_templates/api_key_based.json"
-    )
+    destination_api_key_based = f"{working_folder}/site_templates/api_key_based.json"
     shutil.copy(source_destination_api_key_based, destination_api_key_based)
 
     source_destination_token_based = (
         f"{working_folder}/tests/resources/dupes/templates/token_based.json"
     )
-    destination_token_based = (
-        f"{working_folder}/site_templates/token_based.json"
-    )
+    destination_token_based = f"{working_folder}/site_templates/token_based.json"
     shutil.copy(source_destination_token_based, destination_token_based)
 
     source_destination_header_based = (
         f"{working_folder}/tests/resources/dupes/templates/header_based.json"
     )
-    destination_header_based = (
-        f"{working_folder}/site_templates/header_based.json"
-    )
+    destination_header_based = f"{working_folder}/site_templates/header_based.json"
     shutil.copy(source_destination_header_based, destination_header_based)
 
     start_server()
@@ -208,7 +202,7 @@ def test_search_for_dupes_api_api_key_based(
     )
 
     assert (
-        search_for_dupes_api(
+        DupeUtils().search_for_dupes_api(
             "ACRONYM",
             site_template,
             imdb,

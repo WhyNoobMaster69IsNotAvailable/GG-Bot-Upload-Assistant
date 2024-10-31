@@ -19,8 +19,8 @@ import pytest
 import hashlib
 
 from pathlib import Path
-import utilities.utils as utils
 
+from utilities.utils import GenericUtils
 
 working_folder = Path(__file__).resolve().parent.parent.parent.parent
 temp_working_dir = "/tests/working_folder"
@@ -54,9 +54,7 @@ def run_around_tests():
     if Path(folder).is_dir():
         clean_up(folder)
 
-    Path(f"{folder}/sample").mkdir(
-        parents=True, exist_ok=True
-    )  # config.env folder
+    Path(f"{folder}/sample").mkdir(parents=True, exist_ok=True)  # config.env folder
 
     nano(f"{folder}/sample/config.env.sample", "key1=\nkey2=\nkey3=")
     yield
@@ -65,7 +63,7 @@ def run_around_tests():
 
 def test_write_file_contents_to_log_as_debug(mocker):
     mock_logger = mocker.patch("logging.debug")
-    utils.write_file_contents_to_log_as_debug(
+    GenericUtils.write_file_contents_to_log_as_debug(
         f"{working_folder}{temp_working_dir}/sample/config.env.sample"
     )
     assert mock_logger.call_count == 3
@@ -73,24 +71,22 @@ def test_write_file_contents_to_log_as_debug(mocker):
 
 def test_validate_env_file(mocker):
     get_env = mocker.patch("os.getenv", return_value="")
-    utils.validate_env_file(
+    GenericUtils.validate_env_file(
         f"{working_folder}{temp_working_dir}/sample/config.env.sample"
     )
     assert get_env.call_count == 3
 
 
 def test_get_and_validate_default_trackers(mocker):
-    mocker.patch(
-        "os.getenv", side_effect=__default_tracker_success_key_validation
-    )
+    mocker.patch("os.getenv", side_effect=__default_tracker_success_key_validation)
 
     acronym_to_tracker = json.load(
         open(f"{working_folder}/parameters/tracker/acronyms.json")
     )
-    api_keys_dict = utils.prepare_and_validate_tracker_api_keys_dict(
+    api_keys_dict = GenericUtils.prepare_and_validate_tracker_api_keys_dict(
         f"{working_folder}/parameters/tracker/api_keys.json"
     )
-    assert utils.get_and_validate_configured_trackers(
+    assert GenericUtils().get_and_validate_configured_trackers(
         None, False, api_keys_dict, acronym_to_tracker.keys()
     ) == ["ANT"]
 
@@ -104,22 +100,18 @@ def test_get_and_validate_default_trackers(mocker):
         pytest.param([], False, id="default_trackers_with_no_api_key"),
     ],
 )
-def test_get_and_validate_configured_trackers_failures(
-    trackers, all_trackers, mocker
-):
-    mocker.patch(
-        "os.getenv", side_effect=__default_tracker_failure_key_validation
-    )
+def test_get_and_validate_configured_trackers_failures(trackers, all_trackers, mocker):
+    mocker.patch("os.getenv", side_effect=__default_tracker_failure_key_validation)
 
     acronym_to_tracker = json.load(
         open(f"{working_folder}/parameters/tracker/acronyms.json")
     )
-    api_keys_dict = utils.prepare_and_validate_tracker_api_keys_dict(
+    api_keys_dict = GenericUtils.prepare_and_validate_tracker_api_keys_dict(
         f"{working_folder}/parameters/tracker/api_keys.json"
     )
 
     with pytest.raises(AssertionError):
-        assert utils.get_and_validate_configured_trackers(
+        assert GenericUtils().get_and_validate_configured_trackers(
             trackers, all_trackers, api_keys_dict, acronym_to_tracker.keys()
         )
 
@@ -140,15 +132,13 @@ def test_prepare_and_validate_tracker_api_keys_dict(mocker):
     mocker.patch("os.getenv", side_effect=__tracker_key_validation)
 
     expected = dict()
-    api_keys = json.load(
-        open(f"{working_folder}/parameters/tracker/api_keys.json")
-    )
+    json.load(open(f"{working_folder}/parameters/tracker/api_keys.json"))
     expected["ant_api_key"] = "ant_api_key_value"
     expected["ath_api_key"] = "ath_api_key_value"
     expected["tmdb_api_key"] = "tmdb_api_key_value"
 
     assert (
-        utils.prepare_and_validate_tracker_api_keys_dict(
+        GenericUtils.prepare_and_validate_tracker_api_keys_dict(
             f"{working_folder}/parameters/tracker/api_keys.json"
         )
         == expected
@@ -159,7 +149,7 @@ def test_validate_tracker_api_keys_no_tmdb(mocker):
     mocker.patch("os.getenv", return_value="")
 
     with pytest.raises(AssertionError):
-        assert utils.prepare_and_validate_tracker_api_keys_dict(
+        assert GenericUtils.prepare_and_validate_tracker_api_keys_dict(
             f"{working_folder}/parameters/tracker/api_keys.json"
         )
 
@@ -169,9 +159,7 @@ def test_validate_tracker_api_keys_no_tmdb(mocker):
     ("trackers", "all_trackers", "expected"),
     [
         pytest.param([], True, ["ANT", "ATH"], id="uploading_to_all_trackers"),
-        pytest.param(
-            None, True, ["ANT", "ATH"], id="uploading_to_all_trackers"
-        ),
+        pytest.param(None, True, ["ANT", "ATH"], id="uploading_to_all_trackers"),
         pytest.param(
             ["NBL", "ATH", "TSP"],
             True,
@@ -186,20 +174,18 @@ def test_validate_tracker_api_keys_no_tmdb(mocker):
         ),
     ],
 )
-def test_get_and_validate_configured_trackers(
-    trackers, all_trackers, expected, mocker
-):
+def test_get_and_validate_configured_trackers(trackers, all_trackers, expected, mocker):
     mocker.patch("os.getenv", side_effect=__tracker_key_validation)
 
     acronym_to_tracker = json.load(
         open(f"{working_folder}/parameters/tracker/acronyms.json")
     )
-    api_keys_dict = utils.prepare_and_validate_tracker_api_keys_dict(
+    api_keys_dict = GenericUtils.prepare_and_validate_tracker_api_keys_dict(
         f"{working_folder}/parameters/tracker/api_keys.json"
     )
 
     assert (
-        utils.get_and_validate_configured_trackers(
+        GenericUtils().get_and_validate_configured_trackers(
             trackers, all_trackers, api_keys_dict, acronym_to_tracker.keys()
         )
         == expected
@@ -208,7 +194,7 @@ def test_get_and_validate_configured_trackers(
 
 def test_display_banner(mocker):
     mock_console = mocker.patch("rich.console.Console.print")
-    utils.display_banner("GG-BOT-Testing")
+    GenericUtils.display_banner("GG-BOT-Testing")
     assert mock_console.call_count == 2
 
 
@@ -223,7 +209,7 @@ def test_display_banner(mocker):
     ),
 )
 def test_has_user_provided_type(input, expected):
-    assert utils.has_user_provided_type(input) == expected
+    assert GenericUtils.has_user_provided_type(input) == expected
 
 
 def test_get_hash():
@@ -231,7 +217,7 @@ def test_get_hash():
     hashed = hashlib.new("sha256")
     hashed.update(test_string.encode())
     expected = hashed.hexdigest()
-    assert utils.get_hash(test_string) == expected
+    assert GenericUtils.get_hash(test_string) == expected
 
 
 def __default_tracker_failure_key_validation(param, default=None):

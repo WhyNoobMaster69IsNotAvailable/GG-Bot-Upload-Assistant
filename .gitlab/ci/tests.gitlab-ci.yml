@@ -14,6 +14,61 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
+# ********************************************** #
+# ********************************************** #
+#                 E2E Tests GG-BOT               #
+# ********************************************** #
+# ********************************************** #
+# E2E tests for Parent Repo with report generation
+e2e-test:
+  services:
+    - name: docker:dind
+      command: [ "--tls=false" ]
+  stage: test
+  image: noobmaster669/gg-bot-base:test-latest
+  variables:
+    SOURCE_DIRECTORY: gg-bot-upload-assistant
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
+  script:
+    - pip install -r requirements/requirements_test.txt
+    - pip freeze > requirements/requirements_test.txt
+    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml --cov=./ e2e-tests/
+    # generating xml coverage report for various platforms
+    - coverage report
+    - coverage xml -o coverage.xml
+    - sed -i "s=<source>.*${SOURCE_DIRECTORY}</source>=<source>./${SOURCE_DIRECTORY}</source>=g" coverage.xml
+    - sed -i "s;filename=\";filename=\"${SOURCE_DIRECTORY}/;g" coverage.xml
+    # sending coverage report to codecov
+    - curl -Os https://uploader.codecov.io/latest/alpine/codecov
+    - chmod +x codecov
+    - ./codecov -R .
+    # sending coverage report for codacy
+    - curl -Os https://coverage.codacy.com/get.sh
+    - chmod +x get.sh
+    - sh get.sh report -l Python -r coverage.xml
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  artifacts:
+    name: "e2e-test-report-$CI_COMMIT_REF_NAME"
+    expose_as: E2E test and coverage results
+    paths:
+      - coverage.xml
+      - junit_report.xml
+      - coverage
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+      junit:
+        - junit_report.xml
+    expire_in: 90 days
+  environment:
+    name: e2e-test/reports/$CI_COMMIT_REF_NAME
+    auto_stop_in: 2 months
+    url: $PAGES_URL/-/jobs/$CI_JOB_ID/artifacts/coverage/index.html
+
 # ********************************************** #
 # ********************************************** #
 #                Unit Tests GG-BOT               #
@@ -28,11 +83,10 @@ unit-test:
   script:
     - pip install -r requirements/requirements_test.txt
     - pip freeze > requirements/requirements_test.txt
-    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml --cov=./ .
+    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml --cov=./ tests/
     # generating xml coverage report for various platforms
     - coverage report
     - coverage xml -o coverage.xml
-    # - sed -i 's|" filename="|" filename="src/|g' coverage.xml
     - sed -i "s=<source>.*${SOURCE_DIRECTORY}</source>=<source>./${SOURCE_DIRECTORY}</source>=g" coverage.xml
     - sed -i "s;filename=\";filename=\"${SOURCE_DIRECTORY}/;g" coverage.xml
     # sending coverage report to codecov
@@ -72,7 +126,7 @@ unit-test-mr:
   script:
     - pip install -r requirements/requirements_test.txt
     - pip freeze > requirements/requirements_test.txt
-    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml --cov=./ .
+    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml --cov=./ tests/
     - coverage report
     - coverage xml -o coverage.xml
     - sed -i "s=<source>.*${SOURCE_DIRECTORY}</source>=<source>./${SOURCE_DIRECTORY}</source>=g" coverage.xml
