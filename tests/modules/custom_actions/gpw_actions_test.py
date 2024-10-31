@@ -84,9 +84,7 @@ def test_check_for_existing_group_no_group(monkeypatch, mocker):
     monkeypatch.setattr("requests.get", lambda url: next(gpw_responses))
     mocker.patch("os.getenv", return_value="GPW_API_KEY")
 
-    gpw_actions.check_for_existing_group(
-        torrent_info, tracker_settings, tracker_config
-    )
+    gpw_actions.check_for_existing_group(torrent_info, tracker_settings, tracker_config)
 
     assert tracker_settings["releasetype"] == "1"
     assert tracker_settings["name"] == "Ant-Man and the Wasp: Quantumania"
@@ -193,9 +191,7 @@ def test_check_for_existing_group_group_exists(monkeypatch, mocker):
         ),
     )
 
-    gpw_actions.check_for_existing_group(
-        torrent_info, tracker_settings, tracker_config
-    )
+    gpw_actions.check_for_existing_group(torrent_info, tracker_settings, tracker_config)
     assert tracker_settings["groupid"] == 54321
 
 
@@ -315,9 +311,7 @@ def test_rehost_screens(torrent_info, expected, mocker, prepare_working_folder):
     gpw_actions.rehost_screens(
         torrent_info,
         tracker_settings,
-        {
-            "upload_form": "https://url.com/upload.php?api_key={api_key}&action=upload"
-        },
+        {"upload_form": "https://url.com/upload.php?api_key={api_key}&action=upload"},
     )
 
     assert tracker_settings["gpw_rehosted"] == expected["gpw_rehosted"]
@@ -338,9 +332,7 @@ def test_rehost_screens_with_no_screenshots(prepare_working_folder):
     )
 
 
-def test_rehost_screens_with_exception_from_tracker(
-    mocker, prepare_working_folder
-):
+def test_rehost_screens_with_exception_from_tracker(mocker, prepare_working_folder):
     torrent_info = {
         **json.load(
             open(
@@ -362,7 +354,7 @@ def test_rehost_screens_with_exception_from_tracker(
         return_value=APIResponse(json.load(open(expected["mock_return"]))),
     )
 
-    with pytest.raises(Exception) as ex:
+    with pytest.raises(Exception):
         gpw_actions.rehost_screens(
             torrent_info,
             {},
