@@ -139,3 +139,6 @@ dmypy.json
 .pyre/
 entry.py
 tvmaze_search.py
+
+!e2e-tests/resources/*.mkv
+!e2e-tests/resources/How.I.Met.Your.Mother.S09.1080p.DSNP.WEB-DL.DDP7.1.H.264-ReleaseGroup/*.mkv

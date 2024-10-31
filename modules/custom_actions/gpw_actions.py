@@ -391,13 +391,9 @@ def _rehost_to_gpw(tracker_config, image_url_list):
         image_upload_response["status"] == 200
         and "error" not in image_upload_response["response"]
     ):
-        image_upload_response = list(
-            map(
-                lambda element: element["name"],
-                image_upload_response["response"]["files"],
-            )
-        )
-        return image_upload_response
+        return [
+            element["name"] for element in image_upload_response["response"]["files"]
+        ]
 
     raise Exception(
         f'Image Re-hosting to GPW failed. Error: {image_upload_response["response"]["error"]}'
@@ -406,6 +402,22 @@ def _rehost_to_gpw(tracker_config, image_url_list):
 
 def _filter_gpw_supported_urls(url):
     return "ptpimg.me" in url or "imgbox.com" in url
+
+
+def _get_supported_hosts(image_urls):
+    return [
+        url
+        for url in (url.replace("\n", "") for url in image_urls)
+        if len(url) > 0 and _filter_gpw_supported_urls(url)
+    ]
+
+
+def _get_reupload_img_urls(image_urls):
+    return [
+        url
+        for url in (url.replace("\n", "") for url in image_urls)
+        if len(url) > 0 and not _filter_gpw_supported_urls(url)
+    ]
 
 
 def rehost_screens(torrent_info, tracker_settings, tracker_config):
@@ -437,30 +449,8 @@ def rehost_screens(torrent_info, tracker_settings, tracker_config):
         tracker_settings["gpw_rehosted"] = screenshots_data["gpw_rehosted"]
         return
 
-    supported_hosts = list(
-        filter(
-            lambda url: len(url) > 0,
-            map(
-                lambda url: url.replace("\n", ""),
-                filter(
-                    lambda url: _filter_gpw_supported_urls(url),
-                    torrent_info["url_images"].split("\n"),
-                ),
-            ),
-        )
-    )
-    reupload_img_urls = list(
-        filter(
-            lambda url: len(url) > 0,
-            map(
-                lambda url: url.replace("\n", ""),
-                filter(
-                    lambda url: not _filter_gpw_supported_urls(url),
-                    torrent_info["url_images"].split("\n"),
-                ),
-            ),
-        )
-    )
+    supported_hosts = _get_supported_hosts(torrent_info["url_images"].split("\n"))
+    reupload_img_urls = _get_reupload_img_urls(torrent_info["url_images"].split("\n"))
 
     logging.info(f"[CustomActions][GPW] Supported urls: {supported_hosts}")
     logging.info(f"[CustomActions][GPW] Reupload urls: {reupload_img_urls}")

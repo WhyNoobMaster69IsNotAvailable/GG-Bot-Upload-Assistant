@@ -43,9 +43,7 @@ def test_tmdb_movie_auto_select(mocker, monkeypatch):
 
     tmdb_response = TMDBResponse(
         json.load(
-            open(
-                f"{working_folder}/tests/resources/tmdb/results/Gods of Egypt.json"
-            )
+            open(f"{working_folder}/tests/resources/tmdb/results/Gods of Egypt.json")
         )
     )
     tmdb_external_response = TMDBResponse(
@@ -61,9 +59,7 @@ def test_tmdb_movie_auto_select(mocker, monkeypatch):
     assert metadata._metadata_search_tmdb_for_id(
         query_title, query_year, content_type, False
     ) == json.load(
-        open(
-            f"{working_folder}/tests/resources/tmdb/expected/Gods of Egypt.json"
-        )
+        open(f"{working_folder}/tests/resources/tmdb/expected/Gods of Egypt.json")
     )
 
 
@@ -81,9 +77,7 @@ def test_tmdb_movie_loose_search(mocker, monkeypatch):
     )
     tmdb_response_loose = TMDBResponse(
         json.load(
-            open(
-                f"{working_folder}/tests/resources/tmdb/results/Kung Fu Panda 1.json"
-            )
+            open(f"{working_folder}/tests/resources/tmdb/results/Kung Fu Panda 1.json")
         )
     )
     tmdb_responses = iter([tmdb_response_strict, tmdb_response_loose])
@@ -93,9 +87,7 @@ def test_tmdb_movie_loose_search(mocker, monkeypatch):
     assert metadata._metadata_search_tmdb_for_id(
         query_title, query_year, content_type, False
     ) == json.load(
-        open(
-            f"{working_folder}/tests/resources/tmdb/expected/Kung Fu Panda 1.json"
-        )
+        open(f"{working_folder}/tests/resources/tmdb/expected/Kung Fu Panda 1.json")
     )
 
 
@@ -105,11 +97,7 @@ def test_tmdb_movie_cannot_auto_select(mocker, monkeypatch):
     content_type = "movie"
 
     tmdb_response = TMDBResponse(
-        json.load(
-            open(
-                f"{working_folder}/tests/resources/tmdb/results/Uncharted.json"
-            )
-        )
+        json.load(open(f"{working_folder}/tests/resources/tmdb/results/Uncharted.json"))
     )
     tmdb_response_external = TMDBResponse(
         json.load(
@@ -136,9 +124,7 @@ def test_tmdb_tv_auto_select(mocker, monkeypatch):
 
     tmdb_response = TMDBResponse(
         json.load(
-            open(
-                f"{working_folder}/tests/resources/tmdb/results/Bosch Legacy.json"
-            )
+            open(f"{working_folder}/tests/resources/tmdb/results/Bosch Legacy.json")
         )
     )
     tmdb_response_external = TMDBResponse(
@@ -163,9 +149,7 @@ def test_tmdb_tv_auto_select(mocker, monkeypatch):
     assert metadata._metadata_search_tmdb_for_id(
         query_title, query_year, content_type, False
     ) == json.load(
-        open(
-            f"{working_folder}/tests/resources/tmdb/expected/Bosch Legacy.json"
-        )
+        open(f"{working_folder}/tests/resources/tmdb/expected/Bosch Legacy.json")
     )
 
 
@@ -232,9 +216,7 @@ def test_tmdb_movie_loosely_configured_reuploader(mocker, monkeypatch):
     )
     tmdb_response_loose = TMDBResponse(
         json.load(
-            open(
-                f"{working_folder}/tests/resources/tmdb/results/Kung Fu Panda 1.json"
-            )
+            open(f"{working_folder}/tests/resources/tmdb/results/Kung Fu Panda 1.json")
         )
     )
     tmdb_response_external = TMDBResponse(
@@ -280,7 +262,7 @@ def test_tmdb_movie_no_results_exit(mocker, monkeypatch):
         metadata._metadata_search_tmdb_for_id(
             query_title, query_year, content_type, False
         )
-    assert pytest_wrapped_e.type == SystemExit
+    assert isinstance(pytest_wrapped_e.value, SystemExit)
     assert (
         pytest_wrapped_e.value.code
         == "No results found on TMDB, try running this script again but manually supply the TMDB or IMDB ID"
@@ -374,9 +356,7 @@ def test_metadata_get_external_id(
     mocker.patch("requests.get", return_value=mock_response_file_data)
 
     assert (
-        metadata._get_external_id(
-            id_site, id_value, external_site, content_type
-        )
+        metadata._get_external_id(id_site, id_value, external_site, content_type)
         == expected
     )
 
@@ -462,6 +442,10 @@ def __api_return_values(url, **kwargs):
 def __env_auto_uploader(param, default=None):
     if param == "TMDB_API_KEY":
         return "DUMMY_API_KEY"
+    if param == "tmdb_base_url":
+        return "https://api.themoviedb.org"
+    if param == "tvmaze_base_url":
+        return "https://api.tvmaze.com"
     if param == "tmdb_result_auto_select_threshold":
         return 5
     return None
@@ -581,9 +565,7 @@ def test_fill_database_ids(
     torrent_info, tmdb_id, imdb_id, tvmaze_id, auto_mode, expected, mocker
 ):
     # this mocker is so that, we can run out whole code, and we intercept http call from inside requests package.
-    mocker.patch(
-        "requests.sessions.Session.send", side_effect=__api_return_values
-    )
+    mocker.patch("requests.sessions.Session.send", side_effect=__api_return_values)
     mocker.patch("os.getenv", side_effect=__env_auto_uploader)
 
     possible_match = metadata.fill_database_ids(
@@ -631,9 +613,7 @@ def test_get_external_ids_from_imdb(imdbId, expected, mocker):
     mocker.patch("os.getenv", return_value=imdbId)
     mock_response_file_data = TMDBResponse(
         json.load(
-            open(
-                f"{working_folder}/tests/resources/imdb_external_ids/{imdbId}.json"
-            )
+            open(f"{working_folder}/tests/resources/imdb_external_ids/{imdbId}.json")
         )
     )
     mocker.patch("requests.get", return_value=mock_response_file_data)
@@ -642,7 +622,7 @@ def test_get_external_ids_from_imdb(imdbId, expected, mocker):
 
 
 def test_get_external_ids_from_imdb_no_api_key():
-    assert None == metadata._get_external_ids_from_imdb("imdbId")
+    assert metadata._get_external_ids_from_imdb("imdbId") is None
 
 
 @pytest.mark.parametrize(
@@ -691,9 +671,7 @@ def test_get_external_ids_from_tmdb(content_type, tmdb_id, expected, mocker):
     )
     mocker.patch("requests.get", return_value=mock_response_file_data)
 
-    assert expected == metadata._get_external_ids_from_tmdb(
-        content_type, tmdb_id
-    )
+    assert expected == metadata._get_external_ids_from_tmdb(content_type, tmdb_id)
 
 
 @pytest.mark.parametrize(
@@ -719,9 +697,7 @@ def test_get_external_ids_from_tmdb(content_type, tmdb_id, expected, mocker):
 def test_get_external_ids_from_tvmaze(tvmaze, expected, mocker):
     mock_response_file_data = TMDBResponse(
         json.load(
-            open(
-                f"{working_folder}/tests/resources/tvmaze_external_ids/{tvmaze}.json"
-            )
+            open(f"{working_folder}/tests/resources/tvmaze_external_ids/{tvmaze}.json")
         )
     )
     mocker.patch("requests.get", return_value=mock_response_file_data)
@@ -732,14 +708,12 @@ def test_get_external_ids_from_tvmaze(tvmaze, expected, mocker):
 def test_get_external_ids_from_tvmaze_invalid(mocker):
     mock_response_file_data = TMDBResponse(
         json.load(
-            open(
-                f"{working_folder}/tests/resources/tvmaze_external_ids/invalid.json"
-            )
+            open(f"{working_folder}/tests/resources/tvmaze_external_ids/invalid.json")
         )
     )
     mocker.patch("requests.get", return_value=mock_response_file_data)
 
-    assert None == metadata._get_external_ids_from_tvmaze("invalid")
+    assert metadata._get_external_ids_from_tvmaze("invalid") is None
 
 
 def test_user_gave_imdb_for_movie(mocker, monkeypatch):
@@ -1051,9 +1025,7 @@ def test_user_gave_tvdb_for_tv(mocker, monkeypatch):
         )
     )
 
-    api_responses = iter(
-        [tmdb_search_by_tvdb, tvmaze_search_by_tvdb, tmdb_external]
-    )
+    api_responses = iter([tmdb_search_by_tvdb, tvmaze_search_by_tvdb, tmdb_external])
 
     monkeypatch.setattr("requests.get", lambda url: next(api_responses))
 

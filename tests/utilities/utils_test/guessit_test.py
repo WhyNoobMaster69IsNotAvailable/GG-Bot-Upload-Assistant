@@ -99,4 +99,4 @@ def run_around_tests():
 def test_perform_guessit_on_filename(input_path, expected):
     guessit_result = GenericUtils.perform_guessit_on_filename(input_path)
     for key, value in expected.items():
-        assert guessit_result[key] == expected[key]
+        assert guessit_result[key] == value

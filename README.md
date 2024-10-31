@@ -342,7 +342,6 @@ pip install -r requirements/requirements.txt
 ### v3.1.7
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
-- [ ] Fixed BLU announce URL
 - [ ] Template based custom description
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
@@ -433,17 +432,29 @@ This project exists thanks to all the people who contribute.
 ## **3.1.6**
     New Tracker
         * Yoinked -> [@docd00m]
-    
+
+    New Features
+        * Added more scene groups & streaming services -> [@tiberio87]
+        * Added support for GitLab Sentry error and exception tracking
+
+    Bug Fixes
+        * Fixed BLU announce URL
+
+    Underhood Changes
+        * Code Refactoring
+        * E2E Tests
+        * Updated MAL database
+
 
 <br>
 
 ## **3.1.5**
-    New Image host 
+    New Image host
         * PTScreens -> [@PTScreens]
-        
+
     New Tracker
         * DarkLand -> [@darklandy]
-    
+
     Bug Fixes
         * Fixed Torrent.desi api -> [@highlamb]
 

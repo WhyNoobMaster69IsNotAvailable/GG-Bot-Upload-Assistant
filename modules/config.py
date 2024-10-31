@@ -18,6 +18,7 @@ import binascii
 import os
 from abc import ABC, abstractmethod, ABCMeta
 from functools import cached_property
+from typing import Optional
 
 from modules.exceptions.exception import GGBotUploaderException
 
@@ -54,6 +55,27 @@ class GGBotConfig(ABC):
         return self._get_property_as_boolean(key, default)
 
 
+class MetadataConfig(GGBotConfig):
+    def get_base_url(self, provider_id: str, default: Optional[str] = None):
+        return self.get_config(f"{provider_id}_base_url", default)
+
+
+class BaseUrlConfig(GGBotConfig):
+    @cached_property
+    def TMDB_BASE_URL(self):
+        return self.get_config("tmdb_base_url", "https://api.themoviedb.org")
+
+    @cached_property
+    def TVMAZE_BASE_URL(self):
+        return self.get_config("tvmaze_base_url", "https://api.tvmaze.com")
+
+
+class SentryErrorTrackingConfig(GGBotConfig):
+    @cached_property
+    def ENABLE_SENTRY_ERROR_TRACKING(self):
+        return self.get_config_as_boolean("ENABLE_SENTRY_ERROR_TRACKING", False)
+
+
 class UploaderConfig(GGBotConfig):
     @cached_property
     def CHECK_FOR_DUPES(self):
@@ -81,13 +103,15 @@ class UploaderConfig(GGBotConfig):
 
     @cached_property
     def REUPLOADER(self):
-        return (
-            self._get_property("tmdb_result_auto_select_threshold") is not None
-        )
+        return self._get_property("tmdb_result_auto_select_threshold") is not None
 
     @property
     def TMDB_API_KEY(self):
         return self._get_property("TMDB_API_KEY")
+
+    @property
+    def TVDB_API_KEY(self):
+        return self._get_property("TVDB_API_KEY")
 
     @property
     def IMDB_API_KEY(self):
@@ -99,15 +123,11 @@ class UploaderConfig(GGBotConfig):
 
     @property
     def UPLOADER_PATH(self):
-        return self._get_property(
-            "uploader_accessible_path", "__MISCONFIGURED_PATH__"
-        )
+        return self._get_property("uploader_accessible_path", "__MISCONFIGURED_PATH__")
 
     @property
     def TORRENT_CLIENT_PATH(self):
-        return self._get_property(
-            "client_accessible_path", "__MISCONFIGURED_PATH__"
-        )
+        return self._get_property("client_accessible_path", "__MISCONFIGURED_PATH__")
 
     @property
     def NO_OF_SCREENSHOTS(self) -> int:
@@ -304,9 +324,7 @@ class VisorConfig(APIKeyConfig, GGBotConfig):
         if self.api_key is None:
             global generated_api_key
             if generated_api_key is None:
-                generated_api_key = str(
-                    binascii.hexlify(os.urandom(16)), "UTF-8"
-                )
+                generated_api_key = str(binascii.hexlify(os.urandom(16)), "UTF-8")
                 print(f"Generated visor server api key: {generated_api_key}")
             self.api_key = generated_api_key
 

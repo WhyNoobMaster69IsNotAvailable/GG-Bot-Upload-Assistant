@@ -20,7 +20,7 @@ import datetime
 
 from pathlib import Path
 from pymediainfo import MediaInfo
-from utilities.utils_basic import *
+from utilities.utils_basic import BasicUtils
 
 working_folder = Path(__file__).resolve().parent.parent.parent
 temp_working_dir = "/tests/working_folder_raw"
@@ -37,9 +37,7 @@ mediainfo_summary = "/tests/resources/mediainfo/summary/"
             ("S01E01", "1", "1", "0", "1", "0"),
             id="single_episode",
         ),
-        pytest.param(
-            {"season": 1}, ("S01", "1", "0", "1", "0", "0"), id="season_pack"
-        ),
+        pytest.param({"season": 1}, ("S01", "1", "0", "1", "0", "0"), id="season_pack"),
         pytest.param(
             {"season": 1, "episode": [9, 10]},
             ("S01E09E10", "1", "9", "0", "1", "0"),
@@ -53,7 +51,7 @@ mediainfo_summary = "/tests/resources/mediainfo/summary/"
     ),
 )
 def test_basic_get_episode_basic_details(input, expected):
-    assert basic_get_episode_basic_details(input) == expected
+    assert BasicUtils().basic_get_episode_basic_details(input) == expected
 
 
 def __get_torrent_info(bdinfo, raw_file_name, source):
@@ -239,7 +237,7 @@ def test_basic_get_missing_video_codec(
     torrent_info, is_disc, media_info_video_track, expected
 ):
     assert (
-        basic_get_missing_video_codec(
+        BasicUtils().basic_get_missing_video_codec(
             torrent_info, is_disc, False, media_info_video_track
         )
         == expected
@@ -295,7 +293,7 @@ def test_basic_get_missing_screen_size(
     torrent_info, is_disc, media_info_video_track, expected
 ):
     assert (
-        basic_get_missing_screen_size(
+        BasicUtils().basic_get_missing_screen_size(
             torrent_info, is_disc, media_info_video_track, False, "screen_size"
         )
         == expected
@@ -589,8 +587,8 @@ def test_basic_get_missing_screen_size(
     ],
 )
 def test_basic_get_mediainfo_summary(media_info_result, expected):
-    print(basic_get_mediainfo_summary(media_info_result)[4])
-    assert basic_get_mediainfo_summary(media_info_result) == expected
+    print(BasicUtils().basic_get_mediainfo_summary(media_info_result)[4])
+    assert BasicUtils().basic_get_mediainfo_summary(media_info_result) == expected
 
 
 @pytest.fixture(scope="package")
@@ -662,4 +660,4 @@ def clean_up(pth):
 def test_basic_get_raw_video_file(
     upload_media, expected, sample_data_folders_and_files
 ):
-    assert basic_get_raw_video_file(upload_media) == expected
+    assert BasicUtils().basic_get_raw_video_file(upload_media) == expected
