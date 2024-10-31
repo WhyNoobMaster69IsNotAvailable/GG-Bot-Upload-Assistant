@@ -74,6 +74,7 @@ Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry
 
 > You can read more about Gitlab Sentry error tracking here: https://docs.gitlab.com/ee/operations/integrated_error_tracking.html
 
+<br>
 
 ## Supported Platforms And Trackers
 <table>
