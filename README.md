@@ -70,7 +70,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
             <td><strong>Site Name</strong></td>
         </th>
         <tr style="text-align: center">
-            <td rowspan="20"><strong>UNIT3D</strong></td>
+            <td rowspan="21"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
             <td><strong><a href="https://asiancinema.me">AsianCinema</a></strong></td>
         </tr>
@@ -84,7 +84,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
         </tr>
         <tr style="text-align: center">
             <td><strong>BLU</strong></td>
-            <td><strong><a href="https://blutopia.xyz">Blutopia</a></strong></td>
+            <td><strong><a href="https://blutopia.cc">Blutopia</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td><strong>R4E</strong></td>
@@ -124,7 +124,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
         </tr>
         <tr style="text-align: center">
             <td><strong>FNP</strong></td>
-            <td><strong><a href="https://fearnopeer.com">Fearnooper</a></strong></td>
+            <td><strong><a href="https://fearnopeer.com">FearNoPeer</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td><strong>ULCX</strong></td>
@@ -151,6 +151,10 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
             <td><strong><a href="https://darkland.top">DarkLand</a></strong></td>
         </tr>
         <tr style="text-align: center">
+            <td><strong>YOINK</strong></td>
+            <td><strong><a href="https://yoinked.org">YOiNK</a></strong></td>
+        </tr>
+        <tr style="text-align: center">
             <td rowspan="1"><strong>XBTIT</strong></td>
             <td><strong>TSP</strong></td>
             <td><strong><a href="https://thesceneplace.com/">TheScenePlace</a></strong></td>
@@ -164,11 +168,6 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
             <td><strong>TBDev</strong></td>
             <td><strong>SPD</strong></td>
             <td><strong><a href="https://speedapp.io/">SpeedApp</a></strong></td>
-        </tr>
-        <tr style="text-align: center">
-            <td><strong>TorrentDB</strong></td>
-            <td><strong>TDB</strong></td>
-            <td><strong><a href="https://torrentdb.net/">TorrentDB</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td><strong>BIT-HDTV</strong></td>
@@ -340,15 +339,6 @@ pip install -r requirements/requirements.txt
 <br>
 
 # Roadmap
-### v3.1.6
-- [X] Updated MAL database
-- [X] Added support for GitLab Sentry error and exception tracking
-- [X] Code Refactoring
-- [X] E2E Tests
-- [X] Fixed BLU announce URL
-- [X] Added more scene groups & streaming services -> [@tiberio87]
-
-
 ### v3.1.7
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
@@ -356,7 +346,6 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
-
 
 ### v3.1.8
 - [ ] EPIC: GG-Bot Auto Uploader
@@ -388,6 +377,7 @@ pip install -r requirements/requirements.txt
     - [ ] RetroFlix
     - [ ] PirateTheNet
 - [ ] Add support for DVDs
+- [ ] Add support for sports related contents
 
 <br>
 
@@ -433,9 +423,19 @@ This project exists thanks to all the people who contribute.
 <a href="https://gitlab.com/PTScreens" title="PTScreens">
   <img width="50" src="https://secure.gravatar.com/avatar/8468e07fddc384b050fc961496d7ad25e9738d0e4034da78048305c57a054684?s=384&d=identicon">
 </a>
+<a href="https://gitlab.com/docd00m" title="docd00m">
+  <img width="50" src="https://secure.gravatar.com/avatar/66e2c00e011c17171cda87a7b5a92895014efff92854043e457b48ae6942345b?s=1600&d=identicon">
+</a>
 <br>
 
 # Change Log
+## **3.1.6**
+    New Tracker
+        * Yoinked -> [@docd00m]
+    
+
+<br>
+
 ## **3.1.5**
     New Image host
         * PTScreens -> [@PTScreens]
