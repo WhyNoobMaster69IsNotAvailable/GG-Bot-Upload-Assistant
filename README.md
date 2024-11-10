@@ -62,12 +62,12 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
 <br>
 
 ## Tracking In GG Bot Upload Assistant
-Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry Error Tracking**_ enabled by default. This is to catch any errors / exceptions that happen in the application and fix them pro-actively. 
+Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry Error Tracking**_ enabled by default. This is to catch any errors / exceptions that happen in the application and fix them pro-actively.
 
 > If you do no wish to have this enabled, you can disable the error log tracking from the config file. Simple set `ENABLE_SENTRY_ERROR_TRACKING` to `False` in assistant or re-uploader config and error / exceptions will not be sent to GitLab.
 
 - No personal information is collected from this error tracking. No API_KEYS or PIDs will be sent to the repository.
-- Only exceptions and code block which caused the the exceptions are sent to repository for logging. 
+- Only exceptions and code block which caused the the exceptions are sent to repository for logging.
 - User tracking is **NOT** enabled in this project.
 - Search for `if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is True:` to see the configs enabled.
 - Unfortunately I couldn't find any way to make the error logs publicly available from gitlab.
@@ -85,7 +85,7 @@ Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry
             <td><strong>Site Name</strong></td>
         </th>
         <tr style="text-align: center">
-            <td rowspan="21"><strong>UNIT3D</strong></td>
+            <td rowspan="22"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
             <td><strong><a href="https://asiancinema.me">AsianCinema</a></strong></td>
         </tr>
@@ -168,6 +168,10 @@ Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry
         <tr style="text-align: center">
             <td><strong>YOINK</strong></td>
             <td><strong><a href="https://yoinked.org">YOiNK</a></strong></td>
+        </tr>
+      <tr style="text-align: center">
+            <td><strong>PSS</strong></td>
+            <td><strong><a href="https://privatesilverscreen.cc">Private Silver Screen</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td rowspan="1"><strong>XBTIT</strong></td>
@@ -354,6 +358,7 @@ pip install -r requirements/requirements.txt
 
 # Roadmap
 ### v3.1.7
+- [X] New Tracker: PrivateSilverScreen
 - [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
 - [ ] Template based custom description
