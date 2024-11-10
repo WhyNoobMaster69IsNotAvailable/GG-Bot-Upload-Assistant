@@ -32,7 +32,6 @@ from modules.constants import (
     TVDB_TO_MAL_MAPPING,
 )
 
-
 console = Console()
 
 
@@ -793,6 +792,7 @@ def metadata_compare_tmdb_data_local(torrent_info):
 
 
 def _sanitize_metadata_from_arguments(tmdb_id, imdb_id, tvmaze_id, tvdb_id):
+    # REFACTORED
     if not isinstance(tmdb_id, list):
         tmdb_id = [tmdb_id]
     if not isinstance(imdb_id, list):

@@ -16,3 +16,4 @@ pyfiglet~=0.8.post1
 cinemagoer~=2023.5.1
 fastjsonschema~=2.16.2
 sentry-sdk==2.13.0
+marshmallow==3.22.0
