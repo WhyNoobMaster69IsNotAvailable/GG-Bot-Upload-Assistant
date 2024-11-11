@@ -506,8 +506,10 @@ class GGBotUploadAssistant:
             GenericUtils.sanitize_release_group_from_guessit(self.torrent_info)
         )
 
-        self.torrent_info["release_group"] = self._override_release_group_if_necessary(
-            self.args.release_group, self.torrent_info["release_group"]
+        self.torrent_info["release_group"] = (
+            GenericUtils.override_release_group_if_necessary(
+                self.args.release_group, self.torrent_info["release_group"]
+            )
         )
         if "type" not in self.torrent_info:
             raise AssertionError(
@@ -2434,14 +2436,6 @@ class GGBotUploadAssistant:
             script_end_time = time.perf_counter()
             total_run_time = f"{script_end_time - script_start_time:0.4f}"
             logging.info(f"[Main] Total runtime is {total_run_time} seconds")
-
-    @staticmethod
-    def _override_release_group_if_necessary(
-        args_release_group: Optional[List[str]], guessit_release_group: str
-    ):
-        if args_release_group is None:
-            return guessit_release_group
-        return str(args_release_group[0])
 
 
 if __name__ == "__main__":
