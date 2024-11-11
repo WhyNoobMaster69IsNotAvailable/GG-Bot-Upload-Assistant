@@ -27,7 +27,7 @@ import time
 import unicodedata
 from pathlib import Path
 from pprint import pformat
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 import pyfiglet
 from dotenv import dotenv_values
@@ -859,6 +859,14 @@ class GenericUtils:
             f"[bold blue]{mode}[/bold blue]", justify="center", style="#38ACEC"
         )
         return True
+
+    @staticmethod
+    def override_release_group_if_necessary(
+        args_release_group: Optional[List[str]], guessit_release_group: str
+    ):
+        if args_release_group is None:
+            return guessit_release_group
+        return str(args_release_group[0])
 
     @staticmethod
     def sanitize_release_group_from_guessit(torrent_info):

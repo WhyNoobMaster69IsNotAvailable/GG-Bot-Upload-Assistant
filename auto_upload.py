@@ -224,6 +224,12 @@ class GGBotUploadAssistant:
             "-title", nargs=1, help="Custom title provided by the user"
         )
         uncommon_args.add_argument(
+            "-rg",
+            "--release_group",
+            nargs=1,
+            help="Set the release group for an upload",
+        )
+        uncommon_args.add_argument(
             "-type", nargs=1, help="Use to manually specify 'movie' or 'tv'"
         )
         uncommon_args.add_argument(
@@ -500,6 +506,11 @@ class GGBotUploadAssistant:
             GenericUtils.sanitize_release_group_from_guessit(self.torrent_info)
         )
 
+        self.torrent_info["release_group"] = (
+            GenericUtils.override_release_group_if_necessary(
+                self.args.release_group, self.torrent_info["release_group"]
+            )
+        )
         if "type" not in self.torrent_info:
             raise AssertionError(
                 "'type' is not set in the guessit output, something is seriously wrong with this filename"
