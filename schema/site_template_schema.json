@@ -47,13 +47,18 @@
                 "payload_type":{
                     "type":"string",
                     "description": "Indicates how the payload needs to be sent to tracker upload api",
-                    "enum": ["JSON", "MULTI-PART"]
+                    "enum": ["JSON", "MULTI-PART", "URL-ENCODED"]
                 },
                 "request_method":{
                     "type":"string",
                     "description": "The HTTP request method to be used to communicate with api",
                     "enum": ["GET", "POST"],
                     "default": "POST"
+                },
+                "cloudflare_bypass": {
+                    "type":"boolean",
+                    "description": "Indicates whether or not cloudflare security check bypass is needed or not",
+                    "default": false
                 },
                 "cookie":{
                     "type":"object",
