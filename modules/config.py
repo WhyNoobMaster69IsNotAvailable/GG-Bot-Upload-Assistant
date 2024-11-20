@@ -78,6 +78,10 @@ class SentryErrorTrackingConfig(GGBotConfig):
 
 class UploaderConfig(GGBotConfig):
     @cached_property
+    def VERSION(self):
+        return self._get_property("uploader_version", "dev-build")
+
+    @cached_property
     def CHECK_FOR_DUPES(self):
         return self._get_property_as_boolean("check_dupes")
 

@@ -935,7 +935,7 @@ class GenericUtils:
     @staticmethod
     def prepare_headers_for_tracker(technical_jargons, search_site, tracker_api):
         if technical_jargons["authentication_mode"] == "API_KEY":
-            return None
+            return {}
 
         if technical_jargons["authentication_mode"] == "BEARER":
             logging.info(

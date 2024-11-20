@@ -333,21 +333,22 @@
     "Default":{},
 
     "dupes": {
-        "skip_dupe_check": true,
         "technical_jargons": {
             "authentication_mode": "API_KEY",
-            "payload_type": "MULTI-PART",
-            "request_method": "GET",
-            "response_type": "JSON"
+            "payload_type": "URL-ENCODED",
+            "request_method": "POST",
+            "response_type": "JSON",
+            "cloudflare_bypass": true
         },
 
-        "url_format": "{search_url}&imdbId={imdb}",
+        "url_format": "{search_url}",
         "strip_text": true,
+        "payload": "{\"api_key\": \"<api_key>\",\"imdb\": \"<imdb>\"}",
 
         "parse_json": {
-            "is_needed": true,
+            "is_needed": false,
             "top_lvl": "data",
-            "torrent_details": "attributes"
+            "torrent_name": "filename"
         }
     },
 
