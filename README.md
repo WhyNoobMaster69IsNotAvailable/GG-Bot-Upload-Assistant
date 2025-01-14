@@ -365,6 +365,7 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
+- [X] Issue#159: Memory failure when using torf
 
 ### v3.1.8
 - [ ] EPIC: GG-Bot Auto Uploader
