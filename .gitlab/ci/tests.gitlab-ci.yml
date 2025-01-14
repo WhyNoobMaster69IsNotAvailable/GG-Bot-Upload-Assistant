@@ -57,6 +57,7 @@ e2e-test:
       - coverage.xml
       - junit_report.xml
       - coverage
+      - assistant.log
     reports:
       coverage_report:
         coverage_format: cobertura
