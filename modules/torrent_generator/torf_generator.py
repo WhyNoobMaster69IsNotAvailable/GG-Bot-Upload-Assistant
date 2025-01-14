@@ -30,8 +30,9 @@ class GGBOTTorrent(Torrent):
     piece_size_min = None
 
     def __init__(self, *args, **kwargs):
-        self.piece_size_max = UploaderTweaksConfig().TORF_MAX_PIECE_SIZE
-        self.piece_size_min = UploaderTweaksConfig().TORF_MIN_PIECE_SIZE
+        config = UploaderTweaksConfig()
+        self.piece_size_max = config.TORF_MAX_PIECE_SIZE
+        self.piece_size_min = config.TORF_MIN_PIECE_SIZE
         super().__init__(*args, **kwargs)
 
     @classmethod
@@ -40,8 +41,9 @@ class GGBOTTorrent(Torrent):
         Need to override this method since it refers to class variables piece_size_min and piece_size_max.
         Here we lazily load the values from env and use that for computation.
         """
-        piece_size_max = UploaderTweaksConfig().TORF_MAX_PIECE_SIZE
-        piece_size_min = UploaderTweaksConfig().TORF_MIN_PIECE_SIZE
+        config = UploaderTweaksConfig()
+        piece_size_max = config.TORF_MAX_PIECE_SIZE
+        piece_size_min = config.TORF_MIN_PIECE_SIZE
         if size <= 2**30:  # 1 GiB / 1024 pieces = 1 MiB max
             pieces = size / 1024
         elif size <= 4 * 2**30:  # 4 GiB / 2048 pieces = 2 MiB max
