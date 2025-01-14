@@ -160,10 +160,7 @@ class TestGGBotUploadAssistant:
         assert assistant.torrent_info["video_codec"] == "H.264"
         assert assistant.torrent_info["audio_codec"] == "DD+"
         assert assistant.torrent_info["audio_channels"] == "7.1"
-        # assert assistant.torrent_info["imdb"] == "0460649"
-        # TODO: Had to put the tt here. Come back and check this again.
-        # Mostly this tt has not been removed due to dupe check failure in tracker and translation hasn't happened.
-        assert assistant.torrent_info["imdb"] == "tt0460649"
+        assert assistant.torrent_info["imdb"] == "0460649"
         assert assistant.torrent_info["tmdb"] == "1100"
         assert assistant.torrent_info["tvdb"] == "0"
         assert assistant.torrent_info["mal"] == "0"
@@ -195,9 +192,7 @@ class TestGGBotUploadAssistant:
                 "value": "This release is sourced from Disney+",
             }
         ]
-        # TODO: Just like above imdb TODO, this key `duration` is also not set due to dupe check failure
-        # assert assistant.torrent_info["duration"] == "94494"
-        assert "duration" not in assistant.torrent_info
+        assert assistant.torrent_info["duration"] == "94494"
         assert (
             assistant.torrent_info["shameless_self_promotion"]
             == "Uploaded with ❤ using GG-BOT Upload Assistant"
