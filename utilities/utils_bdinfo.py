@@ -20,12 +20,14 @@ import re
 import shutil
 import subprocess
 
+import sentry_sdk
 from rich import box
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
 
 from modules.config import UploadAssistantConfig
+from modules.exceptions.exception import GGBotSentryCapturedException
 from utilities.utils import GenericUtils
 
 console = Console()
@@ -89,7 +91,7 @@ def bdinfo_get_video_codec_from_bdinfo(bdinfo):
         f"[BDInfoUtils] `video_codec` identified from bdinfo as {bdinfo['video'][0]['codec']}"
     )
     # video codec is taken from the first track
-    return dv, hdr, bdinfo["video"][0]["codec"]
+    return dv, hdr, bdinfo["video"][0]["codec"], bdinfo["video"][0]["codec"]
 
 
 def bdinfo_get_audio_codec_from_bdinfo(bdinfo, audio_codec_dict):
@@ -177,9 +179,18 @@ def bdinfo_get_largest_playlist(bdinfo_script, auto_mode, upload_media):
             playlist_details["length"] = bdinfo_output_split[index + 1]
             playlist_details["est_bytes"] = bdinfo_output_split[index + 2]
             playlist_details["msr_bytes"] = bdinfo_output_split[index + 3]
-            playlist_details["size"] = int(
-                str(bdinfo_output_split[index + 2]).replace(",", "")
-            )
+            try:
+                playlist_details["size"] = int(
+                    str(bdinfo_output_split[index + 2]).replace(",", "")
+                )
+            except ValueError as e:
+                # SentryDebug: sending more details to Sentry for debugging.
+                with sentry_sdk.new_scope() as scope:
+                    scope.set_extra("bdinfo_output_split", bdinfo_output_split)
+                    scope.set_extra("mpls_playlist", mpls_playlist)
+                    sentry_sdk.capture_exception(e)
+                raise GGBotSentryCapturedException(e)
+
             dict_of_playlist_info_list.append(playlist_details)
             dict_of_playlist_length_size[mpls_playlist] = int(
                 str(bdinfo_output_split[index + 2]).replace(",", "")

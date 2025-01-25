@@ -18,8 +18,10 @@ import base64
 import logging
 
 import requests
+import sentry_sdk
 
 from modules.config import ClientConfig, ReUploaderConfig
+from modules.exceptions.exception import GGBotSentryCapturedException
 
 rutorrent_keys = [
     "d.get_custom1",
@@ -140,9 +142,7 @@ class Rutorrent:
             for key, value in torrent.items()
             if key in rutorrent_keys
         }
-        torrent["save_path"] = torrent["content_path"].replace(
-            torrent["name"], ""
-        )
+        torrent["save_path"] = torrent["content_path"].replace(torrent["name"], "")
         torrent["category"] = torrent["category"].replace("%3A", ":")
         return torrent
 
@@ -196,9 +196,7 @@ class Rutorrent:
             self.__call_server(f"{self.base_url}{self.__connection_check_path}")
             print("Successfully established connection with Rutorrent")
         except Exception as err:
-            logging.fatal(
-                "[Rutorrent] Authentication with Rutorrent instance failed"
-            )
+            logging.fatal("[Rutorrent] Authentication with Rutorrent instance failed")
             raise err
 
     def hello(self):
@@ -207,24 +205,27 @@ class Rutorrent:
             if not isinstance(response, dict):
                 raise Exception("Failed to connect to rutorrent instance.")
             print(f"Rutorrent CPU Load: {response['load']}%")
-            response = self.__call_server(
-                f"{self.base_url}{self.__disk_size_path}"
-            )
+            response = self.__call_server(f"{self.base_url}{self.__disk_size_path}")
             print(
                 f"Rutorrent Storage: {self.__format_bytes(response['free'])} free out of {self.__format_bytes(response['total'])}"
             )
         except Exception as err:
-            logging.fatal(
-                f"Failed to connect to rutorrent. Error:{response.text}"
-            )
+            logging.fatal(f"Failed to connect to rutorrent. Error:{response.text}")
             raise err
 
     def list_torrents(self):
         response = self.__call_server(
             f"{self.base_url}{self.__default_path}", data={"mode": "list"}
         )
-        if isinstance(response["t"], list):
-            return []
+        try:
+            if isinstance(response["t"], list):
+                return []
+        except TypeError as e:
+            # SentryDebug: sending more details to Sentry for debugging.
+            with sentry_sdk.new_scope() as scope:
+                scope.set_extra("response_from_server", response)
+                sentry_sdk.capture_exception(e)
+            raise GGBotSentryCapturedException(e)
         return list(
             map(
                 self.__extract_necessary_keys,

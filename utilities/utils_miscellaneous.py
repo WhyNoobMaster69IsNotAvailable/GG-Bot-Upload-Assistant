@@ -320,6 +320,8 @@ class MiscellaneousUtils:
     def get_upload_original_language_title(tmdb_metadata):
         # TMDB gives the original language iso_639_1 which doesn't differentiate between all languages.
         # So to get the actual name, we have to look through the spoken language list
+        if tmdb_metadata is None:
+            return None
         original_language_str = next(
             (
                 language.get("english_name")

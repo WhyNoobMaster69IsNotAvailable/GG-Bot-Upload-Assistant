@@ -18,9 +18,11 @@ import json
 import logging
 
 import requests
+import sentry_sdk
 from rich.console import Console
 
 from modules.config import TrackerConfig
+from modules.exceptions.exception import GGBotSentryCapturedException
 from utilities.utils import GenericUtils
 
 console = Console()
@@ -368,36 +370,51 @@ def add_subtitle_information(torrent_info, tracker_settings, tracker_config):
 
 def check_successful_upload(response):
     # GPW tracker returns a json response, but it is slightly different, hence using a custom action to parse it
-    response = response.json()
-    if (
-        response["status"] == 200
-        and response["response"]["message"] == "Succesfully uploaded torrent"
-    ):
-        return True, "Successfully uploaded torrent to GPW"
-    else:
-        return (
-            False,
-            response["response"]["error"]
-            if "error" in response["response"]
-            else "Upload to GPW failed due to an unknown error.",
-        )
+    response_data = response.json()
+    try:
+        if (
+            response_data["status"] == 200
+            and response_data["response"]["message"] == "Succesfully uploaded torrent"
+        ):
+            return True, "Successfully uploaded torrent to GPW"
+    except KeyError as e:
+        # SentryDebug: Adding extra debugging data to Sentry
+        with sentry_sdk.new_scope() as scope:
+            scope.set_extra("response_data", response_data.get("response", {}))
+            scope.set_extra("full_response", response_data)
+            sentry_sdk.capture_exception(e)
+    return (
+        False,
+        response_data["response"].get(
+            "error", "Upload to GPW failed due to an unknown error."
+        ),
+    )
 
 
 def _rehost_to_gpw(tracker_config, image_url_list):
     image_upload_url = f'{tracker_config["upload_form"].replace("{api_key}", TrackerConfig("gpw").API_KEY).replace("&action=upload", "&action=imgupload")}'
     data = {"urls[]": image_url_list}
     image_upload_response = requests.post(image_upload_url, data=data).json()
-    if (
-        image_upload_response["status"] == 200
-        and "error" not in image_upload_response["response"]
-    ):
-        return [
-            element["name"] for element in image_upload_response["response"]["files"]
-        ]
+    try:
+        if (
+            image_upload_response["status"] == 200
+            and "error" not in image_upload_response["response"]
+        ):
+            return [
+                element["name"]
+                for element in image_upload_response["response"]["files"]
+            ]
 
-    raise Exception(
-        f'Image Re-hosting to GPW failed. Error: {image_upload_response["response"]["error"]}'
-    )
+        raise Exception(
+            f'Image Re-hosting to GPW failed. Error: {image_upload_response["response"]["error"]}'
+        )
+    except TypeError as e:
+        # SentryDebug: Sending more details to sentry for debugging
+        with sentry_sdk.new_scope() as scope:
+            scope.set_extra("response_data", image_upload_response.get("response", {}))
+            scope.set_extra("full_response", image_upload_response)
+            sentry_sdk.capture_exception(e)
+        raise GGBotSentryCapturedException(e)
 
 
 def _filter_gpw_supported_urls(url):

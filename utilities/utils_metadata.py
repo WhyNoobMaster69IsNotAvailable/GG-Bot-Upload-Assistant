@@ -32,7 +32,6 @@ from modules.constants import (
     TVDB_TO_MAL_MAPPING,
 )
 
-
 console = Console()
 
 
@@ -367,14 +366,22 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
                 # if we couldn't get tvdb id from tmdb, we can try to get it from imdb and tvmaze
                 if tmdb_external_ids["imdb"] != "0":
                     imdb_external_ids = _get_external_ids_from_imdb(tmdb)
-                    tmdb_external_ids["tvdb"] = imdb_external_ids["tvdb"]
+                    tmdb_external_ids["tvdb"] = (
+                        imdb_external_ids["tvdb"]
+                        if imdb_external_ids is not None
+                        else "0"
+                    )
 
                 if (
                     tmdb_external_ids["tvdb"] == "0"
                     and tmdb_external_ids["tvmaze"] != "0"
                 ):
                     tvmaze_external_ids = _get_external_ids_from_tvmaze(tmdb)
-                    tmdb_external_ids["tvdb"] = tvmaze_external_ids["tvdb"]
+                    tmdb_external_ids["tvdb"] = (
+                        tvmaze_external_ids["tvdb"]
+                        if tvmaze_external_ids is not None
+                        else "0"
+                    )
 
         tmdb_external_ids["possible_matches"] = selected_tmdb_results_data
         return tmdb_external_ids
@@ -416,6 +423,11 @@ def _get_external_id(id_site, id_value, external_site, content_type):
                     f"[MetadataUtils] GET Request For TVMAZE Lookup: {tvmaze_id_from_imdb}"
                 )
                 tvmaze_id_request = requests.get(tvmaze_id_from_imdb).json()
+                if tvmaze_id_request is None:
+                    logging.error(
+                        "[MetadataUtils] No valid response from TVMaze API. Please check TVMaze API Key..."
+                    )
+                    return "0"
                 logging.debug(
                     f"[MetadataUtils] Returning tvmaze id as `{tvmaze_id_request['id']}`"
                 )
@@ -591,7 +603,8 @@ def _fill_tmdb_metadata_to_torrent_info(torrent_info, tmdb_response):
     )
     tmdb_metadata["poster"] = (
         f"https://image.tmdb.org/t/p/original{tmdb_response['poster_path']}"
-        if "poster_path" in tmdb_response and len(tmdb_response["poster_path"]) > 0
+        if "poster_path" in tmdb_response
+        and len(tmdb_response.get("poster_path", "")) > 0
         else ""
     )
     tmdb_metadata["tags"] = list(
