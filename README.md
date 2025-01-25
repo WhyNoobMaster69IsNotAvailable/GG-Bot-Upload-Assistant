@@ -169,14 +169,18 @@ Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry
             <td><strong>YOINK</strong></td>
             <td><strong><a href="https://yoinked.org">YOiNK</a></strong></td>
         </tr>
-      <tr style="text-align: center">
+        <tr style="text-align: center">
             <td><strong>PSS</strong></td>
             <td><strong><a href="https://privatesilverscreen.cc">Private Silver Screen</a></strong></td>
         </tr>
         <tr style="text-align: center">
-            <td rowspan="1"><strong>XBTIT</strong></td>
+            <td rowspan="2"><strong>XBTIT</strong></td>
             <td><strong>TSP</strong></td>
             <td><strong><a href="https://thesceneplace.com/">TheScenePlace</a></strong></td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>TMG</strong></td>
+            <td><strong><a href="https://tmghub.org">TmGHuB</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td rowspan="1"><strong>Swarmazon</strong></td>
