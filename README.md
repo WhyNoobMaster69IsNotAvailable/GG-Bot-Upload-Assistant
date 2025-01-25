@@ -361,16 +361,6 @@ pip install -r requirements/requirements.txt
 <br>
 
 # Roadmap
-### v3.1.7
-- [X] New Tracker: PrivateSilverScreen
-- [ ] New Tracker: TMGHub
-- [X] Issue#181: Sentry | AttributeError: 'NoneType' object has no attribute 'commercial_name'
-- [X] Issue#185: Sentry | TypeError: 'NoneType' object is not subscriptable
-- [X] Issue#186: Sentry | TypeError: 'NoneType' object is not subscriptable
-- [X] Issue#189: Sentry | AttributeError: 'NoneType' object has no attribute 'get'
-- [X] Issue#190: Sentry | TypeError: object of type 'NoneType' has no len()
-- [X] Issue#193: Sentry | ValueError: not enough values to unpack (expected 4, got 3)
-
 ### v3.1.8
 - [ ] New Tracker: UHDBits
 - [ ] Template based custom description
@@ -461,6 +451,21 @@ This project exists thanks to all the people who contribute.
 <br>
 
 # Change Log
+## **3.1.7**
+    New Tracker
+        * PrivateSilverScreen
+        * TMGHub
+
+    Bug Fixes
+        * Issue#181: Sentry | AttributeError: 'NoneType' object has no attribute 'commercial_name'
+        * Issue#185: Sentry | TypeError: 'NoneType' object is not subscriptable
+        * Issue#186: Sentry | TypeError: 'NoneType' object is not subscriptable
+        * Issue#190: Sentry | TypeError: object of type 'NoneType' has no len()
+        * Issue#189: Sentry | AttributeError: 'NoneType' object has no attribute 'get'
+        * Issue#193: Sentry | ValueError: not enough values to unpack (expected 4, got 3)
+
+<br>
+
 ## **3.1.6**
     New Tracker
         * Yoinked -> [@docd00m]
@@ -476,7 +481,6 @@ This project exists thanks to all the people who contribute.
         * Code Refactoring
         * E2E Tests
         * Updated MAL database
-
 
 <br>
 
@@ -718,212 +722,7 @@ This project exists thanks to all the people who contribute.
 
 <br>
 
-## **2.0.7**
-    Removed Trackers
-        * Telly - ShutDown
-
-    New Features
-        * Ability to resume / reuse assets from previous uploads
-        * Improved watch folder movement during post-processing
-        * Support for immediate corss-seeding to torrent clients
-        * Support for communicating with torrent clients [ immediate-cross-seeding ]
-            * Qbittorrent
-            * Rutorrent
-        * Migrated torrent client feature from v3.0 alpha version
-
-    Underhood Changes
-        * Refactored dupe check logic
-        * Refactored screenshots and image upload logic
-        * Add unit tests to existing code
-        * Add unit tests to the cicd pipeline
-        * Refactored cicd for better performance and faster builds
-        * Introded pre-built base images for cicd improvements
-
-    Bug Fixes
-        * Issue#10: Prevent unnecessary folders from being added in movie uploads
-        * Issue#12: 4K WEB-DLs video codec are named as HEVC instead of H.265
-        * Issue#33: Dupe check error when dealing with DV HDR release
-        * Issue#34: Cross-Seeding uploading torrents for failed uploads
-        * Issue#35: HEVC codec being used for web releases
-        * Issue#36: Broken screenshots after new UNIT3D update
-        * Issue:38: Cross-seeding error with multiple trackers
-
-<br>
-
-## **2.0.6**
-    New Trackers
-        * Anthelion
-        * ReelFlix
-
-    New Features
-        * Refactoring code in anticipation to v3.0 release
-        * Improved dupe check with HDR Support
-        * Improved dupe check with support for REPACKS and PROPER
-        * Dynamic piece size calculation for mktorrent
-        * Implemented a Skip Screenshots feature
-
-    Bug Fixes
-        * Issue#25: Unhashable list error when uploading tv shows
-        * Issue#26: NBL dupe check issue
-        * Issue#28: 720p contents being tagged as SD for UNIT3D trackers
-        * Issue#30: Application crash while making TMDB API Call
-        * Issue#31: Uploads to BIT-HDTV failing
-
-<br>
-
-## **2.0.5**
-    New Trackers
-        * SkipTheTrailers
-
-    New Features
-        * Support for default trackers
-        * Ability to upload to all available trackers (USE WITH CAUTION)
-        * Improved TMDB search results filtering
-
-    Bug Fixes
-        * Issue#19: Multiple episode naming bug fixed
-        * Issue#20: Uploader crash when handling complete packs from tracker
-        * Issue#23: IMDB Id cannot be obtained from TVMaze
-
-<br>
-
-## **2.0.4**
-
-    New Trackers
-        * BIT-HDTV
-        * Nebulance
-
-    New Image Hosts
-        * Snappie
-
-    New Features
-        * Added new bugs to be fixed :p
-        * Support for TVMaze and a database for TV Shows
-        * Improved key translations and mapping for tracker specific jobs
-        * Support for screenshots without thumbnail size limit
-        * New Hybrid Mapping for tracker SkipTheCommercials
-        * Added support for more streaming services
-
-    Bug Fixes
-        * Issue#9: Multiple dupe prompt being asked bug fixed
-        * Issue#11: DTS-X audio codec naming error bug fixed
-        * Issue#14: BHDTV <3 symbol missing bug fixed
-        * Issue#15: HLG not detected from file name bug fixed
-
-<br>
-
-## **2.0.3**
-
-    New Image Hosts
-        * Imgur
-
-    Bug Fixes
-        * ptp image uploads not working bug fix
-
-<br>
-
-## **2.0.2**
-
-    New Trackers
-        * TorrentDB
-
-    New Features
-        * Support for custom messages / descriptions during upload
-        * Support for custom upload signatures for regular uploaders
-
-    Bug Fixes
-        * SpeedApp screenshots missing bug fixed
-
-<br>
-
-## **2.0.1**
-
-    New Trackers
-        * SkipTheCommercials
-
-    New Image Hosts
-        * Imgfi
-
-    Underhood changes
-        * Improved batch processing
-        * Refactor tracker acronyms and api keys to config file
-
-<br>
-
-## **2.0**
-
-    New Trackers
-        * SpeedApp
-        * UHD-Heaven
-
-    Underhood changes
-        * Performance Optimizations
-        * Platform based site tagging
-        * Improved argument description and help
-        * Dynamic media summary based on the extracted metadata
-        * Frame accurate screenshots
-        * Environment file key validations
-        * Code refactor
-        * Masking sensitive data in log file
-        * Various steps added to reduce the coupling with UNIT3D codebase
-
-    New Features
-        * Hybrid category mapping [See Site-Templates Wiki]
-        * Support for Blu-ray Full Disc uploads [fat image required]
-        * Ability to choose playlist manually for full disk uploads
-        * Improved BDInfo parsing
-        * Extended BluRay regions list as configurable json
-        * Debug mode for detailed analysis
-        * Extended Scene Groups list as configurable json
-        * Extended Streaming Services list as configurable json
-        * Audio Codec list as configurable json
-        * Extended audio codec list for full disk codecs
-        * TSP internal uploads
-        * Move dot torrents based on type after upload
-        * Feature merges from XPBot
-            * Improved dupe check
-            * Improved screenshot upload process
-            * Added support for ptpimg
-            * Removed support for imgyukle
-
-    Bug Fixes
-        * No dupe message not being shown in certain cases
-        * Invalid PA streaming service tagging
-        * PQ10, HLG and WCG HDR Formats not being detected
-        * TSP dupe check for web sourced contents
-
-<br>
-
-##  **1.1**
-    New Trackers
-        * DesiTorrents
-    New Features
-        * No spoiler screenshot feature
-        * CICD pipeline optimizations
-        * Default screenshots count changes
-        * Strip text feature for torrent dupe checks
-    Bug Fixes
-        * Full season tv-show upload bug fix
-        * Updated tag naming bug fix
-
-<br>
-
-##  **1.0.1**
-    Bug Fixes
-        * Updated naming conventions for HDR, Atmos Audio, and BluRay source
-
-<br>
-
-##  **1.0**
-    New Features
-        * Initial Release
-        * Added docker images for aarch64 and armhf OS Architectures
-        * CICD Pipeline Changes
-        * Updated Templates
-        * Support for Xbtit Platform with custom API
-        * Screenshot thumbnail feature
-
-<br>
+See [CHANGELOG](CHANGELOG) for more info
 
 # Wiki
 ### [Video usage examples](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Usage:-Video-Examples)
