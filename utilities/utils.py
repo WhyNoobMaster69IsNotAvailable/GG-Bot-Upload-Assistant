@@ -27,9 +27,10 @@ import time
 import unicodedata
 from pathlib import Path
 from pprint import pformat
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 import pyfiglet
+import sentry_sdk
 from dotenv import dotenv_values
 from guessit import guessit
 from rich.console import Console
@@ -47,6 +48,7 @@ from modules.constants import (
     VALIDATED_SITE_TEMPLATES_DIR,
     WORKING_DIR,
 )
+from modules.exceptions.exception import GGBotSentryCapturedException
 from modules.torrent_client import Clients, TorrentClientFactory
 
 console = Console()
@@ -861,6 +863,14 @@ class GenericUtils:
         return True
 
     @staticmethod
+    def override_release_group_if_necessary(
+        args_release_group: Optional[List[str]], guessit_release_group: str
+    ):
+        if args_release_group is None:
+            return guessit_release_group
+        return str(args_release_group[0])
+
+    @staticmethod
     def sanitize_release_group_from_guessit(torrent_info):
         # setting NOGROUP as group if the release_group cannot be identified from guessit
         if "release_group" in torrent_info and len(torrent_info["release_group"]) > 0:
@@ -920,14 +930,23 @@ class GenericUtils:
         module_path = ".".join(method_data[:-1])
         method_string = method_data[-1]
 
-        module = importlib.import_module(module_path)
+        try:
+            module = importlib.import_module(module_path)
+        except ValueError as e:
+            # SentryDebug: Sending more details to sentry for debugging
+            with sentry_sdk.new_scope() as scope:
+                scope.set_extra("module_path", module_path)
+                scope.set_extra("method_string", method_string)
+                scope.set_extra("full_method_string", full_method_string)
+                sentry_sdk.capture_exception(e)
+            raise GGBotSentryCapturedException(e)
         # Finally, we retrieve the Class
         return getattr(module, method_string)
 
     @staticmethod
     def prepare_headers_for_tracker(technical_jargons, search_site, tracker_api):
         if technical_jargons["authentication_mode"] == "API_KEY":
-            return None
+            return {}
 
         if technical_jargons["authentication_mode"] == "BEARER":
             logging.info(

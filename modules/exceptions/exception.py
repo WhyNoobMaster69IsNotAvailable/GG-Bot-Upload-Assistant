@@ -3,6 +3,10 @@ class GGBotException(Exception):
         super().__init__(message)
 
 
+class GGBotSentryCapturedException(GGBotException):
+    pass
+
+
 class GGBotUploaderException(GGBotException):
     pass
 

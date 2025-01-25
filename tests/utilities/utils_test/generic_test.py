@@ -507,3 +507,29 @@ def test_add_argument_tags(argument_tags, expected):
 )
 def test_normalize_for_system_path(file_path, expected):
     assert GenericUtils.normalize_for_system_path(file_path) == expected
+
+
+@pytest.mark.parametrize(
+    "args_release_group, guessit_release_group, expected_output",
+    [
+        pytest.param(None, "DefaultGroup", "DefaultGroup", id="args is None"),
+        pytest.param(
+            ["CustomGroup"], "DefaultGroup", "CustomGroup", id="single element in args"
+        ),
+        pytest.param(
+            ["FirstGroup", "SecondGroup"],
+            "DefaultGroup",
+            "FirstGroup",
+            id="multiple elements in args",
+        ),
+    ],
+)
+def test_override_release_group_if_necessary(
+    args_release_group, guessit_release_group, expected_output
+):
+    assert (
+        GenericUtils.override_release_group_if_necessary(
+            args_release_group, guessit_release_group
+        )
+        == expected_output
+    )

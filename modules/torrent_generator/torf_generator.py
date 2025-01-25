@@ -22,10 +22,51 @@ from typing import Callable
 from torf import Torrent
 
 from modules.torrent_generator.generator_base import GGBotTorrentGeneratorBase
+from modules.config import UploaderTweaksConfig
 
 
 class GGBOTTorrent(Torrent):
-    piece_size_max = 32 * 1024 * 1024  # 32MB as max piece size
+    piece_size_max = None
+    piece_size_min = None
+
+    def __init__(self, *args, **kwargs):
+        config = UploaderTweaksConfig()
+        self.piece_size_max = config.TORF_MAX_PIECE_SIZE
+        self.piece_size_min = config.TORF_MIN_PIECE_SIZE
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def calculate_piece_size(cls, size):
+        """
+        Need to override this method since it refers to class variables piece_size_min and piece_size_max.
+        Here we lazily load the values from env and use that for computation.
+        """
+        config = UploaderTweaksConfig()
+        piece_size_max = config.TORF_MAX_PIECE_SIZE
+        piece_size_min = config.TORF_MIN_PIECE_SIZE
+        if size <= 2**30:  # 1 GiB / 1024 pieces = 1 MiB max
+            pieces = size / 1024
+        elif size <= 4 * 2**30:  # 4 GiB / 2048 pieces = 2 MiB max
+            pieces = size / 2048
+        elif size <= 6 * 2**30:  # 6 GiB / 3072 pieces = 2 MiB max
+            pieces = size / 3072
+        elif size <= 8 * 2**30:  # 8 GiB / 2048 pieces = 4 MiB max
+            pieces = size / 2048
+        elif size <= 16 * 2**30:  # 16 GiB / 2048 pieces = 8 MiB max
+            pieces = size / 2048
+        elif size <= 32 * 2**30:  # 32 GiB / 4096 pieces = 8 MiB max
+            pieces = size / 4096
+        elif size <= 64 * 2**30:  # 64 GiB / 8192 pieces = 8 MiB max
+            pieces = size / 8192
+        else:
+            pieces = size / 10240
+        # Math is magic!
+        return int(
+            min(
+                max(1 << max(0, math.ceil(math.log(pieces, 2))), piece_size_min),
+                piece_size_max,
+            )
+        )
 
 
 class GGBotTorfTorrentGenerator(GGBotTorrentGeneratorBase):
@@ -57,6 +98,10 @@ class GGBotTorfTorrentGenerator(GGBotTorrentGeneratorBase):
             creation_date=self.created_at,
         )
         self.progress_callback = progress_callback
+
+        config = UploaderTweaksConfig()
+        self.piece_size_max = config.TORF_MAX_PIECE_SIZE
+        self.piece_size_min = config.TORF_MIN_PIECE_SIZE
 
     @cached_property
     def size(self):
@@ -98,8 +143,8 @@ class GGBotTorfTorrentGenerator(GGBotTorrentGeneratorBase):
         # piece_size_max :: 32 * 1024 * 1024 => 16MB
         return int(
             min(
-                max(1 << max(0, math.ceil(math.log(pieces, 2))), 16 * 1024),
-                32 * 1024 * 1024,
+                max(1 << max(0, math.ceil(math.log(pieces, 2))), self.piece_size_min),
+                self.piece_size_max,
             )
         )
 

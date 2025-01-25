@@ -16,10 +16,12 @@
 
 import json
 import logging
+import platform
 import re
 from pprint import pformat
 
 import requests
+import sentry_sdk
 from fuzzywuzzy import fuzz
 from guessit import guessit
 from rich.console import Console
@@ -27,6 +29,7 @@ from rich.prompt import Confirm
 from rich.table import Table
 
 from modules.config import UploaderConfig
+from modules.exceptions.exception import GGBotSentryCapturedException
 from utilities.utils import GenericUtils
 from utilities.utils_miscellaneous import MiscellaneousUtils
 
@@ -68,14 +71,18 @@ class DupeUtils:
         json_data=None,
         multipart_data=None,
         headers=None,
+        cloudflare_bypass=False,
     ):
         try:
+            if cloudflare_bypass:
+                headers = headers if headers is not None else {}
+                headers["User-Agent"] = "Apidog/1.0.0 (https://apidog.com)"
             return requests.request(
                 method, url, json=json_data, data=multipart_data, headers=headers
             )
         except Exception as ex:
             console.print(
-                f"[bold red]:warning: Dupe check request to tracker [green]{site_name}[/green], failed. Hence skipping this tracker. :warning:[/bold red]\n"
+                f"[bold red]:warning: Dupe check request to tracker [green]{site_name}[/green], failed. Hence skipping this tracker. :warning:[/bold red]\n {ex}"
             )
             logging.exception(
                 f"[DupeCheck] Request to  {search_site} for dupe check Failed. Error {ex}"
@@ -374,6 +381,9 @@ class DupeUtils:
         headers = GenericUtils.prepare_headers_for_tracker(
             config["dupes"]["technical_jargons"], tracker, tracker_api
         )
+        headers["User-Agent"] = (
+            f"GG-Bot Upload Assistant/{UploaderConfig().VERSION} ({platform.system()} {platform.release()})"
+        )
 
         if (
             str(config["dupes"]["technical_jargons"]["request_method"]) == "POST"
@@ -404,6 +414,12 @@ class DupeUtils:
                     config["dupes"]["technical_jargons"]["auth_payload_key"]
                 ] = tracker_api
 
+            if (
+                str(config["dupes"]["technical_jargons"]["payload_type"])
+                == "URL-ENCODED"
+            ):
+                headers["Content-Type"] = "application/x-www-form-urlencoded"
+
             if str(config["dupes"]["technical_jargons"]["payload_type"]) == "JSON":
                 dupe_check_result = self._make_request(
                     url=url_dupe_search,
@@ -423,6 +439,9 @@ class DupeUtils:
                     site_name=str(config["name"]).upper(),
                     multipart_data=url_dupe_payload,
                     headers=headers,
+                    cloudflare_bypass=config["dupes"]["technical_jargons"].get(
+                        "cloudflare_bypass", False
+                    ),
                 )
                 if dupe_check_result is True:
                     return True  # being pessimistic and assuming dupes exist in tracker
@@ -517,7 +536,14 @@ class DupeUtils:
                 if "torrent_name" in config["dupes"]["parse_json"]
                 else "name"
             )
-            torrent_title = str(torrent_details[torrent_name_key])
+            try:
+                torrent_title = str(torrent_details[torrent_name_key])
+            except TypeError as e:
+                # SentryDebug: Sending more details to sentry for debugging
+                with sentry_sdk.new_scope() as scope:
+                    scope.set_extra("torrent_details", torrent_details)
+                    sentry_sdk.capture_exception(e)
+                raise GGBotSentryCapturedException(e)
             # certain trackers (NOT ANTHELION) won't give the details as one field. In such cases, we can combine the
             # data from multiple fields to create the torrent name ourselves If the configured fields are not present
             # then, we'll log the errors and then just skip it.

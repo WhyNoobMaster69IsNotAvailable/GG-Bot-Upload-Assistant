@@ -156,7 +156,8 @@
             "authentication_mode": "API_KEY",
             "response_type": "JSON",
             "payload_type": "MULTI-PART",
-            "request_method": "GET"
+            "request_method": "GET",
+            "cloudflare_bypass": false
         },
 
         "url_format": "{search_url}&imdbId={imdb}",

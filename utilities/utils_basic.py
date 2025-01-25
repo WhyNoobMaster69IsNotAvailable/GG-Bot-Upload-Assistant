@@ -23,6 +23,7 @@ import sys
 import time
 from pprint import pformat
 
+import sentry_sdk
 from ffmpy import FFprobe
 from pymediainfo import MediaInfo
 from rich.console import Console
@@ -30,6 +31,7 @@ from rich.prompt import Prompt
 
 import utilities.utils_bdinfo as bdinfo_utilities
 from modules.config import UploadAssistantConfig
+from modules.exceptions.exception import GGBotSentryCapturedException
 
 console = Console()
 
@@ -251,7 +253,10 @@ class BasicUtils:
 
     @staticmethod
     def __get_atmos_from_media_info(media_info_audio_track):
-        if "atmos" in media_info_audio_track.commercial_name.lower():
+        if (
+            media_info_audio_track
+            and "atmos" in media_info_audio_track.commercial_name.lower()
+        ):
             return "Atmos"
         return None
 
@@ -802,7 +807,16 @@ class BasicUtils:
                 )
         else:
             # This else is for when we have a season number, so we can immediately assign it to the torrent_info dict
-            season_number = int(guess_it_result["season"])
+            try:
+                season_number = int(guess_it_result["season"])
+            except TypeError as e:
+                # SentryDebug: Sending more details to sentry for debugging
+                with sentry_sdk.new_scope() as scope:
+                    scope.set_extra("guess_it_result", guess_it_result)
+                    scope.set_extra("guess_it_result_json", json.dumps(guess_it_result))
+                    sentry_sdk.capture_exception(e)
+                raise GGBotSentryCapturedException(e)
+
             # check if we have an episode number
             if "episode" in guess_it_result:
                 if isinstance(guess_it_result["episode"], list):
