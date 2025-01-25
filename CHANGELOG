@@ -1,3 +1,18 @@
+## **3.1.7**
+    New Tracker
+        * PrivateSilverScreen
+        * TMGHub
+
+    Bug Fixes
+        * Issue#181: Sentry | AttributeError: 'NoneType' object has no attribute 'commercial_name'
+        * Issue#185: Sentry | TypeError: 'NoneType' object is not subscriptable
+        * Issue#186: Sentry | TypeError: 'NoneType' object is not subscriptable
+        * Issue#190: Sentry | TypeError: object of type 'NoneType' has no len()
+        * Issue#189: Sentry | AttributeError: 'NoneType' object has no attribute 'get'
+        * Issue#193: Sentry | ValueError: not enough values to unpack (expected 4, got 3)
+
+<br>
+
 ## **3.1.6**
     New Tracker
         * Yoinked -> [@docd00m]
@@ -17,12 +32,12 @@
 <br>
 
 ## **3.1.5**
-    New Image host 
+    New Image host
         * PTScreens -> [@PTScreens]
-        
+
     New Tracker
         * DarkLand -> [@darklandy]
-    
+
     Bug Fixes
         * Fixed Torrent.desi api -> [@highlamb]
 
