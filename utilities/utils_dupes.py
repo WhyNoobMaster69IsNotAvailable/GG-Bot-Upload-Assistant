@@ -80,7 +80,7 @@ class DupeUtils:
             )
         except Exception as ex:
             console.print(
-                f"[bold red]:warning: Dupe check request to tracker [green]{site_name}[/green], failed. Hence skipping this tracker. :warning:[/bold red]\n"
+                f"[bold red]:warning: Dupe check request to tracker [green]{site_name}[/green], failed. Hence skipping this tracker. :warning:[/bold red]\n {ex}"
             )
             logging.exception(
                 f"[DupeCheck] Request to  {search_site} for dupe check Failed. Error {ex}"

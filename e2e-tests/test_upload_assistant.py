@@ -31,6 +31,7 @@ class TestGGBotUploadAssistant:
             "-p",
             "./resources/Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv",
             "--auto",
+            "--debug",
         ],
     )
     def test_movie_4k_web_dl_hdr10plus(self, working_folder):
@@ -117,6 +118,7 @@ class TestGGBotUploadAssistant:
             "-p",
             "./resources/How.I.Met.Your.Mother.S09.1080p.DSNP.WEB-DL.DDP7.1.H.264-ReleaseGroup",
             "--auto",
+            "--debug",
         ],
     )
     def test_tv_1080p_web_dl(self, working_folder):

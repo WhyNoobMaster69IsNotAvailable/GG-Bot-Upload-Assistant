@@ -15,11 +15,13 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import binascii
+import logging
 import os
 from abc import ABC, abstractmethod, ABCMeta
 from functools import cached_property
 from typing import Optional
 
+from modules.enums import TorrentPieceSize
 from modules.exceptions.exception import GGBotUploaderException
 
 
@@ -53,6 +55,30 @@ class GGBotConfig(ABC):
 
     def get_config_as_boolean(self, key, default: bool = False) -> bool:
         return self._get_property_as_boolean(key, default)
+
+
+class UploaderTweaksConfig(GGBotConfig):
+    @cached_property
+    def TORF_MIN_PIECE_SIZE(self):
+        configured_piece_size = self.get_config("torf_mix_piece_size", "KB_16")
+        try:
+            return TorrentPieceSize[configured_piece_size].value
+        except KeyError:
+            logging.error(
+                f"[UploaderTweaksConfig] Invalid torf min piece size provided: {configured_piece_size}. Proceeding with default piece size 16 KiB."
+            )
+            return TorrentPieceSize.KB_16.value
+
+    @cached_property
+    def TORF_MAX_PIECE_SIZE(self):
+        configured_piece_size = self.get_config("torf_max_piece_size", "MB_32")
+        try:
+            return TorrentPieceSize[configured_piece_size].value
+        except KeyError:
+            logging.error(
+                f"[UploaderTweaksConfig] Invalid torf max piece size provided: {configured_piece_size}. Proceeding with default piece size 32 MiB."
+            )
+            return TorrentPieceSize.MB_32.value
 
 
 class MetadataConfig(GGBotConfig):
