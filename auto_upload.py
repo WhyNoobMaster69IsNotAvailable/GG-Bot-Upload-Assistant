@@ -72,6 +72,8 @@ from modules.constants import (
     TAG_GROUPINGS,
     CUSTOM_TEXT_COMPONENTS,
 )
+from modules.exceptions.exception import GGBotSentryCapturedException
+from modules.global_utils import sentry_ignored_errors
 
 # Method that will search for dupes in trackers.
 from modules.template_schema_validator import TemplateSchemaValidator
@@ -147,6 +149,7 @@ class GGBotUploadAssistant:
                 profiles_sample_rate=1.0,
                 attach_stacktrace=True,
                 shutdown_timeout=20,
+                ignore_errors=sentry_ignored_errors,
             )
 
         # By default, we load the templates from site_templates/ path
@@ -607,9 +610,17 @@ class GGBotUploadAssistant:
         ]  # for disc we don't need mediainfo
         if self.args.disc:
             bdinfo_start_time = time.perf_counter()
-            logging.debug(
-                f"Generating and parsing the BDInfo for playlist {self.torrent_info['largest_playlist']}"
-            )
+            try:
+                logging.debug(
+                    f"Generating and parsing the BDInfo for playlist {self.torrent_info['largest_playlist']}"
+                )
+            except KeyError as e:
+                # SentryDebug: Sending more details to sentry for debugging
+                with sentry_sdk.new_scope() as scope:
+                    scope.set_extra("torrent_info", self.torrent_info)
+                    scope.set_extra("torrent_info_json", json.dumps(self.torrent_info))
+                    sentry_sdk.capture_exception(e)
+                raise GGBotSentryCapturedException(e)
             console.print(
                 f"\nGenerating and parsing the BDInfo for playlist {self.torrent_info['largest_playlist']}\n",
                 style="bold blue",

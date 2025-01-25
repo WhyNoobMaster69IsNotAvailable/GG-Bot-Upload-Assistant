@@ -363,15 +363,23 @@ pip install -r requirements/requirements.txt
 # Roadmap
 ### v3.1.7
 - [X] New Tracker: PrivateSilverScreen
-- [ ] New Tracker: UHDBits
 - [ ] New Tracker: TMGHub
+- [X] Issue#181: Sentry | AttributeError: 'NoneType' object has no attribute 'commercial_name'
+- [X] Issue#185: Sentry | TypeError: 'NoneType' object is not subscriptable
+- [X] Issue#186: Sentry | TypeError: 'NoneType' object is not subscriptable
+- [X] Issue#189: Sentry | AttributeError: 'NoneType' object has no attribute 'get'
+- [X] Issue#190: Sentry | TypeError: object of type 'NoneType' has no len()
+- [X] Issue#193: Sentry | ValueError: not enough values to unpack (expected 4, got 3)
+
+### v3.1.8
+- [ ] New Tracker: UHDBits
 - [ ] Template based custom description
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
 - [X] Issue#159: Memory failure when using torf
 
-### v3.1.8
+### v3.1.9
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
 - [ ] Issue#96: DVD Remux not supported

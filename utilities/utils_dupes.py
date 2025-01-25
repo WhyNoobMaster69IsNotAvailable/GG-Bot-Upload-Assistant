@@ -21,6 +21,7 @@ import re
 from pprint import pformat
 
 import requests
+import sentry_sdk
 from fuzzywuzzy import fuzz
 from guessit import guessit
 from rich.console import Console
@@ -28,6 +29,7 @@ from rich.prompt import Confirm
 from rich.table import Table
 
 from modules.config import UploaderConfig
+from modules.exceptions.exception import GGBotSentryCapturedException
 from utilities.utils import GenericUtils
 from utilities.utils_miscellaneous import MiscellaneousUtils
 
@@ -534,7 +536,14 @@ class DupeUtils:
                 if "torrent_name" in config["dupes"]["parse_json"]
                 else "name"
             )
-            torrent_title = str(torrent_details[torrent_name_key])
+            try:
+                torrent_title = str(torrent_details[torrent_name_key])
+            except TypeError as e:
+                # SentryDebug: Sending more details to sentry for debugging
+                with sentry_sdk.new_scope() as scope:
+                    scope.set_extra("torrent_details", torrent_details)
+                    sentry_sdk.capture_exception(e)
+                raise GGBotSentryCapturedException(e)
             # certain trackers (NOT ANTHELION) won't give the details as one field. In such cases, we can combine the
             # data from multiple fields to create the torrent name ourselves If the configured fields are not present
             # then, we'll log the errors and then just skip it.
