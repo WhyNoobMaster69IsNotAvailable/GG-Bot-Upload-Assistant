@@ -87,7 +87,7 @@ Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry
         <tr style="text-align: center">
             <td rowspan="22"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
-            <td><strong><a href="https://asiancinema.me">AsianCinema</a></strong></td>
+            <td><strong><a href="https://eiga.moi">AsianCinema</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td><strong>ATH</strong></td>
@@ -457,6 +457,7 @@ This project exists thanks to all the people who contribute.
         * TMGHub
 
     Bug Fixes
+        * Issue#168: TypeError: 'NoneType' object is not subscriptable
         * Issue#181: Sentry | AttributeError: 'NoneType' object has no attribute 'commercial_name'
         * Issue#185: Sentry | TypeError: 'NoneType' object is not subscriptable
         * Issue#186: Sentry | TypeError: 'NoneType' object is not subscriptable
