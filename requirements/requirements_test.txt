@@ -1,5 +1,6 @@
 -r requirements.txt
 Flask-RESTful~=0.3.9
+importlib-metadata~=8.6.1
 mongomock~=4.3.0
 pytest~=8.3.4
 pytest-cov~=6.0.0
