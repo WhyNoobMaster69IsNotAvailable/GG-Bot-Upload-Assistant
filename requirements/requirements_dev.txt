@@ -25,3 +25,4 @@ setuptools~=69.2.0
 poetry
 codespell
 sentry-sdk==2.13.0
+pip-check
