@@ -1,5 +1,5 @@
 -r requirements.txt
-Flask~=2.2.2
-marshmallow~=3.19.0
-schedule~=1.1.0
-wheel~=0.37.1
+Flask~=3.1.0
+marshmallow~=3.26.0
+schedule~=1.2.2
+wheel~=0.45.1
