@@ -29,7 +29,7 @@ from pymediainfo import MediaInfo
 from rich.console import Console
 from rich.prompt import Prompt
 
-import utilities.utils_bdinfo as bdinfo_utilities
+from modules.bdinfo.bdinfo_parser import BDInfoParser
 from modules.config import UploadAssistantConfig
 from modules.exceptions.exception import GGBotSentryCapturedException
 
@@ -136,9 +136,7 @@ class BasicUtils:
             f"[BasicUtils] Dumping torrent_info before video_codec identification. {pformat(torrent_info)}"
         )
         if is_disc and torrent_info["bdinfo"] is not None:
-            return bdinfo_utilities.bdinfo_get_video_codec_from_bdinfo(
-                torrent_info["bdinfo"]
-            )
+            return BDInfoParser.get_video_codec_from_bdinfo(torrent_info["bdinfo"])
 
         dv, hdr = self._get_dv_hdr(media_info_video_track)
 
@@ -282,7 +280,7 @@ class BasicUtils:
             (
                 atmos,
                 audio_codec,
-            ) = bdinfo_utilities.bdinfo_get_audio_codec_from_bdinfo(
+            ) = BDInfoParser.get_audio_codec_from_bdinfo(
                 torrent_info["bdinfo"], audio_codec_dict
             )
             return audio_codec, atmos
@@ -473,9 +471,7 @@ class BasicUtils:
         missing_value,
     ):
         if is_disc and torrent_info["bdinfo"] is not None:
-            return bdinfo_utilities.bdinfo_get_audio_channels_from_bdinfo(
-                torrent_info["bdinfo"]
-            )
+            return BDInfoParser.get_audio_channels_from_bdinfo(torrent_info["bdinfo"])
 
         # suppressing regex based audio channel identification
         # First try detecting the 'audio_channels' using regex

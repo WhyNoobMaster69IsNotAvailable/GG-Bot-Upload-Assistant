@@ -42,9 +42,9 @@ from rich.prompt import Confirm, Prompt
 from rich.table import Table
 from rich.traceback import install
 
-import utilities.utils_bdinfo as bdinfo_utilities
 import utilities.utils_metadata as metadata_utilities
 import utilities.utils_translation as translation_utilities
+from modules.bdinfo.bdinfo_parser import BDInfoParser
 from modules.config import (
     UploadAssistantConfig,
     TrackerConfig,
@@ -114,7 +114,7 @@ class GGBotUploadAssistant:
         self.tracker_settings = {}
         self.config = {}
         self.tracker = None  # the current tracker to which we are uploading to
-
+        self.bdinfo_parser = None  # Will be initialized depending on the environment
         # Debug logs for the upload processing
         # Logger running in "w" : write mode
         # Create a custom log format with UTF-8 encoding
@@ -556,23 +556,15 @@ class GGBotUploadAssistant:
             # First check to see if we are uploading a 'raw bluray disc'
             if self.args.disc:
                 # validating presence of bdinfo script for bare metal
-                bdinfo_utilities.bdinfo_validate_bdinfo_script_for_bare_metal(
-                    self.bdinfo_script
-                )
                 # validating presence of BDMV/STREAM/
-                bdinfo_utilities.bdinfo_validate_presence_of_bdmv_stream(
-                    self.torrent_info["upload_media"]
+                self.bdinfo_parser = BDInfoParser(
+                    bdinfo_script=self.bdinfo_script,
+                    upload_media=self.torrent_info["upload_media"],
                 )
-
                 (
                     raw_video_file,
                     largest_playlist,
-                ) = bdinfo_utilities.bdinfo_get_largest_playlist(
-                    self.bdinfo_script,
-                    self.auto_mode,
-                    self.torrent_info["upload_media"],
-                )
-
+                ) = self.bdinfo_parser.get_largest_playlist(self.auto_mode)
                 self.torrent_info["raw_video_file"] = raw_video_file
                 self.torrent_info["largest_playlist"] = largest_playlist
             else:
@@ -629,11 +621,9 @@ class GGBotUploadAssistant:
                 base_path=self.working_folder,
                 sub_folder=self.torrent_info["working_folder"],
             )
-            self.torrent_info["bdinfo"] = (
-                bdinfo_utilities.bdinfo_generate_and_parse_bdinfo(
-                    self.bdinfo_script, self.torrent_info, self.args.debug
-                )
-            )  # TODO handle non-happy paths
+            self.torrent_info["bdinfo"] = self.bdinfo_parser.generate_and_parse_bdinfo(
+                self.torrent_info, self.args.debug
+            )
             logging.debug(
                 "::::::::::::::::::::::::::::: Parsed BDInfo output :::::::::::::::::::::::::::::"
             )
