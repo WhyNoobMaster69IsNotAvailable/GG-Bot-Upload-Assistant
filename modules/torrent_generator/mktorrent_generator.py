@@ -20,8 +20,9 @@ import os
 from functools import cached_property
 from pathlib import Path
 
+from torf import Torrent
+
 from modules.torrent_generator.generator_base import GGBotTorrentGeneratorBase
-from modules.torrent_generator.torf_generator import GGBOTTorrent
 
 
 class GGBotMkTorrentGenerator(GGBotTorrentGeneratorBase):
@@ -41,9 +42,7 @@ class GGBotMkTorrentGenerator(GGBotTorrentGeneratorBase):
     Once an updated version is available, the flag can be added
     """
 
-    def __init__(
-        self, *, media, announce, source, torrent_title, torrent_path_prefix
-    ):
+    def __init__(self, *, media, announce, source, torrent_title, torrent_path_prefix):
         super().__init__(
             media=media,
             announce=announce,
@@ -51,7 +50,7 @@ class GGBotMkTorrentGenerator(GGBotTorrentGeneratorBase):
             torrent_title=torrent_title,
             torrent_path_prefix=torrent_path_prefix,
         )
-        self.torrent = GGBOTTorrent(
+        self.torrent = Torrent(
             path=self.media,
             trackers=self.announce,
             source=self.source,
@@ -72,14 +71,12 @@ class GGBotMkTorrentGenerator(GGBotTorrentGeneratorBase):
 
     def _get_size_of_dir(self):
         return sum(
-            f.stat().st_size
-            for f in Path(self.media).glob("**/*")
-            if f.is_file()
+            f.stat().st_size for f in Path(self.media).glob("**/*") if f.is_file()
         )
 
     def get_piece_size(self) -> int:
         """
-        How pieces are calclated when using mktorrent...
+        How pieces are calculated when using mktorrent...
 
         2^19 = 524 288 = 512 KiB for filesizes between 512 MiB - 1024 MiB
         2^20 = 1 048 576 = 1024 KiB for filesizes between 1 GiB - 2 GiB
@@ -105,9 +102,7 @@ class GGBotMkTorrentGenerator(GGBotTorrentGeneratorBase):
             return 25
 
     def generate_torrent(self) -> None:
-        logging.info(
-            f"[GGBotMkTorrentGenerator] Size of the torrent: {self.size}"
-        )
+        logging.info(f"[GGBotMkTorrentGenerator] Size of the torrent: {self.size}")
         logging.info(
             f"[GGBotMkTorrentGenerator] Piece Size of the torrent: {self.get_piece_size()}"
         )
@@ -125,9 +120,7 @@ class GGBotMkTorrentGenerator(GGBotTorrentGeneratorBase):
         logging.info(
             "[GGBotMkTorrentGenerator] Using torf to do some cleanup on the created torrent"
         )
-        edit_torrent: GGBOTTorrent = GGBOTTorrent.read(
-            glob.glob(self.torrent_path)[0]
-        )
+        edit_torrent: Torrent = Torrent.read(glob.glob(self.torrent_path)[0])
         edit_torrent.created_by = self.created_by
         edit_torrent.metainfo["created by"] = self.created_by
         if len(self.announce) > 1:
@@ -135,7 +128,7 @@ class GGBotMkTorrentGenerator(GGBotTorrentGeneratorBase):
             edit_torrent.metainfo["announce-list"] = []
             for announce_url in self.announce:
                 edit_torrent.metainfo["announce-list"].append([announce_url])
-        GGBOTTorrent.copy(edit_torrent).write(
+        Torrent.copy(edit_torrent).write(
             filepath=self.torrent_path,
             overwrite=True,
         )
