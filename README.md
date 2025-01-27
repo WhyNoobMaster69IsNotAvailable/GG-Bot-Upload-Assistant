@@ -372,6 +372,7 @@ pip install -r requirements/requirements.txt
 - [X] Issue#167: ACM upload fails due to URL change
 - [X] Issue#159: Memory failure when using torf
 - [X] Issue#198: UnicodeEncodeError: 'charmap' codec can't encode character '\u017b'
+- [X] Issue#199: KeyError: 'title' in guessit result
 
 ### v3.1.9
 - [ ] EPIC: GG-Bot Auto Uploader

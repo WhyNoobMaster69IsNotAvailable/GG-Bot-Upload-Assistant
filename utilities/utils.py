@@ -48,7 +48,10 @@ from modules.constants import (
     VALIDATED_SITE_TEMPLATES_DIR,
     WORKING_DIR,
 )
-from modules.exceptions.exception import GGBotSentryCapturedException
+from modules.exceptions.exception import (
+    GGBotSentryCapturedException,
+    GGBotFatalException,
+)
 from modules.torrent_client import Clients, TorrentClientFactory
 
 console = Console()
@@ -350,6 +353,11 @@ class GenericUtils:
         file_name = file_name_split[len(file_name_split) - 1]
 
         guess_it_result = guessit(file_name)
+
+        if "title" not in guess_it_result or not guess_it_result["title"]:
+            raise GGBotFatalException(
+                "Guessit could not even extract the title, something is really wrong with this filename."
+            )
 
         # Handle movie files with AKA to indicate multiple titles
         if " AKA " in guess_it_result["title"]:
