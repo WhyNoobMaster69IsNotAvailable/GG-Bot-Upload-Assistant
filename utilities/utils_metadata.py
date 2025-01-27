@@ -598,7 +598,8 @@ def _fill_tmdb_metadata_to_torrent_info(torrent_info, tmdb_response):
     )
     tmdb_metadata["release_date"] = (
         tmdb_response["release_date"]
-        if "release_date" in tmdb_response and len(tmdb_response["release_date"]) > 0
+        if "release_date" in tmdb_response
+        and len(tmdb_response.get("release_date", "")) > 0
         else ""
     )
     tmdb_metadata["poster"] = (
