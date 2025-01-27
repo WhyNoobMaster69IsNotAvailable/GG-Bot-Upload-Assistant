@@ -329,13 +329,14 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
         # once we got tmdb id, we can then call tmdb external to get the data for imdb and tvdb
         tmdb_external_ids = _get_external_ids_from_tmdb(content_type, tmdb)
         tmdb_external_ids = (
-            {"tmdb": tmdb, "imdb": "0", "tvdb": "0"}
+            {"tmdb": tmdb, "imdb": "0", "tvdb": "0", "possible_matches": None}
             if tmdb_external_ids is None
             else tmdb_external_ids
         )
         tmdb_external_ids["tvmaze"] = (
             "0"  # initializing tvmaze id as 0. if user is uploading a tv show we'll try to resolve this.
         )
+        tmdb_external_ids["possible_matches"] = selected_tmdb_results_data
 
         # with imdb and tvdb we can attempt to get the tvmaze id.
         if content_type in ["episode", "tv"]:  # getting TVmaze ID
@@ -383,7 +384,6 @@ def _metadata_search_tmdb_for_id(query_title, year, content_type, auto_mode):
                         else "0"
                     )
 
-        tmdb_external_ids["possible_matches"] = selected_tmdb_results_data
         return tmdb_external_ids
     else:
         _return_for_reuploader_and_exit_for_assistant(None)
@@ -1238,7 +1238,7 @@ def _search_and_get_possible_matches(torrent_info, auto_mode):
     torrent_info["imdb"] = metadata_result["imdb"]
     torrent_info["tvmaze"] = metadata_result["tvmaze"]
     torrent_info["tvdb"] = metadata_result["tvdb"]
-    return metadata_result["possible_matches"]
+    return metadata_result.get("possible_matches", [])
 
 
 def _fill_ids_from_external_response(
