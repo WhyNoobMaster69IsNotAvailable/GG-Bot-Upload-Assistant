@@ -38,6 +38,7 @@ from pymediainfo import MediaInfo
 # Rich is used for printing text & interacting with user input
 from rich import box
 from rich.console import Console
+from rich.errors import NotRenderableError
 from rich.prompt import Confirm, Prompt
 from rich.table import Table
 from rich.traceback import install
@@ -767,7 +768,16 @@ class GGBotUploadAssistant:
                 )
                 basic_info.append(torrent_info_key_failsafe)
 
-        codec_result_table.add_row(*basic_info)
+        try:
+            codec_result_table.add_row(*basic_info)
+        except NotRenderableError as e:
+            # SentryDebug: sending more details to Sentry for debugging.
+            with sentry_sdk.new_scope() as scope:
+                scope.set_extra("columns_we_want", columns_we_want)
+                scope.set_extra("basic_info", basic_info)
+                scope.set_extra("torrent_info", self.torrent_info)
+                sentry_sdk.capture_exception(e)
+            raise GGBotSentryCapturedException(e)
 
         console.line(count=2)
         console.print(codec_result_table, justify="center")
