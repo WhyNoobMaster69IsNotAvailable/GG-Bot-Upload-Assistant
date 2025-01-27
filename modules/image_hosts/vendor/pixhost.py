@@ -25,8 +25,8 @@ class PixhostImageHost(GGBotImageHostBase):
             url="https://api.pixhost.to/images", data=data, files=files
         )
 
-        img_upload_response = img_upload_request.json()
         if img_upload_request.ok:
+            img_upload_response = img_upload_request.json()
             logging.debug(
                 f"[PixhostImageHost::upload] Image upload response: {img_upload_response}"
             )
