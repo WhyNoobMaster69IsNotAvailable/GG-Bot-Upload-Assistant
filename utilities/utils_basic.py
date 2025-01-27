@@ -730,7 +730,7 @@ class BasicUtils:
             )
             logging.debug(f"\n{media_info_output}")
 
-            with open(mediainfo_file, "w+") as f:
+            with open(mediainfo_file, "w+", encoding="utf-8") as f:
                 f.write(media_info_output)
             # now save the mediainfo txt file location to the dict
             # torrent_info["mediainfo"] = save_location
