@@ -363,6 +363,7 @@ pip install -r requirements/requirements.txt
 # Roadmap
 ### v3.1.8
 - [ ] New Tracker: UHDBits
+- [X] Updated MyAnimeList mappings
 - [ ] Template based custom description
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
@@ -370,6 +371,7 @@ pip install -r requirements/requirements.txt
 - [X] Issue#165: Pixhost screenshot upload error
 - [X] Issue#167: ACM upload fails due to URL change
 - [X] Issue#159: Memory failure when using torf
+- [X] Issue#198: UnicodeEncodeError: 'charmap' codec can't encode character '\u017b'
 
 ### v3.1.9
 - [ ] EPIC: GG-Bot Auto Uploader
