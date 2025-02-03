@@ -118,20 +118,6 @@ unit-test:
     auto_stop_in: 2 months
     url: $PAGES_URL/-/jobs/$CI_JOB_ID/artifacts/coverage/index.html
 
-release-set:
-  stage: test
-  image: noobmaster669/gg-bot-base:test-latest
-  variables:
-    SOURCE_DIRECTORY: gg-bot-upload-assistant
-  script:
-    - echo "${CI_COMMIT_TAG:-$CI_COMMIT_SHA}" > RELEASE
-  artifacts:
-    paths:
-      - RELEASE
-    expire_in: 1 week
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-
 # Unit tests for MRs without any report generation
 unit-test-mr:
   stage: test
