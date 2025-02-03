@@ -62,7 +62,11 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
 <br>
 
 ## Tracking In GG Bot Upload Assistant
-Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry Error Tracking**_ enabled by default. This is to catch any errors / exceptions that happen in the application and fix them pro-actively.
+Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**Sentry Error Tracking**_ enabled by default. This is to catch any errors / exceptions that happen in the application and fix them pro-actively.
+
+> Gitlab based error tracking has been replaced with [BugSink](https://www.bugsink.com/) to track sentry errors. This change was made from **v3.1.8** onwards.
+> GitLab wasn't providing enough event details to properly debug the issues, hence moving out from it.
+
 
 > If you do no wish to have this enabled, you can disable the error log tracking from the config file. Simple set `ENABLE_SENTRY_ERROR_TRACKING` to `False` in assistant or re-uploader config and error / exceptions will not be sent to GitLab.
 
@@ -364,6 +368,7 @@ pip install -r requirements/requirements.txt
 ### v3.1.8
 - [ ] New Tracker: UHDBits
 - [X] Updated MyAnimeList mappings
+- [X] Replace GitLab with [BugSink](https://www.bugsink.com/) for error tracking
 - [ ] Template based custom description
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
@@ -740,3 +745,5 @@ See [CHANGELOG](CHANGELOG) for more info
 ### [Docker: Noob Friendly Setup Guide](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Noob-Friendly-Setup-Guide)
 ### [Support For New Trackers](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Support-For-New-Trackers)
 <br>
+
+<sup>Free DNS provided by [Free DNS](https://freedns.afraid.org/)</sup>

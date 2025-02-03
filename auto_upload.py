@@ -145,7 +145,7 @@ class GGBotUploadAssistant:
             sentry_sdk.init(
                 environment="production",
                 server_name="GG Bot Upload Assistant",
-                dsn="https://glet_b895102140e2b1bd3b2550b446de32f1@observe.gitlab.com:443/errortracking/api/v1/projects/32631784",
+                dsn="https://4093e406eb754b20a2a7f6d15e6b34c0@ggbot.bot.nu/1",
                 traces_sample_rate=1.0,
                 profiles_sample_rate=1.0,
                 attach_stacktrace=True,
