@@ -170,13 +170,14 @@ RUN set -eux; \
 	\
 	pip --version
 
+WORKDIR /build
+COPY requirements requirements
 
-COPY requirements /
 RUN \
   echo "**** install pip prerequisite packages ****" && \
-  pip3 install -r /requirements/requirements_baseimages.txt && \
-  pip3 freeze > /requirements/requirements_baseimages.txt
+  pip3 install -r requirements/requirements_baseimages.txt && \
+  pip3 freeze > requirements/requirements_baseimages.txt
 
-RUN rm -rf /requirements
+RUN rm -rf requirements
 
 CMD ["python3"]

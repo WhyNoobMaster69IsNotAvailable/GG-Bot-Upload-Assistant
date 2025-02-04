@@ -20,13 +20,14 @@ FROM noobmaster669/gg-bot-base:disk-latest AS GIT_CLONER
 WORKDIR /app
 
 # add local files
-COPY requirements .
+COPY requirements requirements
 RUN \
   echo "**** install pip packages ****" && \
   pip install -r requirements/requirements.txt && \
   pip freeze > requirements/requirements.txt
 
 COPY . .
+RUN rm -rf requirements
 RUN rm auto_reupload.py && chmod +x auto_upload.py
 
 # ports and volumes
