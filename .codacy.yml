@@ -1,8 +1,16 @@
 ---
+engines:
+  duplication:
+    enabled: true
+    config:
+      languages:
+        - python
+  fixme:
+    enabled: true
+  radon:
+    enabled: true
 assert_used:
   skips: ['*test.py', '*test*.py', 'e2e-tests/*']
 exclude_paths:
-  - "**/tests/**"
-  - "**/e2e-tests/**"
-  - "test/**"
+  - "tests/**"
   - "e2e-tests/**"
