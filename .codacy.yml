@@ -4,3 +4,5 @@ assert_used:
 exclude_paths:
   - "**/tests/**"
   - "**/e2e-tests/**"
+  - "test/**"
+  - "e2e-tests/**"
