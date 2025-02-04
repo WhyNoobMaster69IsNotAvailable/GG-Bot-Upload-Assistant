@@ -78,11 +78,12 @@ RUN \
 	echo '#!/bin/bash\nmono /usr/src/app/build/BDInfo.exe "$@"' > /usr/bin/bdinfocli && \
 	chmod +x /usr/bin/bdinfocli
 
+WORKDIR /build
+COPY requirements requirements
 
-COPY requirements /
 RUN \
   echo "**** install pip prerequisite packages ****" && \
-  pip3 install -r /requirements/requirements_baseimages.txt && \
-  pip3 freeze > /requirements/requirements_baseimages.txt
+  pip3 install -r requirements/requirements_baseimages.txt && \
+  pip3 freeze > requirements/requirements_baseimages.txt
 
-RUN rm -rf /requirements
+RUN rm -rf requirements
