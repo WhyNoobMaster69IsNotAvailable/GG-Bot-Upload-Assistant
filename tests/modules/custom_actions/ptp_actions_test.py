@@ -20,7 +20,6 @@ import pickle
 from pathlib import Path
 
 import pytest
-from pytest_mock import mocker
 
 import modules.custom_actions.ptp_actions as ptp_actions
 
@@ -105,9 +104,9 @@ def test_new_group_custom_action_no_poster(mocker):
     mocker.patch("requests.get", return_value=APIResponse(metadata))
     metadata = metadata[0]
     # this art will be loaded from tmdb_metadata
-    metadata[
-        "art"
-    ] = "https://m.media-amazon.com/images/M/MV5BMWFmYmRiYzMtMTQ4YS00NjA5LTliYTgtMmM3OTc4OGY3MTFkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_.jpg"
+    metadata["art"] = (
+        "https://m.media-amazon.com/images/M/MV5BMWFmYmRiYzMtMTQ4YS00NjA5LTliYTgtMmM3OTc4OGY3MTFkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_.jpg"
+    )
 
     tracker_settings = {}
     torrent_info = {
@@ -179,26 +178,18 @@ def test_new_group_custom_action(mocker):
             {"scene": "on"},
             id="scene_release",
         ),
-        pytest.param(
-            {"scene": "false"}, {"scene": "0"}, {}, id="not_scene_release"
-        ),
+        pytest.param({"scene": "false"}, {"scene": "0"}, {}, id="not_scene_release"),
         pytest.param(
             {},
             {"scene": "1"},
             {},
             id="no_scene_in_torrent_info_present_in_tracker_settings",
         ),
-        pytest.param(
-            {}, {}, {}, id="no_scene_in_torrent_info_not_in_tracker_settings"
-        ),
+        pytest.param({}, {}, {}, id="no_scene_in_torrent_info_not_in_tracker_settings"),
     ],
 )
-def test_mark_scene_release_if_applicable(
-    torrent_info, tracker_settings, expected
-):
-    ptp_actions.mark_scene_release_if_applicable(
-        torrent_info, tracker_settings, None
-    )
+def test_mark_scene_release_if_applicable(torrent_info, tracker_settings, expected):
+    ptp_actions.mark_scene_release_if_applicable(torrent_info, tracker_settings, None)
     assert tracker_settings == expected
 
 
@@ -278,7 +269,9 @@ def __ptp_crsf_token_side_effect(key, default=None):
     if key == "PTP_2FA_ENABLED":
         return True
     elif key == "PTP_ANNOUNCE_URL":
-        return "http://please.passthepopcorn.me:2710/possiblyavalidtrackerpasskey/announce"
+        return (
+            "http://please.passthepopcorn.me:2710/possiblyavalidtrackerpasskey/announce"
+        )
     else:
         return default
 
@@ -397,12 +390,8 @@ def test_get_crsf_token_cached_cookie_failure(mocker):
             ["action", "comedy", "drama"],
             id="ptp_tags",
         ),
-        pytest.param(
-            ["scifi", "drama"], [], ["drama", "sci.fi"], id="ptp_tags"
-        ),
-        pytest.param(
-            [], ["scifi", "drama"], ["drama", "sci.fi"], id="ptp_tags"
-        ),
+        pytest.param(["scifi", "drama"], [], ["drama", "sci.fi"], id="ptp_tags"),
+        pytest.param([], ["scifi", "drama"], ["drama", "sci.fi"], id="ptp_tags"),
         pytest.param([], [], [], id="ptp_tags"),
     ],
 )
@@ -482,9 +471,7 @@ def test_check_successful_upload(response, expected, mocker):
         ),
         pytest.param(
             {
-                "tmdb_metadata": {
-                    "keywords": ["short", "miniseries", "short-film"]
-                },
+                "tmdb_metadata": {"keywords": ["short", "miniseries", "short-film"]},
                 "type": "movie",
                 "duration": "4200000",  # 70min * 60000
                 "imdb": "",

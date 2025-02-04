@@ -4,9 +4,9 @@ import shutil
 from pathlib import Path
 
 import pytest
+from torf import Torrent
 
 from modules.custom_actions.spd_actions import update_torrent_info_hash
-from modules.torrent_generator.torf_generator import GGBOTTorrent
 from tests.test_utilities import TestUtils
 from utilities.utils import GenericUtils
 
@@ -94,8 +94,8 @@ def test_update_torrent_info_hash():
     # assert that there is one BKP_SPD-atorrent.torrent
     assert bkp_spd_present is True
     assert spd_file is not None and bkp_spd_file is not None
-    spd_torrent = GGBOTTorrent.read(spd_file)
-    bkp_torrent = GGBOTTorrent.read(bkp_spd_file)
+    spd_torrent = Torrent.read(spd_file)
+    bkp_torrent = Torrent.read(bkp_spd_file)
 
     # assert that the info-hash of BKP_SPD-atorrent.torrent is added to source of SPD-atorrent.torrent
     assert (

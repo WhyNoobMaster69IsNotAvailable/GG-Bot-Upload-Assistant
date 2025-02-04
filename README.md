@@ -62,7 +62,11 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
 <br>
 
 ## Tracking In GG Bot Upload Assistant
-Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry Error Tracking**_ enabled by default. This is to catch any errors / exceptions that happen in the application and fix them pro-actively.
+Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**Sentry Error Tracking**_ enabled by default. This is to catch any errors / exceptions that happen in the application and fix them pro-actively.
+
+> Gitlab based error tracking has been replaced with [BugSink](https://www.bugsink.com/) to track sentry errors. This change was made from **v3.1.8** onwards.
+> GitLab wasn't providing enough event details to properly debug the issues, hence moving out from it.
+
 
 > If you do no wish to have this enabled, you can disable the error log tracking from the config file. Simple set `ENABLE_SENTRY_ERROR_TRACKING` to `False` in assistant or re-uploader config and error / exceptions will not be sent to GitLab.
 
@@ -87,7 +91,7 @@ Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry
         <tr style="text-align: center">
             <td rowspan="22"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
-            <td><strong><a href="https://asiancinema.me">AsianCinema</a></strong></td>
+            <td><strong><a href="https://eiga.moi">AsianCinema</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td><strong>ATH</strong></td>
@@ -363,11 +367,17 @@ pip install -r requirements/requirements.txt
 # Roadmap
 ### v3.1.8
 - [ ] New Tracker: UHDBits
+- [X] Updated MyAnimeList mappings
+- [X] Replace GitLab with [BugSink](https://www.bugsink.com/) for error tracking
 - [ ] Template based custom description
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
+- [X] Issue#165: Pixhost screenshot upload error
+- [X] Issue#167: ACM upload fails due to URL change
 - [X] Issue#159: Memory failure when using torf
+- [X] Issue#198: UnicodeEncodeError: 'charmap' codec can't encode character '\u017b'
+- [X] Issue#199: KeyError: 'title' in guessit result
 
 ### v3.1.9
 - [ ] EPIC: GG-Bot Auto Uploader
@@ -457,6 +467,7 @@ This project exists thanks to all the people who contribute.
         * TMGHub
 
     Bug Fixes
+        * Issue#168: TypeError: 'NoneType' object is not subscriptable
         * Issue#181: Sentry | AttributeError: 'NoneType' object has no attribute 'commercial_name'
         * Issue#185: Sentry | TypeError: 'NoneType' object is not subscriptable
         * Issue#186: Sentry | TypeError: 'NoneType' object is not subscriptable
@@ -734,3 +745,5 @@ See [CHANGELOG](CHANGELOG) for more info
 ### [Docker: Noob Friendly Setup Guide](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Noob-Friendly-Setup-Guide)
 ### [Support For New Trackers](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Support-For-New-Trackers)
 <br>
+
+<sup>Free DNS provided by [Free DNS](https://freedns.afraid.org/)</sup>

@@ -2,8 +2,9 @@ import glob
 import logging
 import shutil
 
+from torf import Torrent
+
 from modules.constants import WORKING_DIR
-from modules.torrent_generator.torf_generator import GGBOTTorrent
 
 
 def update_torrent_info_hash(torrent_info, _, __, working_folder):
@@ -26,13 +27,13 @@ def update_torrent_info_hash(torrent_info, _, __, working_folder):
         )
         return
 
-    torrent = GGBOTTorrent.read(torrent_file)
-    torrent.metainfo["info"][
-        "source"
-    ] = f'{torrent.metainfo["info"]["source"]}-{torrent.infohash}'
+    torrent = Torrent.read(torrent_file)
+    torrent.metainfo["info"]["source"] = (
+        f'{torrent.metainfo["info"]["source"]}-{torrent.infohash}'
+    )
     shutil.copyfile(torrent_file, torrent_file.replace("SPD", "BKP_SPD"))
 
-    GGBOTTorrent.copy(torrent).write(
+    Torrent.copy(torrent).write(
         filepath=torrent_file,
         overwrite=True,
     )

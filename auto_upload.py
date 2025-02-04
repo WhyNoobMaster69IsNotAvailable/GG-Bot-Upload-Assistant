@@ -38,13 +38,14 @@ from pymediainfo import MediaInfo
 # Rich is used for printing text & interacting with user input
 from rich import box
 from rich.console import Console
+from rich.errors import NotRenderableError
 from rich.prompt import Confirm, Prompt
 from rich.table import Table
 from rich.traceback import install
 
-import utilities.utils_bdinfo as bdinfo_utilities
 import utilities.utils_metadata as metadata_utilities
 import utilities.utils_translation as translation_utilities
+from modules.bdinfo.bdinfo_parser import BDInfoParser
 from modules.config import (
     UploadAssistantConfig,
     TrackerConfig,
@@ -114,7 +115,7 @@ class GGBotUploadAssistant:
         self.tracker_settings = {}
         self.config = {}
         self.tracker = None  # the current tracker to which we are uploading to
-
+        self.bdinfo_parser = None  # Will be initialized depending on the environment
         # Debug logs for the upload processing
         # Logger running in "w" : write mode
         # Create a custom log format with UTF-8 encoding
@@ -144,7 +145,7 @@ class GGBotUploadAssistant:
             sentry_sdk.init(
                 environment="production",
                 server_name="GG Bot Upload Assistant",
-                dsn="https://glet_b895102140e2b1bd3b2550b446de32f1@observe.gitlab.com:443/errortracking/api/v1/projects/32631784",
+                dsn="https://4093e406eb754b20a2a7f6d15e6b34c0@ggbot.bot.nu/1",
                 traces_sample_rate=1.0,
                 profiles_sample_rate=1.0,
                 attach_stacktrace=True,
@@ -449,11 +450,6 @@ class GGBotUploadAssistant:
 
         # ------------ Save obvious info we are almost guaranteed to get from guessit into torrent_info dict ------------ #
         # But we can immediately assign some values now like Title & Year
-        if "title" not in guess_it_result or not guess_it_result["title"]:
-            raise AssertionError(
-                "Guessit could not even extract the title, something is really wrong with this filename."
-            )
-
         self.torrent_info["title"] = guess_it_result["title"]
         if (
             "year" in guess_it_result
@@ -556,23 +552,15 @@ class GGBotUploadAssistant:
             # First check to see if we are uploading a 'raw bluray disc'
             if self.args.disc:
                 # validating presence of bdinfo script for bare metal
-                bdinfo_utilities.bdinfo_validate_bdinfo_script_for_bare_metal(
-                    self.bdinfo_script
-                )
                 # validating presence of BDMV/STREAM/
-                bdinfo_utilities.bdinfo_validate_presence_of_bdmv_stream(
-                    self.torrent_info["upload_media"]
+                self.bdinfo_parser = BDInfoParser(
+                    bdinfo_script=self.bdinfo_script,
+                    upload_media=self.torrent_info["upload_media"],
                 )
-
                 (
                     raw_video_file,
                     largest_playlist,
-                ) = bdinfo_utilities.bdinfo_get_largest_playlist(
-                    self.bdinfo_script,
-                    self.auto_mode,
-                    self.torrent_info["upload_media"],
-                )
-
+                ) = self.bdinfo_parser.get_largest_playlist(self.auto_mode)
                 self.torrent_info["raw_video_file"] = raw_video_file
                 self.torrent_info["largest_playlist"] = largest_playlist
             else:
@@ -629,11 +617,9 @@ class GGBotUploadAssistant:
                 base_path=self.working_folder,
                 sub_folder=self.torrent_info["working_folder"],
             )
-            self.torrent_info["bdinfo"] = (
-                bdinfo_utilities.bdinfo_generate_and_parse_bdinfo(
-                    self.bdinfo_script, self.torrent_info, self.args.debug
-                )
-            )  # TODO handle non-happy paths
+            self.torrent_info["bdinfo"] = self.bdinfo_parser.generate_and_parse_bdinfo(
+                self.torrent_info, self.args.debug
+            )
             logging.debug(
                 "::::::::::::::::::::::::::::: Parsed BDInfo output :::::::::::::::::::::::::::::"
             )
@@ -782,7 +768,16 @@ class GGBotUploadAssistant:
                 )
                 basic_info.append(torrent_info_key_failsafe)
 
-        codec_result_table.add_row(*basic_info)
+        try:
+            codec_result_table.add_row(*basic_info)
+        except NotRenderableError as e:
+            # SentryDebug: sending more details to Sentry for debugging.
+            with sentry_sdk.new_scope() as scope:
+                scope.set_extra("columns_we_want", columns_we_want)
+                scope.set_extra("basic_info", basic_info)
+                scope.set_extra("torrent_info", self.torrent_info)
+                sentry_sdk.capture_exception(e)
+            raise GGBotSentryCapturedException(e)
 
         console.line(count=2)
         console.print(codec_result_table, justify="center")
