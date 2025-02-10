@@ -4,7 +4,7 @@ from qbittorrentapi import Unauthorized401Error
 
 from modules.exceptions.exception import GGBotSentryCapturedException
 
-ignored_log_lines = []
+ignored_log_lines = ["Outdated config.env file"]
 
 
 class SentryConfig:
