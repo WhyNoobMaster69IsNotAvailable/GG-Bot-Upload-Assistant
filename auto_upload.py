@@ -74,7 +74,7 @@ from modules.constants import (
     CUSTOM_TEXT_COMPONENTS,
 )
 from modules.exceptions.exception import GGBotSentryCapturedException
-from modules.global_utils import sentry_ignored_errors
+from modules.sentry_config import SentryConfig
 
 # Method that will search for dupes in trackers.
 from modules.template_schema_validator import TemplateSchemaValidator
@@ -150,7 +150,7 @@ class GGBotUploadAssistant:
                 profiles_sample_rate=1.0,
                 attach_stacktrace=True,
                 shutdown_timeout=20,
-                ignore_errors=sentry_ignored_errors,
+                ignore_errors=SentryConfig.sentry_ignored_errors(),
             )
 
         # By default, we load the templates from site_templates/ path

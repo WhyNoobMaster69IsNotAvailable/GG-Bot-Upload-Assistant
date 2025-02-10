@@ -61,7 +61,7 @@ from modules.constants import (
     DESCRIPTION_FILE_PATH,
     BLURAY_REGIONS_MAP,
 )
-from modules.global_utils import sentry_ignored_errors
+from modules.sentry_config import SentryConfig
 from utilities.utils import GenericUtils
 from utilities.utils_basic import BasicUtils
 from utilities.utils_dupes import DupeUtils
@@ -131,7 +131,7 @@ if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is True:
         profiles_sample_rate=1.0,
         attach_stacktrace=True,
         shutdown_timeout=20,
-        ignore_errors=sentry_ignored_errors,
+        ignore_errors=SentryConfig.sentry_ignored_errors(),
     )
 
 # By default, we load the templates from site_templates/ path
