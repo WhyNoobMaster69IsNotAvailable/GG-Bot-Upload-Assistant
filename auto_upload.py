@@ -151,6 +151,7 @@ class GGBotUploadAssistant:
                 attach_stacktrace=True,
                 shutdown_timeout=20,
                 ignore_errors=SentryConfig.sentry_ignored_errors(),
+                before_send=SentryConfig.before_send,
             )
 
         # By default, we load the templates from site_templates/ path
