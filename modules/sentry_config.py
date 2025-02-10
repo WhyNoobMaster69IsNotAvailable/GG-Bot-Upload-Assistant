@@ -4,6 +4,8 @@ from qbittorrentapi import Unauthorized401Error
 
 from modules.exceptions.exception import GGBotSentryCapturedException
 
+ignored_log_lines = []
+
 
 class SentryConfig:
     @staticmethod
@@ -13,3 +15,9 @@ class SentryConfig:
             Unauthorized401Error,
             GGBotSentryCapturedException,
         ]
+
+    @staticmethod
+    def before_send(event, hint):
+        if any(log_line in str(event) for log_line in ignored_log_lines):
+            return None
+        return event
