@@ -1,0 +1,1 @@
+Refer to https://kometa.wiki/en/latest/config/omdb/ for MAL and anidb api creation and setup
