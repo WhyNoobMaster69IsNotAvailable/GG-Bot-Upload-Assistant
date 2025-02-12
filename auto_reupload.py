@@ -1588,6 +1588,15 @@ def _process_torrent(torrent: Dict):
                 )
             )
         )
+        screenshots_data_types = {
+            "bbcode_images": screenshots_data["bbcode_images"],
+            "bbcode_images_nothumb": screenshots_data["bbcode_images_nothumb"],
+            "bbcode_thumb_nothumb": screenshots_data["bbcode_thumb_nothumb"],
+            "url_images": screenshots_data["url_images"],
+            "data_images": screenshots_data["data_images"],
+        }
+        torrent_info["screenshots_data_types"] = screenshots_data_types
+        # TODO: check whether the below can be removed.
         torrent_info["bbcode_images"] = screenshots_data["bbcode_images"]
         torrent_info["bbcode_images_nothumb"] = screenshots_data[
             "bbcode_images_nothumb"

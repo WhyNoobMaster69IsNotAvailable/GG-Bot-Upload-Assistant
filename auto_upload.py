@@ -1372,7 +1372,7 @@ class GGBotUploadAssistant:
                 console.print(
                     f"\nCanceling upload to [bright_red]{upload_to}[/bright_red]"
                 )
-                logging.error(
+                logging.info(
                     f"[TrackerUpload] User chose to cancel the upload to {self.tracker}"
                 )
                 return False
@@ -1381,7 +1381,6 @@ class GGBotUploadAssistant:
             f"[TrackerUpload] URL: {url_masked} \n Data: {payload} \n Files: {files}"
         )
 
-        response = None
         if not self.args.dry_run:  # skipping tracker upload during dry runs
             if self.config["technical_jargons"]["payload_type"] == "JSON":
                 response = requests_orchestator.request(
