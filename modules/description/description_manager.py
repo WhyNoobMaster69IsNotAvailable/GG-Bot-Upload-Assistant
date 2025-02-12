@@ -114,7 +114,18 @@ class GGBotDescriptionManager:
         # -------- Add custom uploader signature to description.txt --------
         self.set_custom_uploader_signature()
 
-        self.description_file_data["mediainfo"] = mediainfo
+        # -------- Fill in extra information --------
+        self.set_extra_information(mediainfo_file_path=mediainfo)
+
+    def set_extra_information(self, mediainfo_file_path):
+        if not os.path.isfile(mediainfo_file_path):
+            logging.error(
+                f"[GGBotDescriptionManager] Mediainfo file is not present. Path: {mediainfo_file_path}"
+            )
+            return
+
+        with open(mediainfo_file_path, "r", encoding="utf-8") as media_info:
+            self.description_file_data["mediainfo"] = media_info.read()
 
     def set_custom_uploader_signature(self):
         uploader_signature = UploaderConfig().SIGNATURE
