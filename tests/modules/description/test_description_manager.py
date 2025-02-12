@@ -85,6 +85,7 @@ class TestGGBotDescriptionManager:
                 "uploader_signature": "SIGNATURE",
                 "screenshot_header": "SCREENSHOT_HEADER",
             },
+            "mediainfo": "",
             "screenshots": "SCREENSHOTS",
         }
         manager.render()
