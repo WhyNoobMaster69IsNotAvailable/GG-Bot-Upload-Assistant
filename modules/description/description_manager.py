@@ -158,7 +158,8 @@ class GGBotDescriptionManager:
             screenshot_data=screenshots_data_types[screenshot_type],
         )
 
-    def _process_screenshot_type(self, *, screenshot_type, screenshot_data) -> str:
+    @staticmethod
+    def _process_screenshot_type(*, screenshot_type, screenshot_data) -> str:
         if screenshot_type != "url_images":
             return screenshot_data
 
