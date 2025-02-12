@@ -58,9 +58,9 @@ from modules.constants import (
     TAG_GROUPINGS,
     WORKING_DIR,
     SCREENSHOTS_RESULT_FILE_PATH,
-    DESCRIPTION_FILE_PATH,
     BLURAY_REGIONS_MAP,
 )
+from modules.description.description_manager import GGBotDescriptionManager
 from modules.sentry_config import SentryConfig
 from utilities.utils import GenericUtils
 from utilities.utils_basic import BasicUtils
@@ -1632,6 +1632,8 @@ def _upload_to_tracker(
     tracker: str, target_trackers, torrent: Dict
 ) -> Tuple[TrackerUploadStatus, Union[Dict, Any]]:
     tracker_env_config = TrackerConfig(tracker)
+    tracker_name = str(acronym_to_tracker.get(str(tracker).lower()))
+
     torrent_info["shameless_self_promotion"] = (
         f'Uploaded with {"<3" if str(tracker).upper() in ("BHD", "BHDTV") or os.name == "nt" else "❤"} using GG-BOT Auto-ReUploader'
     )
@@ -1644,9 +1646,7 @@ def _upload_to_tracker(
     # Open the correct .json file since we now need things like announce URL, API Keys, and API info
     config = json.load(
         open(
-            site_templates_path
-            + str(acronym_to_tracker.get(str(tracker).lower()))
-            + ".json",
+            f"{site_templates_path}{tracker_name}.json",
             encoding="utf-8",
         )
     )
@@ -1675,35 +1675,22 @@ def _upload_to_tracker(
     # (Theory) BHD has a different bbcode parser then BLU/ACM so the line break is different for each site
     # this is why we set it in each site *.json file then retrieve it here in this 'for loop' since it's
     # different for each site
-    bbcode_line_break = config["bbcode_line_break"]
-
-    # -------- Add bbcode images to description.txt --------
-    GenericUtils.add_bbcode_images_to_description(
-        torrent_info=torrent_info,
-        config=config,
-        description_file_path=DESCRIPTION_FILE_PATH.format(
-            base_path=working_folder,
-            sub_folder=torrent_info["working_folder"],
-        ),
-        bbcode_line_break=bbcode_line_break,
+    description_manager = GGBotDescriptionManager(
+        working_folder=working_folder,
+        sub_folder=torrent_info["working_folder"],
+        tracker=tracker_name,
+        bbcode_line_break=config["bbcode_line_break"],
     )
-
-    # -------- Add custom uploader signature to description.txt --------
-    GenericUtils.write_uploader_signature_to_description(
-        description_file_path=DESCRIPTION_FILE_PATH.format(
-            base_path=working_folder,
-            sub_folder=torrent_info["working_folder"],
-        ),
-        tracker=tracker,
-        bbcode_line_break=bbcode_line_break,
-        release_group=torrent_info["release_group"],
+    description_manager.prepare_description_file(
+        custom_user_inputs=torrent_info.get("custom_user_inputs"),
+        tracker_description_components=config.get("description_components"),
+        screenshots_data_types=torrent_info.get("screenshots_data_types"),
+        screenshot_type=config.get("screenshot_type"),
     )
+    description_manager.render()
 
     # Add the finished file to the 'torrent_info' dict
-    torrent_info["description"] = DESCRIPTION_FILE_PATH.format(
-        base_path=working_folder,
-        sub_folder=torrent_info["working_folder"],
-    )
+    torrent_info["description"] = description_manager.get_description_file_path()
 
     # -------- Check for Dupes Multiple Trackers --------
     # when the user has configured multiple trackers to upload to

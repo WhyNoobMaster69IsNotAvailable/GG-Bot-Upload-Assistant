@@ -43,14 +43,15 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
 <br>
 
 # Main Features
-* Generate, parse and attach Mediainfo or BDInfo to torrent uploads
+* Generate, parse and attach `Mediainfo` or `BDInfo` to torrent uploads
 * Support for Full Disk uploads
+* Support for per tracker custom description templates
 * Frame Accurate Screenshots
 * Generates, uploads and attach screenshots to torrent description
 * Ability to decide the thumbnail size for screenshots in bbcode
-* Obtains TMDB/IMDB/MAL ids automatically
+* Obtains `TMDB/IMDB/MAL/TVDB` ids automatically
 * Creates name following proper conventions
-* Generate .torrent with pytor or mktorrent
+* Generate .torrent with `pytor` or `mktorrent`
 * Uploads to various trackers seamlessly
 * Multiple Image Host support
 * Packed as a docker container. (No need to install any additional tools)
@@ -58,6 +59,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
 * Customizable uploader signature for torrent descriptions
 * Automatic upload to torrent client: Immediate cross-seeding
 * Auto Re-Uploader flavour for uploading gods and tracker owners
+* [BugSink](https://www.bugsink.com/) based automatic error / exception tracking
 
 <br>
 
@@ -87,7 +89,7 @@ Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**Sentry Error 
             <td><strong>Platform</strong></td>
             <td><strong>Acronym</strong></td>
             <td><strong>Site Name</strong></td>
-        </th>
+        </tr>
         <tr style="text-align: center">
             <td rowspan="22"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
@@ -307,7 +309,7 @@ docker run --rm -it \
 > Ensure that you have optional dependencies installed. <br>
 > - [MediaInfo](https://mediaarea.net/en/MediaInfo/Download/Ubuntu)
 > - [FFmpeg](https://ffmpeg.org/download.html)
-> - unrar
+> - [unrar](https://askubuntu.com/questions/566407/whats-the-easiest-way-to-unrar-a-file-on-ubuntu-12-04)
 > - [mktorrent](https://github.com/pobrn/mktorrent): Use --use_mktorrent flag. (Create .torrent using mktorrent instead of torf)
 7. Run the script using [Python3](https://www.python.org/downloads/) (If you're having issues or torf isn't installing, try python3.9)
 > Run command template ```python3 auto_upload.py -t <TRACKERS> -p "<FILE_OR_FOLDER_TO_BE_UPLOADED>" [OPTIONAL ARGUMENTS 1] [OPTIONAL ARGUMENTS 2...]```
@@ -358,40 +360,32 @@ pip install -r requirements/requirements.txt
 1. Docker volume mounts in debian host system results in permission error in docker container. (No Proper Fix Available)
     * **Workaround**: Torrent file can be created in debian host os by using mktorrent. Use argument `--use_mktorrent or -mkt`
 2. No support for Bluray distributors and Bluray disc regions
-3. No official support for Blurays in .iso format
+3. No official support for Blu-rays in .iso format
 4. No support for 3D Bluray discs
 5. Cannot pass `tmdb`, `imdb`, `tvmaze` and `mal` ids as command line arguments when running in `batch` mode.
 
 <br>
 
 # Roadmap
-### v3.1.8
+### v3.1.9
 - [ ] New Tracker: UHDBits
-- [X] Updated MyAnimeList mappings
-- [X] Replace GitLab with [BugSink](https://www.bugsink.com/) for error tracking
-- [ ] Template based custom description
+- [ ] Support for encrypted values from config
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
-- [X] Issue#165: Pixhost screenshot upload error
-- [X] Issue#167: ACM upload fails due to URL change
-- [X] Issue#159: Memory failure when using torf
-- [X] Issue#198: UnicodeEncodeError: 'charmap' codec can't encode character '\u017b'
-- [X] Issue#199: KeyError: 'title' in guessit result
 
-### v3.1.9
+### v3.2.0
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
 - [ ] Issue#96: DVD Remux not supported
 - [ ] Issue#97: PTP uploads fail if no tags in IMDB
 - [ ] Improved TMDB metadata search Phase 3
-- [ ] Support for encrypted values from config
 - [ ] Add support for adding primary language to title
 - [ ] Use new search API for ANT
 
 ### Backlogs
-- [ ] EPIC: GGBOT Metadata Aggregator
-- [ ] EPIC: GGBOT P2P Network Relay
+- [ ] EPIC: GG-BOT Metadata Aggregator
+- [ ] EPIC: GG-BOT P2P Network Relay
 - [ ] EPIC: Migrate GG-BOT Runtime to work with GG-BOT Auto ReUploader
 - [ ] EPIC: Refactor GG-BOT Admin to handle GG-BOT Auto ReUploader
 - [ ] Better MAL id detection
@@ -402,7 +396,7 @@ pip install -r requirements/requirements.txt
 - [ ] Support for communicating with torrent clients
     - [ ] Deluge
     - [ ] Transmission
-- [ ] Add support for bitorrent v2 and v2 hybrid torrents
+- [ ] Add support for bittorrent v2 and v2 hybrid torrents
 - [ ] Add Support for new platforms
     - [ ] MoreThanTV
     - [ ] DanishBytes
@@ -461,6 +455,23 @@ This project exists thanks to all the people who contribute.
 <br>
 
 # Change Log
+## **3.1.8**
+    New Features
+      * Per tracker custom description templates
+
+    Underhood Changes
+      * Updated MyAnimeList mappings
+      * Replace GitLab with BugSink for error tracking
+
+    Bug Fixes
+      * Issue#165: Pixhost screenshot upload error
+      * Issue#167: ACM upload fails due to URL change
+      * Issue#159: Memory failure when using torf
+      * Issue#198: UnicodeEncodeError: 'charmap' codec can't encode character '\u017b'
+      * Issue#199: KeyError: 'title' in guessit result
+
+<br>
+
 ## **3.1.7**
     New Tracker
         * PrivateSilverScreen

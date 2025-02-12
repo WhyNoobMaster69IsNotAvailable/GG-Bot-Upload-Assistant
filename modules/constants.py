@@ -11,15 +11,9 @@ TRACKER_ACRONYMS = "{base_path}/parameters/tracker/acronyms.json"
 TRACKER_API_KEYS = "{base_path}/parameters/tracker/api_keys.json"
 TEMPLATE_SCHEMA_LOCATION = "{base_path}/schema/site_template_schema.json"
 
-TMDB_TO_MAL_MAPPING = (
-    "{base_path}/parameters/mal_mapping/tmdb_to_mal_mapping.json"
-)
-IMDB_TO_MAL_MAPPING = (
-    "{base_path}/parameters/mal_mapping/imdb_to_mal_mapping.json"
-)
-TVDB_TO_MAL_MAPPING = (
-    "{base_path}/parameters/mal_mapping/tvdb_to_mal_mapping.json"
-)
+TMDB_TO_MAL_MAPPING = "{base_path}/parameters/mal_mapping/tmdb_to_mal_mapping.json"
+IMDB_TO_MAL_MAPPING = "{base_path}/parameters/mal_mapping/imdb_to_mal_mapping.json"
+TVDB_TO_MAL_MAPPING = "{base_path}/parameters/mal_mapping/tvdb_to_mal_mapping.json"
 
 # Working dir paths
 # Note: The `sub_folder` is expected to end with a '/'
@@ -28,7 +22,7 @@ WORKING_DIR = "{base_path}/temp_upload/"
 __MEDIAINFO_FILE = "{sub_folder}mediainfo.txt"
 __URL_IMAGES_FILE = "{sub_folder}url_images.txt"
 __SCREENSHOTS_DIR = "{sub_folder}screenshots/"
-__DESCRIPTION_FILE = "{sub_folder}description.txt"
+__DESCRIPTION_FILE = "{sub_folder}{tracker}_description.txt"
 __BBCODE_IMAGES_FILE = "{sub_folder}bbcode_images.txt"
 __SCREENSHOTS_RESULT_FILE = "{sub_folder}screenshots/screenshots_data.json"
 __UPLOADS_COMPLETE_MARKER_FILE = "{sub_folder}screenshots/uploads_complete.mark"
@@ -61,3 +55,5 @@ CUSTOM_TEXT_COMPONENTS = "{base_path}/parameters/custom_text_components.json"
 STREAMING_SERVICES_REVERSE_MAP = (
     "{base_path}/parameters/streaming_services_reverse.json"
 )
+DESCRIPTIONS_TEMPLATE_PATH = "{base_path}/description_templates"
+DEFAULT_DESCRIPTION_TEMPLATE = "default.jinja2"

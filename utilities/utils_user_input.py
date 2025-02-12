@@ -70,9 +70,7 @@ def add_item_to_custom_texts(
 
     custom_text_components, _ = _load_components(custom_text_components_path)
     component = list(
-        filter(
-            lambda component: item == component["key"], custom_text_components
-        )
+        filter(lambda component: item == component["key"], custom_text_components)
     )
     if len(component) != 1:
         return user_custom_texts
@@ -126,7 +124,7 @@ def collect_custom_messages_from_user(custom_text_components_path):
     )
 
     keep_going_mate = True
-    while keep_going_mate == True:
+    while keep_going_mate:
         # starting a loop to accept multiple components from user
         # displaying the list of components available
         for index, component in enumerate(custom_text_components):
@@ -177,9 +175,7 @@ def collect_custom_messages_from_user(custom_text_components_path):
                     "title": title,
                 }
             )
-            if not Confirm.ask(
-                "Do you want to add more custom texts?", default="n"
-            ):
+            if not Confirm.ask("Do you want to add more custom texts?", default="n"):
                 logging.debug(
                     "[CustomUserInputs] Stopping custom input data collection."
                 )
