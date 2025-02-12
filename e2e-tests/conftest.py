@@ -82,7 +82,7 @@ def qbittorrent_container():
 @pytest.fixture(scope="module")
 def rutorrent_credentials(rutorrent_container):
     # This needs more time when running in kubernetes cluster to start properly
-    time.sleep(30)  # allowing time for rutorrent container to start and be ready
+    time.sleep(60)  # allowing time for rutorrent container to start and be ready
 
     yield {
         "host": rutorrent_container.get_container_host_ip(),
