@@ -17,7 +17,7 @@ class GGBotJinjaTemplateManager:
         template_file = self._get_template_file(templates_folder)
 
         template_loader = FileSystemLoader(searchpath=templates_folder)
-        template_environment = Environment(loader=template_loader)
+        template_environment = Environment(loader=template_loader, autoescape=True)
 
         return template_environment.get_template(template_file)
 
