@@ -83,6 +83,7 @@ class TestGGBotDescriptionManager:
                 "center_start": "[center]",
                 "center_end": "[/center]",
                 "uploader_signature": "SIGNATURE",
+                "uploader_signature_hex": "SIGNATURE",
                 "screenshot_header": "SCREENSHOT_HEADER",
             },
             "mediainfo": "",
