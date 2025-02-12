@@ -153,9 +153,24 @@ class GGBotDescriptionManager:
             )
             return
 
-        self.description_file_data["screenshots"] = screenshots_data_types[
-            screenshot_type
-        ]
+        self.description_file_data["screenshots"] = self._process_screenshot_type(
+            screenshot_type=screenshot_type,
+            screenshot_data=screenshots_data_types[screenshot_type],
+        )
+
+    def _process_screenshot_type(self, *, screenshot_type, screenshot_data) -> str:
+        if screenshot_type != "url_images":
+            return screenshot_data
+
+        processed_url_screenshots = ""
+        for screenshot in screenshot_data.split("\n"):
+            if len(screenshot.strip()) == 0:
+                continue
+            processed_url_screenshots = (
+                f"{processed_url_screenshots}[img]{screenshot}[/img]\n"
+            )
+
+        return processed_url_screenshots
 
     def set_custom_user_inputs(
         self,
