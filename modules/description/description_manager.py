@@ -53,6 +53,7 @@ class GGBotDescriptionManager:
                 "screenshot_header": " ---------------------- [size=22]Screenshots[/size] ---------------------- ",
                 "bbcode_line_break": bbcode_line_break,
             },
+            "mediainfo": "",
             "screenshots": "",
         }
 
@@ -92,6 +93,7 @@ class GGBotDescriptionManager:
         tracker_description_components,
         screenshots_data_types,
         screenshot_type,
+        mediainfo: str,
     ):
         # Just a cleanup to ensure that the description file doesn't exist
         if os.path.isfile(self._description_file_path):
@@ -111,6 +113,8 @@ class GGBotDescriptionManager:
 
         # -------- Add custom uploader signature to description.txt --------
         self.set_custom_uploader_signature()
+
+        self.description_file_data["mediainfo"] = mediainfo
 
     def set_custom_uploader_signature(self):
         uploader_signature = UploaderConfig().SIGNATURE

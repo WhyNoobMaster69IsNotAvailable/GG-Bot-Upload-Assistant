@@ -2164,6 +2164,7 @@ class GGBotUploadAssistant:
                         "screenshots_data_types"
                     ),
                     screenshot_type=config.get("screenshot_type"),
+                    mediainfo=self.torrent_info["mediainfo"],
                 )
 
                 description_manager.render()
