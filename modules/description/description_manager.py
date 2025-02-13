@@ -66,7 +66,7 @@ class GGBotDescriptionManager:
             working_folder=working_folder, sub_folder=sub_folder, tracker=tracker
         )
         self.template_manager: GGBotJinjaTemplateManager = GGBotJinjaTemplateManager(
-            working_folder=working_folder, template_file_name=tracker
+            working_folder=working_folder, template_name=tracker
         )
 
     def get_description_file_path(self) -> str:

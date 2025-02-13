@@ -27,8 +27,8 @@ from modules.constants import (
 
 
 class GGBotJinjaTemplateManager:
-    def __init__(self, *, working_folder: str, template_file_name: str):
-        self.template_file_name = template_file_name
+    def __init__(self, *, working_folder: str, template_name: str):
+        self.template_name = template_name
         self.working_folder = working_folder
         self.template = self._load_jinja_template()
 
@@ -43,9 +43,9 @@ class GGBotJinjaTemplateManager:
 
     def _get_template_file(self, templates_folders: List[str]):
         for folder in templates_folders:
-            if not Path(f"{folder}/{self.template_file_name}.jinja2").exists():
+            if not Path(f"{folder}/{self.template_name}.jinja2").exists():
                 continue
-            return f"{self.template_file_name}.jinja2"
+            return f"{self.template_name}.jinja2"
 
         return DEFAULT_DESCRIPTION_TEMPLATE
 

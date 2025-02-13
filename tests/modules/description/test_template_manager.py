@@ -1,5 +1,6 @@
 # GG Bot Upload Assistant
 # Copyright (C) 2025  Noob Master669
+import pytest
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
@@ -18,17 +19,27 @@ from modules.description.template_manager import GGBotJinjaTemplateManager
 
 
 class TestGGBotJinjaTemplateManager:
-    def test_template_manager(self, working_folder_path):
+    @pytest.mark.parametrize(
+        ("template_name", "loaded_template_name"),
+        [
+            pytest.param("passthepopcorn", "default.jinja2", id="default_template"),
+            pytest.param("blutopia", "blutopia.jinja2", id="built_in_template"),
+            pytest.param("desitorrents", "desitorrents.jinja2", id="custom_template"),
+        ],
+    )
+    def test_template_manager(
+        self, working_folder_path, template_name, loaded_template_name
+    ):
         manager = GGBotJinjaTemplateManager(
-            working_folder=working_folder_path, template_file_name="DT"
+            working_folder=working_folder_path, template_name=template_name
         )
         assert manager is not None
         assert manager.template is not None
-        assert manager.template.name == "default.jinja2"
+        assert manager.template.name == loaded_template_name
 
     def test_template_render(self, working_folder_path):
         manager = GGBotJinjaTemplateManager(
-            working_folder=working_folder_path, template_file_name="DT"
+            working_folder=working_folder_path, template_name="DT"
         )
 
         data = {
