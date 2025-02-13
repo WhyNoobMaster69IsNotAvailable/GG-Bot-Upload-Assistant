@@ -149,7 +149,7 @@ class DescriptionManager:
                 "./description_templates/custom",
             ]
         )
-        templateEnv = Environment(loader=templateLoader)
+        templateEnv = Environment(loader=templateLoader, autoescape=True)
 
         TEMPLATE_FILE = "test.jinja2"
         template = templateEnv.get_template(TEMPLATE_FILE)
