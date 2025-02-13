@@ -43,6 +43,9 @@ class GGBotJinjaTemplateManager:
         return template_environment.get_template(template_file)
 
     def _get_template_file(self, templates_folders: List[str]):
+        # here we first look for source type specific template in both custom and default folder
+        # if source type based is not found, then we look for tracker specific template
+        # in case if tracker specific template is missing, we fall back to default template
         for folder in templates_folders:
             if not Path(
                 f"{folder}/{self.template_name}-{self.source_type}.jinja2"
