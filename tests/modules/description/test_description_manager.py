@@ -46,9 +46,12 @@ class TestGGBotDescriptionManager:
     @pytest.mark.parametrize(
         ("tracker", "expected_template_name"),
         [
-            pytest.param("blutopia", "blutopia.jinja2", id="custom_template_exist"),
+            pytest.param("blutopia", "blutopia.jinja2", id="default_template_exist"),
             pytest.param(
-                "desitorrents", "default.jinja2", id="fallback_to_default_template"
+                "desitorrents", "desitorrents.jinja2", id="custom_template_exist"
+            ),
+            pytest.param(
+                "passthepopcorn", "default.jinja2", id="fallback_to_default_template"
             ),
         ],
     )
