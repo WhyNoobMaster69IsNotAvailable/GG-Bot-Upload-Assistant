@@ -937,13 +937,13 @@ def identify_type_and_basic_info(full_path, guess_it_result):
     #         torrent_info["mediainfo_summary"] = bdInfo_summary
     # else:
     (
-        mediainfo_summary,
+        torrent_info["mediainfo_summary"],
         tmdb,
         imdb,
         _,
         torrent_info["subtitles"],
+        torrent_info["mediainfo_summary_data"],
     ) = BasicUtils().basic_get_mediainfo_summary(media_info_result.to_data())
-    torrent_info["mediainfo_summary"] = mediainfo_summary
     if tmdb != "0":
         # we will get movie/12345 or tv/12345 => we only need 12345 part.
         tmdb = tmdb[tmdb.find("/") + 1 :] if tmdb.find("/") >= 0 else tmdb
@@ -1044,6 +1044,7 @@ def analyze_video_file(missing_value, media_info):
     try:
         media_info_audio_track = media_info.tracks[2]
     except IndexError:
+        logging.info("[Main] No audio tracker info available for this release...")
         media_info_audio_track = None
 
     # ------------ Save mediainfo to txt ------------ #

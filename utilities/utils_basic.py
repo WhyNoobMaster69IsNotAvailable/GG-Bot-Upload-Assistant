@@ -1010,10 +1010,11 @@ class BasicUtils:
 
         return (
             summary,
-            general["tmdb"],
-            general["imdb"],
-            general["tvdb"],
+            mediainfo_summary["General"]["tmdb"],
+            mediainfo_summary["General"]["imdb"],
+            mediainfo_summary["General"]["tvdb"],
             mediainfo_summary["Text"],
+            mediainfo_summary,
         )
 
     def basic_get_mediainfo_summary(self, media_info_result):
@@ -1024,6 +1025,7 @@ class BasicUtils:
             imdb,
             tvdb,
             subtitle_language_codes,
+            mediainfo_summary_data,
         ) = self.prepare_mediainfo_summary(media_info_result)
         meddiainfo_end_time = time.perf_counter()
         logging.debug(
@@ -1036,4 +1038,11 @@ class BasicUtils:
         logging.info(f"[BasicUtils] IMDb Identified from mediainfo: {imdb}")
         logging.info(f"[BasicUtils] TVDb Identified from mediainfo: {tvdb}")
         logging.info(f"[BasicUtils] Subtitle language codes: {subtitle_language_codes}")
-        return mediainfo_summary, tmdb, imdb, tvdb, subtitle_language_codes
+        return (
+            mediainfo_summary,
+            tmdb,
+            imdb,
+            tvdb,
+            subtitle_language_codes,
+            mediainfo_summary_data,
+        )

@@ -1,0 +1,220 @@
+{
+  "Audio": [
+    {
+      "Bit Rate": "4 291 kb/s",
+      "Bit Rate Mode": "Variable",
+      "Channels": "8 channels",
+      "Compression": "Lossless",
+      "Format": "Dolby TrueHD with Dolby Atmos",
+      "Language": "Dolby TrueHD/Atmos Audio / 7.1 / 48 kHz / 4291 kbps / 24-bit",
+      "Sampling Rate": "48.0 kHz"
+    },
+    {
+      "Bit Rate": "640 kb/s",
+      "Bit Rate Mode": "Constant",
+      "Channels": "6 channels",
+      "Compression": "Lossy",
+      "Format": "Dolby Digital",
+      "Language": "Compatibility Track / Dolby Digital Audio / 5.1 / 48 kHz / 640 kbps",
+      "Sampling Rate": "48.0 kHz"
+    }
+  ],
+  "General": {
+    "Bit Rate": "63.7 Mb/s",
+    "Container": "Matroska",
+    "Duration": "1 h 37 min",
+    "Frame Rate": "",
+    "Size": "43.3 GiB",
+    "imdb": "tt7097896",
+    "tmdb": "movie/580489",
+    "tvdb": "0"
+  },
+  "Text": [
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "English"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "SDH",
+      "Title": "SDH",
+      "language_code": "English"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Bulgarian"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "Cantonese",
+      "Title": "Cantonese",
+      "language_code": "Chinese"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "Mandarin Simplified",
+      "Title": "Mandarin Simplified",
+      "language_code": "Chinese"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "Mandarin Traditional",
+      "Title": "Mandarin Traditional",
+      "language_code": "Chinese"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Croatian"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Czech"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "French"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Greek"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Hungarian"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Icelandic"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Indonesian"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Italian"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Korean"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Malay"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Polish"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "Brazilian",
+      "Title": "Brazilian",
+      "language_code": "Portuguese"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "Iberian",
+      "Title": "Iberian",
+      "language_code": "Portuguese"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Romanian"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Serbian"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Slovak"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Slovenian"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "Latin American",
+      "Title": "Latin American",
+      "language_code": "Spanish"
+    },
+    {
+      "Forced": "",
+      "Format": "PGS",
+      "Language": "",
+      "Title": "",
+      "language_code": "Thai"
+    }
+  ],
+  "Video": [
+    {
+      "Aspect Ratio": "16:9",
+      "Bit Depth": "10 bits",
+      "Bit Rate": "58.0 Mb/s",
+      "Codec": "HEVC",
+      "Frame Rate": "23.976 (24000/1001) FPS",
+      "Language": "English",
+      "Resolution": "3840x2160"
+    }
+  ]
+}

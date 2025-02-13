@@ -94,7 +94,7 @@ class GGBotDescriptionManager:
         tracker_description_components,
         screenshots_data_types,
         screenshot_type,
-        mediainfo: str,
+        torrent_info: Dict,
     ):
         # Just a cleanup to ensure that the description file doesn't exist
         if os.path.isfile(self._description_file_path):
@@ -116,17 +116,19 @@ class GGBotDescriptionManager:
         self.set_custom_uploader_signature()
 
         # -------- Fill in extra information --------
-        self.set_extra_information(mediainfo_file_path=mediainfo)
+        self.set_extra_information(torrent_info)
 
-    def set_extra_information(self, mediainfo_file_path):
-        if not os.path.isfile(mediainfo_file_path):
+    def set_extra_information(self, torrent_info):
+        if not os.path.isfile(torrent_info["mediainfo"]):
             logging.error(
-                f"[GGBotDescriptionManager] Mediainfo file is not present. Path: {mediainfo_file_path}"
+                f"[GGBotDescriptionManager] Mediainfo file is not present. Path: {torrent_info['mediainfo']}"
             )
             return
 
-        with open(mediainfo_file_path, "r", encoding="utf-8") as media_info:
+        with open(torrent_info["mediainfo"], "r", encoding="utf-8") as media_info:
             self.description_file_data["mediainfo"] = media_info.read()
+
+        self.description_file_data["torrent_info"] = dict(torrent_info)
 
     def set_custom_uploader_signature(self):
         uploader_signature = UploaderConfig().SIGNATURE

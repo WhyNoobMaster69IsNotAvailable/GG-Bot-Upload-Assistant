@@ -73,7 +73,7 @@ from modules.constants import (
     CUSTOM_TEXT_COMPONENTS,
 )
 from modules.description.description_manager import GGBotDescriptionManager
-from modules.exceptions.exception import GGBotSentryCapturedException
+from modules.exceptions.exception import GGBotSentryCapturedException, GGBotException
 from modules.sentry_config import SentryConfig
 
 # Method that will search for dupes in trackers.
@@ -110,6 +110,7 @@ class GGBotUploadAssistant:
         # This is an important dict that we use to store info about the media file as we discover it Once all
         # necessary info has been collected we will loop through this dict and set the correct tracker API Keys to it
         self.torrent_info = {}
+        self.meta_info = {}
         self.media_info = {}
         self.movie_db_info = {}
         self.tracker_settings = {}
@@ -512,7 +513,7 @@ class GGBotUploadAssistant:
             )
         )
         if "type" not in self.torrent_info:
-            raise AssertionError(
+            raise GGBotException(
                 "'type' is not set in the guessit output, something is seriously wrong with this filename"
             )
 
@@ -684,13 +685,14 @@ class GGBotUploadAssistant:
             # consider it the same as being provided by the user (no need to search)
             # PS: We don't use the tvdb id obtained here. (Might be deprecated)
             (
-                mediainfo_summary,
+                self.torrent_info["mediainfo_summary"],
                 tmdb,
                 imdb,
                 _,
                 self.torrent_info["subtitles"],
+                self.torrent_info["mediainfo_summary_data"],
             ) = BasicUtils().basic_get_mediainfo_summary(media_info_result.to_data())
-            self.torrent_info["mediainfo_summary"] = mediainfo_summary
+
             if tmdb != "0":
                 # we will get movie/12345 or tv/12345 => we only need 12345 part.
                 tmdb = tmdb[tmdb.find("/") + 1 :] if tmdb.find("/") >= 0 else tmdb
@@ -1822,9 +1824,10 @@ class GGBotUploadAssistant:
         for file in upload_queue:
             # Remove all old temp_files & data from the previous upload
             self.torrent_info.clear()
+            self.meta_info.clear()
             # This list will contain tags that are applicable to the torrent being uploaded.
             # The tags that are generated will be based on the media properties and tag groupings from `tag_grouping.json`
-            self.torrent_info["tag_grouping"] = json.load(
+            self.meta_info["tag_grouping"] = json.load(
                 open(TAG_GROUPINGS.format(base_path=self.working_folder))
             )
             self.torrent_info["argument_tags"] = GenericUtils.add_argument_tags(
@@ -2164,7 +2167,7 @@ class GGBotUploadAssistant:
                         "screenshots_data_types"
                     ),
                     screenshot_type=config.get("screenshot_type"),
-                    mediainfo=self.torrent_info["mediainfo"],
+                    torrent_info=self.torrent_info,
                 )
 
                 description_manager.render()

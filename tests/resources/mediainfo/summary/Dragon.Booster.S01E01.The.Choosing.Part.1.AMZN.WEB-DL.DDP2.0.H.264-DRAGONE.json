@@ -1,0 +1,43 @@
+{
+  "Audio": [
+    {
+      "Bit Rate": "224 kb/s",
+      "Bit Rate Mode": "Constant",
+      "Channels": "2 channels",
+      "Compression": "Lossy",
+      "Format": "Dolby Digital Plus",
+      "Language": "",
+      "Sampling Rate": "48.0 kHz"
+    }
+  ],
+  "General": {
+    "Bit Rate": "1 456 kb/s",
+    "Container": "Matroska",
+    "Duration": "20 min 37 s",
+    "Frame Rate": "",
+    "Size": "215 MiB",
+    "imdb": "0",
+    "tmdb": "0",
+    "tvdb": "0"
+  },
+  "Text": [
+    {
+      "Forced": "",
+      "Format": "UTF-8",
+      "Language": "SDH",
+      "Title": "SDH",
+      "language_code": "English"
+    }
+  ],
+  "Video": [
+    {
+      "Aspect Ratio": "1.85:1",
+      "Bit Depth": "8 bits",
+      "Bit Rate": "1 230 kb/s",
+      "Codec": "AVC",
+      "Frame Rate": "25.000 FPS",
+      "Language": "",
+      "Resolution": "720x384"
+    }
+  ]
+}
