@@ -1827,7 +1827,7 @@ class GGBotUploadAssistant:
             self.meta_info.clear()
             # This list will contain tags that are applicable to the torrent being uploaded.
             # The tags that are generated will be based on the media properties and tag groupings from `tag_grouping.json`
-            self.meta_info["tag_grouping"] = json.load(
+            self.torrent_info["tag_grouping"] = json.load(
                 open(TAG_GROUPINGS.format(base_path=self.working_folder))
             )
             self.torrent_info["argument_tags"] = GenericUtils.add_argument_tags(
