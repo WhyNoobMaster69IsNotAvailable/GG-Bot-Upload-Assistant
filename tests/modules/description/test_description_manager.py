@@ -62,6 +62,7 @@ class TestGGBotDescriptionManager:
             working_folder=working_folder_path,
             sub_folder="sub_folder/",
             tracker=tracker,
+            source_type="",
             bbcode_line_break="\n",
         )
         assert manager is not None
@@ -78,6 +79,7 @@ class TestGGBotDescriptionManager:
             working_folder=working_folder_path,
             sub_folder="sub_folder/",
             tracker="desitorrents",
+            source_type="",
             bbcode_line_break="\n",
         )
         manager.description_file_data = {
@@ -114,6 +116,7 @@ SCREENSHOTS [/center]
             working_folder=working_folder_path,
             sub_folder="sub_folder/",
             tracker="desitorrents",
+            source_type="",
             bbcode_line_break="\n",
         )
         manager.set_custom_user_inputs(
@@ -136,6 +139,7 @@ SCREENSHOTS [/center]
             working_folder=working_folder_path,
             sub_folder="sub_folder/",
             tracker="desitorrents",
+            source_type="",
             bbcode_line_break="\n",
         )
         manager.set_custom_user_inputs(
@@ -311,6 +315,7 @@ line 3
             working_folder=working_folder_path,
             sub_folder="sub_folder/",
             tracker="desitorrents",
+            source_type="",
             bbcode_line_break=bbcode_line_break,
             debug=debug,
         )
@@ -329,6 +334,7 @@ line 3
             working_folder=working_folder_path,
             sub_folder="sub_folder/",
             tracker="desitorrents",
+            source_type="",
             bbcode_line_break="\n",
         )
         manager.set_screenshots(screenshots_data_types=None, screenshot_type=None)
@@ -370,6 +376,7 @@ line 3
             working_folder=working_folder_path,
             sub_folder="sub_folder/",
             tracker="desitorrents",
+            source_type="",
             bbcode_line_break="\n",
         )
         manager.set_screenshots(
@@ -383,6 +390,7 @@ line 3
             working_folder=working_folder_path,
             sub_folder="sub_folder/",
             tracker="desitorrents",
+            source_type="",
             bbcode_line_break="\n",
         )
         default_signature = manager.description_file_data["internal"][
@@ -403,6 +411,7 @@ line 3
             working_folder=working_folder_path,
             sub_folder="sub_folder/",
             tracker="desitorrents",
+            source_type="",
             bbcode_line_break="\n",
         )
         manager.set_custom_uploader_signature()
