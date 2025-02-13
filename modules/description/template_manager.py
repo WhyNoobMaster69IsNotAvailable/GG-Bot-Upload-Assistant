@@ -44,13 +44,16 @@ class GGBotJinjaTemplateManager:
 
     def _get_template_file(self, templates_folders: List[str]):
         for folder in templates_folders:
-            if Path(
+            if not Path(
                 f"{folder}/{self.template_name}-{self.source_type}.jinja2"
             ).exists():
-                return f"{self.template_name}-{self.source_type}.jinja2"
+                continue
+            return f"{self.template_name}-{self.source_type}.jinja2"
 
-            if Path(f"{folder}/{self.template_name}.jinja2").exists():
-                return f"{self.template_name}.jinja2"
+        for folder in templates_folders:
+            if not Path(f"{folder}/{self.template_name}.jinja2").exists():
+                continue
+            return f"{self.template_name}.jinja2"
 
         return DEFAULT_DESCRIPTION_TEMPLATE
 

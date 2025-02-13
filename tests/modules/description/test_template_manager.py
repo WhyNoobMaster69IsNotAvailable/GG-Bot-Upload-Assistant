@@ -57,6 +57,12 @@ class TestGGBotJinjaTemplateManager:
                 "desitorrents.jinja2",
                 id="custom_template_with_missing_source",
             ),
+            pytest.param(
+                "desitorrents",
+                "remux",
+                "desitorrents-remux.jinja2",
+                id="custom_template_with_fallback_to_default_source",
+            ),
         ],
     )
     def test_template_manager(
