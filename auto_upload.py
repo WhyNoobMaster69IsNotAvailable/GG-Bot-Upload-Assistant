@@ -2156,6 +2156,7 @@ class GGBotUploadAssistant:
                     working_folder=self.working_folder,
                     sub_folder=self.torrent_info["working_folder"],
                     tracker=tracker_name,
+                    source_type=self.torrent_info["source_type"],
                     bbcode_line_break=config["bbcode_line_break"],
                     debug=self.args.debug,
                 )

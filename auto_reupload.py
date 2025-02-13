@@ -1689,6 +1689,7 @@ def _upload_to_tracker(
         working_folder=working_folder,
         sub_folder=torrent_info["working_folder"],
         tracker=tracker_name,
+        source_type=torrent_info["source_type"],
         bbcode_line_break=config["bbcode_line_break"],
     )
     description_manager.prepare_description_file(

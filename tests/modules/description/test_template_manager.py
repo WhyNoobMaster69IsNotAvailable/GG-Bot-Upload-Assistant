@@ -20,18 +20,52 @@ from modules.description.template_manager import GGBotJinjaTemplateManager
 
 class TestGGBotJinjaTemplateManager:
     @pytest.mark.parametrize(
-        ("template_name", "loaded_template_name"),
+        ("template_name", "source_type", "loaded_template_name"),
         [
-            pytest.param("passthepopcorn", "default.jinja2", id="default_template"),
-            pytest.param("blutopia", "blutopia.jinja2", id="built_in_template"),
-            pytest.param("desitorrents", "desitorrents.jinja2", id="custom_template"),
+            pytest.param("passthepopcorn", "", "default.jinja2", id="default_template"),
+            pytest.param("blutopia", "", "blutopia.jinja2", id="built_in_template"),
+            pytest.param(
+                "blutopia",
+                "webdl",
+                "blutopia-webdl.jinja2",
+                id="built_in_template_with_source",
+            ),
+            pytest.param(
+                "blutopia",
+                "remux",
+                "blutopia-remux.jinja2",
+                id="built_in_template_with_source_2",
+            ),
+            pytest.param(
+                "blutopia",
+                "encode",
+                "blutopia.jinja2",
+                id="built_in_template_with_missing_source",
+            ),
+            pytest.param(
+                "desitorrents", "", "desitorrents.jinja2", id="custom_template"
+            ),
+            pytest.param(
+                "desitorrents",
+                "webdl",
+                "desitorrents-webdl.jinja2",
+                id="custom_template_with_source",
+            ),
+            pytest.param(
+                "desitorrents",
+                "encode",
+                "desitorrents.jinja2",
+                id="custom_template_with_missing_source",
+            ),
         ],
     )
     def test_template_manager(
-        self, working_folder_path, template_name, loaded_template_name
+        self, working_folder_path, template_name, loaded_template_name, source_type
     ):
         manager = GGBotJinjaTemplateManager(
-            working_folder=working_folder_path, template_name=template_name
+            working_folder=working_folder_path,
+            template_name=template_name,
+            source_type=source_type,
         )
         assert manager is not None
         assert manager.template is not None
@@ -39,7 +73,7 @@ class TestGGBotJinjaTemplateManager:
 
     def test_template_render(self, working_folder_path):
         manager = GGBotJinjaTemplateManager(
-            working_folder=working_folder_path, template_name="DT"
+            working_folder=working_folder_path, template_name="DT", source_type=""
         )
 
         data = {

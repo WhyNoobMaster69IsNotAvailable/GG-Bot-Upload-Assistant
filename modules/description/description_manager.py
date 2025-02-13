@@ -32,6 +32,7 @@ class GGBotDescriptionManager:
         working_folder: str,
         sub_folder: str,
         tracker: str,
+        source_type: str,
         bbcode_line_break: str,
         debug: bool = False,
     ):
@@ -66,7 +67,9 @@ class GGBotDescriptionManager:
             working_folder=working_folder, sub_folder=sub_folder, tracker=tracker
         )
         self.template_manager: GGBotJinjaTemplateManager = GGBotJinjaTemplateManager(
-            working_folder=working_folder, template_name=tracker
+            working_folder=working_folder,
+            template_name=tracker,
+            source_type=source_type,
         )
 
     def get_description_file_path(self) -> str:
