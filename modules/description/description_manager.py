@@ -46,9 +46,13 @@ class GGBotDescriptionManager:
         )
         self.description_file_data = {
             "custom_description_components": "",
-            "internal": {
+            "bbcode": {
                 "center_start": "[center]",
                 "center_end": "[/center]",
+                "code_start": "[code]",
+                "code_end": "[/code]",
+            },
+            "internal": {
                 "uploader_signature": f"Uploaded with [color=red]{heart_emoji}[/color] using GG-BOT Upload Assistant",
                 "uploader_signature_hex": f"Uploaded with [color=#ff0000]{heart_emoji}[/color] using GG-BOT Upload Assistant",
                 "screenshot_header": " ---------------------- [size=22]Screenshots[/size] ---------------------- ",

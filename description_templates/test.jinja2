@@ -1,11 +1,11 @@
 {{ data.bbcode.center_start }} [url=https://ibb.co/98Xwk5P][img=370]https://i.ibb.co/SsTQ4CS/DTR-WEB-DL.png[/img][/url] {{ data.bbcode.center_end }}
 
 {{ data.bbcode.code_start }}
-Release Name    : {{ data.torrent_info.torrent_title }}
-Video           : {{ data.torrent_info.screen_size }} {{ data.torrent_info.pymediainfo_video_codec }} {{ data.torrent_info.bit_depth }}-bit @ {{ data.release.video.bitrate }}
-Audio           : {{ data.torrent_info.audio_codec }} {{ data.torrent_info.audio_channels }} @ {{ data.release.audio.bitrate }}
-Copyright       : DTR@desitorrents.tv
-Notes           : Enjoy
+Release Name....: {{ data.torrent_info.torrent_title }}
+Video...........: {{ data.torrent_info.screen_size }} {{ data.torrent_info.mediainfo_summary_data.Video[0].Codec }} {{ data.torrent_info.bit_depth }}-bit @ {{ data.release.video.bitrate }}
+Audio...........: {{ data.torrent_info.mediainfo_summary_data.Audio[0].Format }} {{ data.torrent_info.audio_channels }} @ {{ data.release.audio.bitrate }}
+Copyright.......: DTR@desitorrents.tv
+Notes...........: Enjoy!
 {{ data.bbcode.code_end }}
 
 {{ data.custom_description_components }}
