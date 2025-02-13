@@ -84,6 +84,17 @@ def rutorrent_credentials(rutorrent_container):
     # This needs more time when running in kubernetes cluster to start properly
     time.sleep(60)  # allowing time for rutorrent container to start and be ready
 
+    rutorrent_logs = "".join(
+        [
+            log.decode("utf-8")
+            for log in rutorrent_container.get_logs()
+            if isinstance(log, bytes)
+        ]
+    )
+    # search the logs to ensure that container and services have started
+    service_done_message = re.search(r"\[services\.d\\] done\.", rutorrent_logs)
+    assert service_done_message is not None
+
     yield {
         "host": rutorrent_container.get_container_host_ip(),
         "port": rutorrent_container.get_exposed_port(80),
@@ -129,7 +140,8 @@ def qbittorrent_credentials(qbittorrent_container):
 @pytest.fixture(scope="module", autouse=True)
 def rutorrent_container():
     container = DockerContainer("romancin/rutorrent:0.9.8-v7.0.1")
-    container.with_exposed_ports(80)
+    container.with_bind_ports(80, 50002)
+
     container.with_env("PUID", "1001")
     container.with_env("PGID", "1001")
     container.with_env("TZ", "UTC")
