@@ -59,6 +59,7 @@ def docker_testing_network():
 
 @pytest.fixture(scope="module", autouse=True)
 def qbittorrent_container():
+    logging.info("Creating Qbittorrent docker container")
     container = DockerContainer("linuxserver/qbittorrent:4.6.5")
     container.with_bind_ports(50001, 50001)
 
@@ -68,6 +69,7 @@ def qbittorrent_container():
     container.with_env("TZ", "UTC")
 
     container.start()
+    logging.info("Started Qbittorrent docker container")
     container_id = container._container.id
     logging.info(
         f"[TestContainers] Created a qbittorrent container for e2e testing: {container_id}"
@@ -82,7 +84,7 @@ def qbittorrent_container():
 @pytest.fixture(scope="module")
 def rutorrent_credentials(rutorrent_container):
     # This needs more time when running in kubernetes cluster to start properly
-    time.sleep(60)  # allowing time for rutorrent container to start and be ready
+    time.sleep(30)  # allowing time for rutorrent container to start and be ready
 
     rutorrent_logs = "".join(
         [
@@ -92,12 +94,14 @@ def rutorrent_credentials(rutorrent_container):
         ]
     )
     # search the logs to ensure that container and services have started
-    service_done_message = re.search(r"\[services\.d\\] done\.", rutorrent_logs)
+    service_done_message = re.search(
+        r"NOTICE: ready to handle connections", rutorrent_logs
+    )
     assert service_done_message is not None
 
     yield {
         "host": rutorrent_container.get_container_host_ip(),
-        "port": rutorrent_container.get_exposed_port(80),
+        "port": rutorrent_container.get_exposed_port(8080),
         "hashed": base64.b64encode("admin:admin".encode("ascii")).decode("ascii"),
         "username": "admin",
         "password": "admin",
@@ -139,15 +143,16 @@ def qbittorrent_credentials(qbittorrent_container):
 
 @pytest.fixture(scope="module", autouse=True)
 def rutorrent_container():
-    container = DockerContainer("romancin/rutorrent:0.9.8-v7.0.1")
-    container.with_bind_ports(80, 50002)
+    logging.info("Creating rutorrent docker container")
+    container = DockerContainer("crazymax/rtorrent-rutorrent:5.1.5-7.2")
+    container.with_bind_ports(8080, 50002)
 
     container.with_env("PUID", "1001")
     container.with_env("PGID", "1001")
     container.with_env("TZ", "UTC")
-    container.with_env("CREATE_SUBDIR_BY_TRACKERS", "NO")
     container.start()
 
+    logging.info("Started rutorrent docker container")
     container_id = container._container.id
     logging.info(
         f"[TestContainers] Created a rutorrent container for e2e testing: {container_id}"
