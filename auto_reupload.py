@@ -1696,7 +1696,7 @@ def _upload_to_tracker(
         tracker_description_components=config.get("description_components"),
         screenshots_data_types=torrent_info.get("screenshots_data_types"),
         screenshot_type=config.get("screenshot_type"),
-        mediainfo=torrent_info["mediainfo"],
+        torrent_info=torrent_info,
     )
     description_manager.render()
 
