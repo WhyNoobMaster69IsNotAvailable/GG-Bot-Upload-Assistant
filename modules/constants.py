@@ -72,4 +72,5 @@ STREAMING_SERVICES_REVERSE_MAP = (
     "{base_path}/parameters/streaming_services_reverse.json"
 )
 DESCRIPTIONS_TEMPLATE_PATH = "{base_path}/description_templates"
+DESCRIPTIONS_CUSTOM_TEMPLATE_PATH = "{base_path}/description_templates/custom"
 DEFAULT_DESCRIPTION_TEMPLATE = "default.jinja2"

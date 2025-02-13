@@ -15,11 +15,15 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 from jinja2 import FileSystemLoader, Environment
 
-from modules.constants import DESCRIPTIONS_TEMPLATE_PATH, DEFAULT_DESCRIPTION_TEMPLATE
+from modules.constants import (
+    DESCRIPTIONS_TEMPLATE_PATH,
+    DEFAULT_DESCRIPTION_TEMPLATE,
+    DESCRIPTIONS_CUSTOM_TEMPLATE_PATH,
+)
 
 
 class GGBotJinjaTemplateManager:
@@ -29,22 +33,28 @@ class GGBotJinjaTemplateManager:
         self.template = self._load_jinja_template()
 
     def _load_jinja_template(self):
-        templates_folder = self._get_templates_folder()
-        template_file = self._get_template_file(templates_folder)
+        templates_folders: List[str] = self._get_templates_folders()
+        template_file = self._get_template_file(templates_folders)
 
-        template_loader = FileSystemLoader(searchpath=templates_folder)
+        template_loader = FileSystemLoader(searchpath=templates_folders)
         template_environment = Environment(loader=template_loader, autoescape=True)
 
         return template_environment.get_template(template_file)
 
-    def _get_template_file(self, templates_folder):
-        if Path(f"{templates_folder}/{self.template_file_name}.jinja2").exists():
+    def _get_template_file(self, templates_folders: List[str]):
+        for folder in templates_folders:
+            if not Path(f"{folder}/{self.template_file_name}.jinja2").exists():
+                continue
             return f"{self.template_file_name}.jinja2"
 
         return DEFAULT_DESCRIPTION_TEMPLATE
 
-    def _get_templates_folder(self):
-        return DESCRIPTIONS_TEMPLATE_PATH.format(base_path=self.working_folder)
+    def _get_templates_folders(self) -> List[str]:
+        # The order matters here. We first check custom templates folder and then fallback to default templates
+        return [
+            DESCRIPTIONS_CUSTOM_TEMPLATE_PATH.format(base_path=self.working_folder),
+            DESCRIPTIONS_TEMPLATE_PATH.format(base_path=self.working_folder),
+        ]
 
     def render(self, data: Dict):
         return self.template.render(data=data)
