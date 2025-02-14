@@ -23,6 +23,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
 - Customizable uploader signature for torrent descriptions
 - Automatic upload to torrent client: Immediate cross-seeding
 - Auto Re-Uploader flavour for uploading gods
+- Support for per tracker custom description templates
 
 <br>
 
@@ -156,7 +157,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
 ### Bare Metal / VM:
 1. Clone this repository `git clone https://gitlab.com/NoobMaster669/gg-bot-upload-assistant.git`
 > It is recommended to checkout a tag and use it instead of using as the master branch, as there is a possibility for master branch to have bug / error / conflicts during merges.<br>
-> Checkout a tag using the command `git checkout tags/<TAG>` 
+> Checkout a tag using the command `git checkout tags/<TAG>`
 2. Checkout a release tag/version that you wish to use `git checkout tags/2.0`
 2. Install necessary packages ```pip install -r requirements.txt```
 3. Grand execute permission for user. `chmod u+x auto_upload.py`
@@ -179,7 +180,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
 <br>
 
 ### Docker (recommended):
-1. Create new folder / dir [`mkdir GGBotUploader && cd GGBotUploader`] 
+1. Create new folder / dir [`mkdir GGBotUploader && cd GGBotUploader`]
 2. Download `samples/assistant/config.env` to the newly created folder (`GGBotUploader`)
 3. Fill out the required values in `config.env`
 5. Run GG-Bot-Uploader using docker run command below. (For more samples refer to Wiki [Docker Run Command Examples](https://gitlab.com/gg-bot/gg-bot-uploader/-/wikis/Docker-Run-Command-Examples))
@@ -193,7 +194,7 @@ docker run --rm -it \
 
 ### Usage Examples Docker
 1. Upload to **Beyond-HD** & **Blutopia** with movie file in **/home/user/Videos/movie.title.year.bluray.1080p.etc.mkv**
-    * 
+    *
 ```
      docker run --rm -it \
     -v <PATH_TO_YOUR_MEDIA>:/data \
@@ -201,20 +202,20 @@ docker run --rm -it \
     noobmaster669/gg-bot-uploader -t BHD BLU -path /home/user/Videos/movie.title.year.bluray.1080p.etc.mkv
 ```
 2. Upload movie **anonymously** to **AsianCinema** with manually specified **TMDB** & **IMDB** IDs
-    * 
+    *
 ```
     docker run --rm -it \
     -v <PATH_TO_YOUR_MEDIA>:/data \
     --env-file config.env \
     noobmaster669/gg-bot-uploader -t acm -p /home/user/Videos/movie.title.year.bluray.1080p.etc.mkv -imdb tt0111161 -tmdb 278 -anon
 ```
-<br /> 
+<br />
 
 **Things to note:**
 1. We use TMDB API for all things media related (Title, Year, External IDs, etc)
 2. If you provide the IMDB ID via ```-imdb```, you must include the 'tt' that precedes the numerical ID
 3. When providing multiple database (TMDB, IMDB, TVMAZE ) ids via optional arguments, uploader uses the ids with priority **`IMDB > TMDB > TVMAZE`**
-4. Full Disk uploads are supported ONLY in FAT version of the docker images. Look for image tags in the format **`:FullDisk-{TAG}`** 
+4. Full Disk uploads are supported ONLY in FAT version of the docker images. Look for image tags in the format **`:FullDisk-{TAG}`**
 
 <br>
 
