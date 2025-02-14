@@ -54,8 +54,12 @@ class GGBotDescriptionManager:
                 "code_end": "[/code]",
             },
             "internal": {
-                "uploader_signature": f"Uploaded with [color=red]{heart_emoji}[/color] using GG-BOT Upload Assistant",
-                "uploader_signature_hex": f"Uploaded with [color=#ff0000]{heart_emoji}[/color] using GG-BOT Upload Assistant",
+                "uploader_signature": f"Uploaded with [color=red]{heart_emoji}[/color] using ["
+                f"url=https://gitlab.com/NoobMaster669/gg-bot-upload-assistant]GG-BOT Upload "
+                f"Assistant[/url]",
+                "uploader_signature_hex": f"Uploaded with [color=#ff0000]{heart_emoji}[/color] using ["
+                f"url=https://gitlab.com/NoobMaster669/gg-bot-upload-assistant]GG-BOT "
+                f"Upload Assistant[/url]",
                 "screenshot_header": " ---------------------- [size=22]Screenshots[/size] ---------------------- ",
                 "bbcode_line_break": bbcode_line_break,
             },
@@ -157,7 +161,7 @@ class GGBotDescriptionManager:
             uploader_signature = f"[center]{uploader_signature}[/center]"
 
         self.description_file_data["internal"]["uploader_signature"] = (
-            f"{uploader_signature}{self.bbcode_line_break}[center]Powered by GG-BOT Upload Assistant[/center]"
+            f"{uploader_signature}{self.bbcode_line_break}[center]Powered by [url=https://gitlab.com/NoobMaster669/gg-bot-upload-assistant]GG-BOT Upload Assistant[/url][/center]"
         )
         self.description_file_data["internal"]["uploader_signature_hex"] = (
             self.description_file_data["internal"]["uploader_signature"]

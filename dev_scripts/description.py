@@ -137,7 +137,7 @@ class DescriptionManager:
                 "code_end": "[/code]",
             },
             "internal": {
-                "uploader_signature": "Uploaded with [color=red]❤[/color] using GG-BOT Upload Assistant",
+                "uploader_signature": "Uploaded with [color=red]❤[/color] using [url=https://gitlab.com/NoobMaster669/gg-bot-upload-assistant]GG-BOT Upload Assistant[/url]",
                 "screenshot_header": "---------------------- [size=22]Screenshots[/size] ----------------------",
             },
             "screenshots": "[url=https://ptpimg.me/dpuq6e.png][img=350]https://ptpimg.me/dpuq6e.png[/img][/url] [url=https://ptpimg.me/kaz5nr.png][img=350]https://ptpimg.me/kaz5nr.png[/img][/url] [url=https://ptpimg.me/8fb12a.png][img=350]https://ptpimg.me/8fb12a.png[/img][/url] [url=https://ptpimg.me/9it24k.png][img=350]https://ptpimg.me/9it24k.png[/img][/url] [url=https://ptpimg.me/9o5751.png][img=350]https://ptpimg.me/9o5751.png[/img][/url] [url=https://ptpimg.me/07xk34.png][img=350]https://ptpimg.me/07xk34.png[/img][/url]",
