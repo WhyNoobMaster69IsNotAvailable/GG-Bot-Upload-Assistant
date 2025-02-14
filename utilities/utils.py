@@ -315,7 +315,7 @@ class GenericUtils:
             unique_hash = files[0]
         else:
             unique_hash = self.get_hash(file)
-        unique_hash = f"{unique_hash}/"
+        unique_hash = f"{unique_hash}{os.path.sep}"
 
         if not Path(f"{working_dir}{unique_hash}").is_dir():
             os.mkdir(f"{working_dir}{unique_hash}")
