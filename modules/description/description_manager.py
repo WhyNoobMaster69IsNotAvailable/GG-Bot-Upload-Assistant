@@ -161,7 +161,8 @@ class GGBotDescriptionManager:
             uploader_signature = f"[center]{uploader_signature}[/center]"
 
         self.description_file_data["internal"]["uploader_signature"] = (
-            f"{uploader_signature}{self.bbcode_line_break}[center]Powered by [url=https://gitlab.com/NoobMaster669/gg-bot-upload-assistant]GG-BOT Upload Assistant[/url][/center]"
+            f"{uploader_signature}{self.bbcode_line_break}[center]Powered by [url=https://gitlab.com/NoobMaster669/gg"
+            f"-bot-upload-assistant]GG-BOT Upload Assistant[/url][/center]"
         )
         self.description_file_data["internal"]["uploader_signature_hex"] = (
             self.description_file_data["internal"]["uploader_signature"]
