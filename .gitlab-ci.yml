@@ -25,6 +25,7 @@ include:
 - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 stages:
+- experiment
 - lint
 - build
 - test
@@ -44,4 +45,16 @@ release-set:
     expire_in: 1 week
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+
+windows_tests:
+  image: mcr.microsoft.com/windows/python:3.9
+  stage: experiment
+  tags:
+    - windows
+  before_script:
+    - pip install -r requirements/requirements_test.txt
+    - pip freeze > requirements/requirements_test.txt
+  script:
+    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml --cov=./ tests/
     
