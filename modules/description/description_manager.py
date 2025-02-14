@@ -83,8 +83,7 @@ class GGBotDescriptionManager:
     def _format_description_file(
         *, working_folder: str, sub_folder: str, tracker: str
     ) -> str:
-        ## TODO: In windows as well subfolder is coming as "/" instead of "\"
-        if len(sub_folder) > 0 and sub_folder[-1:] != "/":
+        if len(sub_folder) > 0 and sub_folder[-1:] != os.path.sep:
             raise GGBotFatalException(
                 f"Invalid sub_folder path provided :- {sub_folder}"
             )
