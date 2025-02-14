@@ -1,3 +1,19 @@
+# GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # General constants
 COOKIES_DUMP_DIR = "{base_path}/cookies/"
 SITE_TEMPLATES_DIR = "{base_path}/site_templates/"
@@ -11,15 +27,9 @@ TRACKER_ACRONYMS = "{base_path}/parameters/tracker/acronyms.json"
 TRACKER_API_KEYS = "{base_path}/parameters/tracker/api_keys.json"
 TEMPLATE_SCHEMA_LOCATION = "{base_path}/schema/site_template_schema.json"
 
-TMDB_TO_MAL_MAPPING = (
-    "{base_path}/parameters/mal_mapping/tmdb_to_mal_mapping.json"
-)
-IMDB_TO_MAL_MAPPING = (
-    "{base_path}/parameters/mal_mapping/imdb_to_mal_mapping.json"
-)
-TVDB_TO_MAL_MAPPING = (
-    "{base_path}/parameters/mal_mapping/tvdb_to_mal_mapping.json"
-)
+TMDB_TO_MAL_MAPPING = "{base_path}/parameters/mal_mapping/tmdb_to_mal_mapping.json"
+IMDB_TO_MAL_MAPPING = "{base_path}/parameters/mal_mapping/imdb_to_mal_mapping.json"
+TVDB_TO_MAL_MAPPING = "{base_path}/parameters/mal_mapping/tvdb_to_mal_mapping.json"
 
 # Working dir paths
 # Note: The `sub_folder` is expected to end with a '/'
@@ -28,7 +38,7 @@ WORKING_DIR = "{base_path}/temp_upload/"
 __MEDIAINFO_FILE = "{sub_folder}mediainfo.txt"
 __URL_IMAGES_FILE = "{sub_folder}url_images.txt"
 __SCREENSHOTS_DIR = "{sub_folder}screenshots/"
-__DESCRIPTION_FILE = "{sub_folder}description.txt"
+__DESCRIPTION_FILE = "{sub_folder}{tracker}_description.txt"
 __BBCODE_IMAGES_FILE = "{sub_folder}bbcode_images.txt"
 __SCREENSHOTS_RESULT_FILE = "{sub_folder}screenshots/screenshots_data.json"
 __UPLOADS_COMPLETE_MARKER_FILE = "{sub_folder}screenshots/uploads_complete.mark"
@@ -61,3 +71,6 @@ CUSTOM_TEXT_COMPONENTS = "{base_path}/parameters/custom_text_components.json"
 STREAMING_SERVICES_REVERSE_MAP = (
     "{base_path}/parameters/streaming_services_reverse.json"
 )
+DESCRIPTIONS_TEMPLATE_PATH = "{base_path}/description_templates"
+DESCRIPTIONS_CUSTOM_TEMPLATE_PATH = "{base_path}/description_templates/custom"
+DEFAULT_DESCRIPTION_TEMPLATE = "default.jinja2"

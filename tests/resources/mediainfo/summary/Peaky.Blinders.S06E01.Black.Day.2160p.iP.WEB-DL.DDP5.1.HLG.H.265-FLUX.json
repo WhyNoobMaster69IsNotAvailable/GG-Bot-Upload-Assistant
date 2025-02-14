@@ -1,0 +1,50 @@
+{
+  "Audio": [
+    {
+      "Bit Rate": "640 kb/s",
+      "Bit Rate Mode": "Constant",
+      "Channels": "6 channels",
+      "Compression": "Lossy",
+      "Format": "Dolby Digital Plus",
+      "Language": "",
+      "Sampling Rate": "48.0 kHz"
+    }
+  ],
+  "General": {
+    "Bit Rate": "19.1 Mb/s",
+    "Container": "Matroska",
+    "Duration": "58 min 4 s",
+    "Frame Rate": "",
+    "Size": "7.74 GiB",
+    "imdb": "tt2442560",
+    "tmdb": "tv/60574",
+    "tvdb": "0"
+  },
+  "Text": [
+    {
+      "Forced": "",
+      "Format": "UTF-8",
+      "Language": "",
+      "Title": "",
+      "language_code": "English"
+    },
+    {
+      "Forced": "",
+      "Format": "UTF-8",
+      "Language": "SDH",
+      "Title": "SDH",
+      "language_code": "English"
+    }
+  ],
+  "Video": [
+    {
+      "Aspect Ratio": "16:9",
+      "Bit Depth": "10 bits",
+      "Bit Rate": "18.5 Mb/s",
+      "Codec": "HEVC",
+      "Frame Rate": "25.000 FPS",
+      "Language": "",
+      "Resolution": "3840x2160"
+    }
+  ]
+}

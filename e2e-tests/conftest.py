@@ -1,3 +1,19 @@
+# GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import base64
 import logging
 import re
@@ -43,6 +59,7 @@ def docker_testing_network():
 
 @pytest.fixture(scope="module", autouse=True)
 def qbittorrent_container():
+    logging.info("Creating Qbittorrent docker container")
     container = DockerContainer("linuxserver/qbittorrent:4.6.5")
     container.with_bind_ports(50001, 50001)
 
@@ -52,6 +69,7 @@ def qbittorrent_container():
     container.with_env("TZ", "UTC")
 
     container.start()
+    logging.info("Started Qbittorrent docker container")
     container_id = container._container.id
     logging.info(
         f"[TestContainers] Created a qbittorrent container for e2e testing: {container_id}"
@@ -65,11 +83,25 @@ def qbittorrent_container():
 
 @pytest.fixture(scope="module")
 def rutorrent_credentials(rutorrent_container):
-    time.sleep(15)  # allowing time for rutorrent container to start and be ready
+    # This needs more time when running in kubernetes cluster to start properly
+    time.sleep(30)  # allowing time for rutorrent container to start and be ready
+
+    rutorrent_logs = "".join(
+        [
+            log.decode("utf-8")
+            for log in rutorrent_container.get_logs()
+            if isinstance(log, bytes)
+        ]
+    )
+    # search the logs to ensure that container and services have started
+    service_done_message = re.search(
+        r"NOTICE: ready to handle connections", rutorrent_logs
+    )
+    assert service_done_message is not None
 
     yield {
         "host": rutorrent_container.get_container_host_ip(),
-        "port": rutorrent_container.get_exposed_port(80),
+        "port": rutorrent_container.get_exposed_port(8080),
         "hashed": base64.b64encode("admin:admin".encode("ascii")).decode("ascii"),
         "username": "admin",
         "password": "admin",
@@ -111,14 +143,16 @@ def qbittorrent_credentials(qbittorrent_container):
 
 @pytest.fixture(scope="module", autouse=True)
 def rutorrent_container():
-    container = DockerContainer("romancin/rutorrent:0.9.8-v7.0.1")
-    container.with_exposed_ports(80)
+    logging.info("Creating rutorrent docker container")
+    container = DockerContainer("crazymax/rtorrent-rutorrent:5.1.5-7.2")
+    container.with_bind_ports(8080, 50002)
+
     container.with_env("PUID", "1001")
     container.with_env("PGID", "1001")
     container.with_env("TZ", "UTC")
-    container.with_env("CREATE_SUBDIR_BY_TRACKERS", "NO")
     container.start()
 
+    logging.info("Started rutorrent docker container")
     container_id = container._container.id
     logging.info(
         f"[TestContainers] Created a rutorrent container for e2e testing: {container_id}"

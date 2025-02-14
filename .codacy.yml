@@ -10,7 +10,7 @@ engines:
   radon:
     enabled: true
 assert_used:
-  skips: ['*test.py', '*test*.py', 'e2e-tests/*']
+  skips: ['*test.py', '*test*.py', 'e2e-tests/*', '*_test.py', '*test_*.py']
 exclude_paths:
   - "tests/**"
   - "e2e-tests/**"
