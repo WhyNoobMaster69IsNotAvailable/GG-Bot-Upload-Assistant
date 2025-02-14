@@ -1,12 +1,28 @@
+# GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import glob
 import os
 import shutil
 from pathlib import Path
 
 import pytest
+from torf import Torrent
 
 from modules.custom_actions.spd_actions import update_torrent_info_hash
-from modules.torrent_generator.torf_generator import GGBOTTorrent
 from tests.test_utilities import TestUtils
 from utilities.utils import GenericUtils
 
@@ -94,8 +110,8 @@ def test_update_torrent_info_hash():
     # assert that there is one BKP_SPD-atorrent.torrent
     assert bkp_spd_present is True
     assert spd_file is not None and bkp_spd_file is not None
-    spd_torrent = GGBOTTorrent.read(spd_file)
-    bkp_torrent = GGBOTTorrent.read(bkp_spd_file)
+    spd_torrent = Torrent.read(spd_file)
+    bkp_torrent = Torrent.read(bkp_spd_file)
 
     # assert that the info-hash of BKP_SPD-atorrent.torrent is added to source of SPD-atorrent.torrent
     assert (

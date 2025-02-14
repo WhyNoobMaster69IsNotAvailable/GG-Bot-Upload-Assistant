@@ -43,14 +43,15 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
 <br>
 
 # Main Features
-* Generate, parse and attach Mediainfo or BDInfo to torrent uploads
+* Generate, parse and attach `Mediainfo` or `BDInfo` to torrent uploads
 * Support for Full Disk uploads
+* Support for per tracker [Custom Description Templates](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Custom-Description-Templates)
 * Frame Accurate Screenshots
 * Generates, uploads and attach screenshots to torrent description
 * Ability to decide the thumbnail size for screenshots in bbcode
-* Obtains TMDB/IMDB/MAL ids automatically
+* Obtains `TMDB/IMDB/MAL/TVDB` ids automatically
 * Creates name following proper conventions
-* Generate .torrent with pytor or mktorrent
+* Generate .torrent with `pytor` or `mktorrent`
 * Uploads to various trackers seamlessly
 * Multiple Image Host support
 * Packed as a docker container. (No need to install any additional tools)
@@ -58,11 +59,16 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
 * Customizable uploader signature for torrent descriptions
 * Automatic upload to torrent client: Immediate cross-seeding
 * Auto Re-Uploader flavour for uploading gods and tracker owners
+* [BugSink](https://www.bugsink.com/) based automatic error / exception tracking
 
 <br>
 
 ## Tracking In GG Bot Upload Assistant
-Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry Error Tracking**_ enabled by default. This is to catch any errors / exceptions that happen in the application and fix them pro-actively.
+Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**Sentry Error Tracking**_ enabled by default. This is to catch any errors / exceptions that happen in the application and fix them pro-actively.
+
+> Gitlab based error tracking has been replaced with [BugSink](https://www.bugsink.com/) to track sentry errors. This change was made from **v3.1.8** onwards.
+> GitLab wasn't providing enough event details to properly debug the issues, hence moving out from it.
+
 
 > If you do no wish to have this enabled, you can disable the error log tracking from the config file. Simple set `ENABLE_SENTRY_ERROR_TRACKING` to `False` in assistant or re-uploader config and error / exceptions will not be sent to GitLab.
 
@@ -83,11 +89,11 @@ Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry
             <td><strong>Platform</strong></td>
             <td><strong>Acronym</strong></td>
             <td><strong>Site Name</strong></td>
-        </th>
+        </tr>
         <tr style="text-align: center">
             <td rowspan="22"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
-            <td><strong><a href="https://asiancinema.me">AsianCinema</a></strong></td>
+            <td><strong><a href="https://eiga.moi">AsianCinema</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td><strong>ATH</strong></td>
@@ -285,6 +291,8 @@ Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**GitLab Sentry
 ```
 docker run --rm -it \
     -v <PATH_TO_YOUR_MEDIA>:/data \
+    -v ./temp_upload:/app/temp_upload \
+    -v ./custom_description_templates:/app/description_templates/custom \
     --env-file config.env \
     noobmaster669/gg-bot-uploader -t ATH TSP -p "/data/<YOUR_FILE_FOLDER>"
 ```
@@ -303,7 +311,7 @@ docker run --rm -it \
 > Ensure that you have optional dependencies installed. <br>
 > - [MediaInfo](https://mediaarea.net/en/MediaInfo/Download/Ubuntu)
 > - [FFmpeg](https://ffmpeg.org/download.html)
-> - unrar
+> - [unrar](https://askubuntu.com/questions/566407/whats-the-easiest-way-to-unrar-a-file-on-ubuntu-12-04)
 > - [mktorrent](https://github.com/pobrn/mktorrent): Use --use_mktorrent flag. (Create .torrent using mktorrent instead of torf)
 7. Run the script using [Python3](https://www.python.org/downloads/) (If you're having issues or torf isn't installing, try python3.9)
 > Run command template ```python3 auto_upload.py -t <TRACKERS> -p "<FILE_OR_FOLDER_TO_BE_UPLOADED>" [OPTIONAL ARGUMENTS 1] [OPTIONAL ARGUMENTS 2...]```
@@ -354,34 +362,32 @@ pip install -r requirements/requirements.txt
 1. Docker volume mounts in debian host system results in permission error in docker container. (No Proper Fix Available)
     * **Workaround**: Torrent file can be created in debian host os by using mktorrent. Use argument `--use_mktorrent or -mkt`
 2. No support for Bluray distributors and Bluray disc regions
-3. No official support for Blurays in .iso format
+3. No official support for Blu-rays in .iso format
 4. No support for 3D Bluray discs
 5. Cannot pass `tmdb`, `imdb`, `tvmaze` and `mal` ids as command line arguments when running in `batch` mode.
 
 <br>
 
 # Roadmap
-### v3.1.8
+### v3.1.9
 - [ ] New Tracker: UHDBits
-- [ ] Template based custom description
+- [ ] Support for encrypted values from config
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
-- [X] Issue#159: Memory failure when using torf
 
-### v3.1.9
+### v3.2.0
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
 - [ ] Issue#96: DVD Remux not supported
 - [ ] Issue#97: PTP uploads fail if no tags in IMDB
 - [ ] Improved TMDB metadata search Phase 3
-- [ ] Support for encrypted values from config
 - [ ] Add support for adding primary language to title
 - [ ] Use new search API for ANT
 
 ### Backlogs
-- [ ] EPIC: GGBOT Metadata Aggregator
-- [ ] EPIC: GGBOT P2P Network Relay
+- [ ] EPIC: GG-BOT Metadata Aggregator
+- [ ] EPIC: GG-BOT P2P Network Relay
 - [ ] EPIC: Migrate GG-BOT Runtime to work with GG-BOT Auto ReUploader
 - [ ] EPIC: Refactor GG-BOT Admin to handle GG-BOT Auto ReUploader
 - [ ] Better MAL id detection
@@ -392,7 +398,7 @@ pip install -r requirements/requirements.txt
 - [ ] Support for communicating with torrent clients
     - [ ] Deluge
     - [ ] Transmission
-- [ ] Add support for bitorrent v2 and v2 hybrid torrents
+- [ ] Add support for bittorrent v2 and v2 hybrid torrents
 - [ ] Add Support for new platforms
     - [ ] MoreThanTV
     - [ ] DanishBytes
@@ -451,12 +457,30 @@ This project exists thanks to all the people who contribute.
 <br>
 
 # Change Log
+## **3.1.8**
+    New Features
+      * Per tracker custom description templates
+
+    Underhood Changes
+      * Updated MyAnimeList mappings
+      * Replace GitLab with BugSink for error tracking
+
+    Bug Fixes
+      * Issue#165: Pixhost screenshot upload error
+      * Issue#167: ACM upload fails due to URL change
+      * Issue#159: Memory failure when using torf
+      * Issue#198: UnicodeEncodeError: 'charmap' codec can't encode character '\u017b'
+      * Issue#199: KeyError: 'title' in guessit result
+
+<br>
+
 ## **3.1.7**
     New Tracker
         * PrivateSilverScreen
         * TMGHub
 
     Bug Fixes
+        * Issue#168: TypeError: 'NoneType' object is not subscriptable
         * Issue#181: Sentry | AttributeError: 'NoneType' object has no attribute 'commercial_name'
         * Issue#185: Sentry | TypeError: 'NoneType' object is not subscriptable
         * Issue#186: Sentry | TypeError: 'NoneType' object is not subscriptable
@@ -733,4 +757,7 @@ See [CHANGELOG](CHANGELOG) for more info
 ### [Docker: Run Command Examples](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Docker-Run-Command-Examples)
 ### [Docker: Noob Friendly Setup Guide](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Noob-Friendly-Setup-Guide)
 ### [Support For New Trackers](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Support-For-New-Trackers)
+### [Custom Description Templates](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Custom-Description-Templates)
 <br>
+
+<sup>Free DNS provided by [Free DNS](https://freedns.afraid.org/)</sup>

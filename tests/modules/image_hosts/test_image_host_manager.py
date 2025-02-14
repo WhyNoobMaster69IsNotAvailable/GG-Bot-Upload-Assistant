@@ -1,3 +1,19 @@
+# GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 from unittest import mock
 
 import pytest
@@ -41,9 +57,7 @@ class TestGGBotImageHostManager:
         assert no_host_image_host_manager.thumb_size == "350"  # default value
         assert no_host_image_host_manager.torrent_title == torrent_title
 
-    def test_proper_image_host_identification(
-        self, image_host_manager, torrent_title
-    ):
+    def test_proper_image_host_identification(self, image_host_manager, torrent_title):
         assert image_host_manager.thumb_size == "350"
         assert image_host_manager.no_of_image_hosts == 3
         assert image_host_manager.image_hosts == [
@@ -57,9 +71,7 @@ class TestGGBotImageHostManager:
     @mock.patch("modules.image_hosts.vendor.ptpimg.PTPImgImageHost.status")
     def test_upload_screenshots(self, mock_status, _, image_host_manager):
         mock_status.return_value = GGBotImageUploadStatus(status=True)
-        status: GGBotImageUploadStatus = image_host_manager.upload_screenshots(
-            ""
-        )
+        status: GGBotImageUploadStatus = image_host_manager.upload_screenshots("")
         assert status.status
 
     @mock.patch("modules.image_hosts.vendor.imgbox.ImgboxImageHost.status")
@@ -69,7 +81,5 @@ class TestGGBotImageHostManager:
         self, _, __, mock_imgbox_status, image_host_manager
     ):
         mock_imgbox_status.return_value = GGBotImageUploadStatus(status=True)
-        status: GGBotImageUploadStatus = image_host_manager.upload_screenshots(
-            ""
-        )
+        status: GGBotImageUploadStatus = image_host_manager.upload_screenshots("")
         assert status.status

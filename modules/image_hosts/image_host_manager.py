@@ -19,6 +19,7 @@ from typing import List
 
 from rich.console import Console
 
+from modules.exceptions.exception import GGBotException
 from modules.image_hosts.image_host_base import GGBotImageHostBase
 from modules.image_hosts.image_upload_status import GGBotImageUploadStatus
 from modules.image_hosts.vendor.chevereto.freeimage import FreeImageImageHost
@@ -95,18 +96,13 @@ class GGBotImageHostManager:
 
     def upload_screenshots(self, image_path: str) -> GGBotImageUploadStatus:
         for image_host in self.image_hosts:
-            image_host_manager: GGBotImageHostBase = (
-                self._create_image_host_uploader(
-                    image_path=image_path, image_host=image_host
-                )
+            image_host_manager: GGBotImageHostBase = self._create_image_host_uploader(
+                image_path=image_path, image_host=image_host
             )
-            assert image_host_manager is not None
             image_host_manager.upload()
             status: GGBotImageUploadStatus = image_host_manager.status
             if status.status:
-                logging.debug(
-                    f"[Screenshots] Response from image host: {status}"
-                )
+                logging.debug(f"[Screenshots] Response from image host: {status}")
                 return status
         return GGBotImageUploadStatus(status=False)
 
@@ -140,4 +136,4 @@ class GGBotImageHostManager:
         logging.fatal(
             f"[GGBotImageHostManager::upload_screenshots] Invalid image host {image_host}. Cannot upload screenshots."
         )
-        # TODO: what should be done here?
+        raise GGBotException(f"Invalid image host {image_host}.")

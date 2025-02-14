@@ -38,13 +38,14 @@ from pymediainfo import MediaInfo
 # Rich is used for printing text & interacting with user input
 from rich import box
 from rich.console import Console
+from rich.errors import NotRenderableError
 from rich.prompt import Confirm, Prompt
 from rich.table import Table
 from rich.traceback import install
 
-import utilities.utils_bdinfo as bdinfo_utilities
 import utilities.utils_metadata as metadata_utilities
 import utilities.utils_translation as translation_utilities
+from modules.bdinfo.bdinfo_parser import BDInfoParser
 from modules.config import (
     UploadAssistantConfig,
     TrackerConfig,
@@ -60,7 +61,6 @@ from modules.constants import (
     ASSISTANT_SAMPLE_CONFIG,
     BLURAY_REGIONS_MAP,
     MEDIAINFO_FILE_PATH,
-    DESCRIPTION_FILE_PATH,
     SCREENSHOTS_RESULT_FILE_PATH,
     TEMPLATE_SCHEMA_LOCATION,
     VALIDATED_SITE_TEMPLATES_DIR,
@@ -72,8 +72,9 @@ from modules.constants import (
     TAG_GROUPINGS,
     CUSTOM_TEXT_COMPONENTS,
 )
-from modules.exceptions.exception import GGBotSentryCapturedException
-from modules.global_utils import sentry_ignored_errors
+from modules.description.description_manager import GGBotDescriptionManager
+from modules.exceptions.exception import GGBotSentryCapturedException, GGBotException
+from modules.sentry_config import SentryConfig
 
 # Method that will search for dupes in trackers.
 from modules.template_schema_validator import TemplateSchemaValidator
@@ -109,12 +110,13 @@ class GGBotUploadAssistant:
         # This is an important dict that we use to store info about the media file as we discover it Once all
         # necessary info has been collected we will loop through this dict and set the correct tracker API Keys to it
         self.torrent_info = {}
+        self.meta_info = {}
         self.media_info = {}
         self.movie_db_info = {}
         self.tracker_settings = {}
         self.config = {}
         self.tracker = None  # the current tracker to which we are uploading to
-
+        self.bdinfo_parser = None  # Will be initialized depending on the environment
         # Debug logs for the upload processing
         # Logger running in "w" : write mode
         # Create a custom log format with UTF-8 encoding
@@ -144,12 +146,13 @@ class GGBotUploadAssistant:
             sentry_sdk.init(
                 environment="production",
                 server_name="GG Bot Upload Assistant",
-                dsn="https://glet_b895102140e2b1bd3b2550b446de32f1@observe.gitlab.com:443/errortracking/api/v1/projects/32631784",
+                dsn="https://4093e406eb754b20a2a7f6d15e6b34c0@ggbot.bot.nu/1",
                 traces_sample_rate=1.0,
                 profiles_sample_rate=1.0,
                 attach_stacktrace=True,
                 shutdown_timeout=20,
-                ignore_errors=sentry_ignored_errors,
+                ignore_errors=SentryConfig.sentry_ignored_errors(),
+                before_send=SentryConfig.before_send,
             )
 
         # By default, we load the templates from site_templates/ path
@@ -449,11 +452,6 @@ class GGBotUploadAssistant:
 
         # ------------ Save obvious info we are almost guaranteed to get from guessit into torrent_info dict ------------ #
         # But we can immediately assign some values now like Title & Year
-        if "title" not in guess_it_result or not guess_it_result["title"]:
-            raise AssertionError(
-                "Guessit could not even extract the title, something is really wrong with this filename."
-            )
-
         self.torrent_info["title"] = guess_it_result["title"]
         if (
             "year" in guess_it_result
@@ -515,7 +513,7 @@ class GGBotUploadAssistant:
             )
         )
         if "type" not in self.torrent_info:
-            raise AssertionError(
+            raise GGBotException(
                 "'type' is not set in the guessit output, something is seriously wrong with this filename"
             )
 
@@ -556,23 +554,15 @@ class GGBotUploadAssistant:
             # First check to see if we are uploading a 'raw bluray disc'
             if self.args.disc:
                 # validating presence of bdinfo script for bare metal
-                bdinfo_utilities.bdinfo_validate_bdinfo_script_for_bare_metal(
-                    self.bdinfo_script
-                )
                 # validating presence of BDMV/STREAM/
-                bdinfo_utilities.bdinfo_validate_presence_of_bdmv_stream(
-                    self.torrent_info["upload_media"]
+                self.bdinfo_parser = BDInfoParser(
+                    bdinfo_script=self.bdinfo_script,
+                    upload_media=self.torrent_info["upload_media"],
                 )
-
                 (
                     raw_video_file,
                     largest_playlist,
-                ) = bdinfo_utilities.bdinfo_get_largest_playlist(
-                    self.bdinfo_script,
-                    self.auto_mode,
-                    self.torrent_info["upload_media"],
-                )
-
+                ) = self.bdinfo_parser.get_largest_playlist(self.auto_mode)
                 self.torrent_info["raw_video_file"] = raw_video_file
                 self.torrent_info["largest_playlist"] = largest_playlist
             else:
@@ -629,11 +619,9 @@ class GGBotUploadAssistant:
                 base_path=self.working_folder,
                 sub_folder=self.torrent_info["working_folder"],
             )
-            self.torrent_info["bdinfo"] = (
-                bdinfo_utilities.bdinfo_generate_and_parse_bdinfo(
-                    self.bdinfo_script, self.torrent_info, self.args.debug
-                )
-            )  # TODO handle non-happy paths
+            self.torrent_info["bdinfo"] = self.bdinfo_parser.generate_and_parse_bdinfo(
+                self.torrent_info, self.args.debug
+            )
             logging.debug(
                 "::::::::::::::::::::::::::::: Parsed BDInfo output :::::::::::::::::::::::::::::"
             )
@@ -697,13 +685,14 @@ class GGBotUploadAssistant:
             # consider it the same as being provided by the user (no need to search)
             # PS: We don't use the tvdb id obtained here. (Might be deprecated)
             (
-                mediainfo_summary,
+                self.torrent_info["mediainfo_summary"],
                 tmdb,
                 imdb,
                 _,
                 self.torrent_info["subtitles"],
+                self.torrent_info["mediainfo_summary_data"],
             ) = BasicUtils().basic_get_mediainfo_summary(media_info_result.to_data())
-            self.torrent_info["mediainfo_summary"] = mediainfo_summary
+
             if tmdb != "0":
                 # we will get movie/12345 or tv/12345 => we only need 12345 part.
                 tmdb = tmdb[tmdb.find("/") + 1 :] if tmdb.find("/") >= 0 else tmdb
@@ -782,7 +771,16 @@ class GGBotUploadAssistant:
                 )
                 basic_info.append(torrent_info_key_failsafe)
 
-        codec_result_table.add_row(*basic_info)
+        try:
+            codec_result_table.add_row(*basic_info)
+        except NotRenderableError as e:
+            # SentryDebug: sending more details to Sentry for debugging.
+            with sentry_sdk.new_scope() as scope:
+                scope.set_extra("columns_we_want", columns_we_want)
+                scope.set_extra("basic_info", basic_info)
+                scope.set_extra("torrent_info", self.torrent_info)
+                sentry_sdk.capture_exception(e)
+            raise GGBotSentryCapturedException(e)
 
         console.line(count=2)
         console.print(codec_result_table, justify="center")
@@ -1376,7 +1374,7 @@ class GGBotUploadAssistant:
                 console.print(
                     f"\nCanceling upload to [bright_red]{upload_to}[/bright_red]"
                 )
-                logging.error(
+                logging.info(
                     f"[TrackerUpload] User chose to cancel the upload to {self.tracker}"
                 )
                 return False
@@ -1385,7 +1383,6 @@ class GGBotUploadAssistant:
             f"[TrackerUpload] URL: {url_masked} \n Data: {payload} \n Files: {files}"
         )
 
-        response = None
         if not self.args.dry_run:  # skipping tracker upload during dry runs
             if self.config["technical_jargons"]["payload_type"] == "JSON":
                 response = requests_orchestator.request(
@@ -1827,6 +1824,7 @@ class GGBotUploadAssistant:
         for file in upload_queue:
             # Remove all old temp_files & data from the previous upload
             self.torrent_info.clear()
+            self.meta_info.clear()
             # This list will contain tags that are applicable to the torrent being uploaded.
             # The tags that are generated will be based on the media properties and tag groupings from `tag_grouping.json`
             self.torrent_info["tag_grouping"] = json.load(
@@ -1958,7 +1956,7 @@ class GGBotUploadAssistant:
                     )
                 )
             else:
-                logging.debug(
+                logging.info(
                     "[Main] User decided not to add custom text to torrent description or running in auto_mode"
                 )
             # if the upload is a web-dl, then we'll have values for `web_source` and `web_source_name`
@@ -2064,6 +2062,16 @@ class GGBotUploadAssistant:
                         )
                     )
                 )
+                screenshots_data_types = {
+                    "bbcode_images": screenshots_data["bbcode_images"],
+                    "bbcode_images_nothumb": screenshots_data["bbcode_images_nothumb"],
+                    "bbcode_thumb_nothumb": screenshots_data["bbcode_thumb_nothumb"],
+                    "url_images": screenshots_data["url_images"],
+                    "data_images": screenshots_data["data_images"],
+                }
+                self.torrent_info["screenshots_data_types"] = screenshots_data_types
+
+                # TODO: check whether the below can be removed.
                 self.torrent_info["bbcode_images"] = screenshots_data["bbcode_images"]
                 self.torrent_info["bbcode_images_nothumb"] = screenshots_data[
                     "bbcode_images_nothumb"
@@ -2073,6 +2081,7 @@ class GGBotUploadAssistant:
                 ]
                 self.torrent_info["url_images"] = screenshots_data["url_images"]
                 self.torrent_info["data_images"] = screenshots_data["data_images"]
+
                 self.torrent_info["screenshots_data"] = (
                     SCREENSHOTS_RESULT_FILE_PATH.format(
                         base_path=self.working_folder,
@@ -2091,6 +2100,7 @@ class GGBotUploadAssistant:
                 upload_report[tracker]["post_message"] = ""
 
                 tracker_env_config = TrackerConfig(tracker)
+                tracker_name = str(self.acronym_to_tracker.get(str(tracker).lower()))
 
                 self.torrent_info["shameless_self_promotion"] = (
                     f'Uploaded with {"<3" if str(tracker).upper() in ("BHD", "BHDTV") or os.name == "nt" else "❤"} using GG-BOT Upload Assistant'
@@ -2106,9 +2116,7 @@ class GGBotUploadAssistant:
                 # Open the correct .json file since we now need things like announce URL, API Keys, and API info
                 config = json.load(
                     open(
-                        site_templates_path
-                        + str(self.acronym_to_tracker.get(str(tracker).lower()))
-                        + ".json",
+                        f"{site_templates_path}{tracker_name}.json",
                         encoding="utf-8",
                     )
                 )
@@ -2144,47 +2152,29 @@ class GGBotUploadAssistant:
                 # (Theory) BHD has a different bbcode parser then BLU/ACM so the line break is different for each site this
                 # is why we set it in each sites *.json file then retrieve it here in this 'for loop' since its different for
                 # each site
-                bbcode_line_break = config["bbcode_line_break"]
-
-                # -------- Add custom descriptions to description.txt --------
-                GenericUtils.write_custom_user_inputs_to_description(
-                    torrent_info=self.torrent_info,
-                    description_file_path=DESCRIPTION_FILE_PATH.format(
-                        base_path=self.working_folder,
-                        sub_folder=self.torrent_info["working_folder"],
-                    ),
-                    config=config,
-                    tracker=tracker,
-                    bbcode_line_break=bbcode_line_break,
+                description_manager = GGBotDescriptionManager(
+                    working_folder=self.working_folder,
+                    sub_folder=self.torrent_info["working_folder"],
+                    tracker=tracker_name,
+                    source_type=self.torrent_info["source_type"],
+                    bbcode_line_break=config["bbcode_line_break"],
                     debug=self.args.debug,
                 )
 
-                # -------- Add bbcode images to description.txt --------
-                GenericUtils.add_bbcode_images_to_description(
+                description_manager.prepare_description_file(
+                    custom_user_inputs=self.torrent_info.get("custom_user_inputs"),
+                    tracker_description_components=config.get("description_components"),
+                    screenshots_data_types=self.torrent_info.get(
+                        "screenshots_data_types"
+                    ),
+                    screenshot_type=config.get("screenshot_type"),
                     torrent_info=self.torrent_info,
-                    config=config,
-                    description_file_path=DESCRIPTION_FILE_PATH.format(
-                        base_path=self.working_folder,
-                        sub_folder=self.torrent_info["working_folder"],
-                    ),
-                    bbcode_line_break=bbcode_line_break,
                 )
 
-                # -------- Add custom uploader signature to description.txt --------
-                GenericUtils.write_uploader_signature_to_description(
-                    description_file_path=DESCRIPTION_FILE_PATH.format(
-                        base_path=self.working_folder,
-                        sub_folder=self.torrent_info["working_folder"],
-                    ),
-                    tracker=tracker,
-                    bbcode_line_break=bbcode_line_break,
-                    release_group=self.torrent_info["release_group"],
-                )
-
+                description_manager.render()
                 # Add the finished file to the 'torrent_info' dict
-                self.torrent_info["description"] = DESCRIPTION_FILE_PATH.format(
-                    base_path=self.working_folder,
-                    sub_folder=self.torrent_info["working_folder"],
+                self.torrent_info["description"] = (
+                    description_manager.get_description_file_path()
                 )
 
                 # -------- Check for Dupes Multiple Trackers --------

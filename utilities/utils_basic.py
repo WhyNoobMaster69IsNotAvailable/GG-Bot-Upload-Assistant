@@ -29,7 +29,7 @@ from pymediainfo import MediaInfo
 from rich.console import Console
 from rich.prompt import Prompt
 
-import utilities.utils_bdinfo as bdinfo_utilities
+from modules.bdinfo.bdinfo_parser import BDInfoParser
 from modules.config import UploadAssistantConfig
 from modules.exceptions.exception import GGBotSentryCapturedException
 
@@ -136,9 +136,7 @@ class BasicUtils:
             f"[BasicUtils] Dumping torrent_info before video_codec identification. {pformat(torrent_info)}"
         )
         if is_disc and torrent_info["bdinfo"] is not None:
-            return bdinfo_utilities.bdinfo_get_video_codec_from_bdinfo(
-                torrent_info["bdinfo"]
-            )
+            return BDInfoParser.get_video_codec_from_bdinfo(torrent_info["bdinfo"])
 
         dv, hdr = self._get_dv_hdr(media_info_video_track)
 
@@ -282,7 +280,7 @@ class BasicUtils:
             (
                 atmos,
                 audio_codec,
-            ) = bdinfo_utilities.bdinfo_get_audio_codec_from_bdinfo(
+            ) = BDInfoParser.get_audio_codec_from_bdinfo(
                 torrent_info["bdinfo"], audio_codec_dict
             )
             return audio_codec, atmos
@@ -473,9 +471,7 @@ class BasicUtils:
         missing_value,
     ):
         if is_disc and torrent_info["bdinfo"] is not None:
-            return bdinfo_utilities.bdinfo_get_audio_channels_from_bdinfo(
-                torrent_info["bdinfo"]
-            )
+            return BDInfoParser.get_audio_channels_from_bdinfo(torrent_info["bdinfo"])
 
         # suppressing regex based audio channel identification
         # First try detecting the 'audio_channels' using regex
@@ -734,7 +730,7 @@ class BasicUtils:
             )
             logging.debug(f"\n{media_info_output}")
 
-            with open(mediainfo_file, "w+") as f:
+            with open(mediainfo_file, "w+", encoding="utf-8") as f:
                 f.write(media_info_output)
             # now save the mediainfo txt file location to the dict
             # torrent_info["mediainfo"] = save_location
@@ -1014,10 +1010,11 @@ class BasicUtils:
 
         return (
             summary,
-            general["tmdb"],
-            general["imdb"],
-            general["tvdb"],
+            mediainfo_summary["General"]["tmdb"],
+            mediainfo_summary["General"]["imdb"],
+            mediainfo_summary["General"]["tvdb"],
             mediainfo_summary["Text"],
+            mediainfo_summary,
         )
 
     def basic_get_mediainfo_summary(self, media_info_result):
@@ -1028,6 +1025,7 @@ class BasicUtils:
             imdb,
             tvdb,
             subtitle_language_codes,
+            mediainfo_summary_data,
         ) = self.prepare_mediainfo_summary(media_info_result)
         meddiainfo_end_time = time.perf_counter()
         logging.debug(
@@ -1040,4 +1038,11 @@ class BasicUtils:
         logging.info(f"[BasicUtils] IMDb Identified from mediainfo: {imdb}")
         logging.info(f"[BasicUtils] TVDb Identified from mediainfo: {tvdb}")
         logging.info(f"[BasicUtils] Subtitle language codes: {subtitle_language_codes}")
-        return mediainfo_summary, tmdb, imdb, tvdb, subtitle_language_codes
+        return (
+            mediainfo_summary,
+            tmdb,
+            imdb,
+            tvdb,
+            subtitle_language_codes,
+            mediainfo_summary_data,
+        )

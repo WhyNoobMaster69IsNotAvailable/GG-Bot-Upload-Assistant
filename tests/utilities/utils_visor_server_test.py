@@ -2,7 +2,6 @@ from unittest import mock
 
 import mongomock as mongomock
 import pytest
-from bson import json_util
 
 from modules.cache import CacheVendor, CacheFactory
 from modules.config import CacheConfig
@@ -165,9 +164,7 @@ class TestVisorServerManager:
         self, visor_server_manager, torrents_collection
     ):
         expected = [
-            torrents_collection.find_one(
-                {"id": "5374c84f-631c-4faa-8241-da1e6980062b"}
-            )
+            torrents_collection.find_one({"id": "5374c84f-631c-4faa-8241-da1e6980062b"})
         ]
         assert (
             visor_server_manager.get_torrent_details_object(
@@ -176,16 +173,12 @@ class TestVisorServerManager:
             == expected
         )
 
-    def test_update_torrent_object(
-        self, visor_server_manager, torrents_collection
-    ):
+    def test_update_torrent_object(self, visor_server_manager, torrents_collection):
         existing_item = torrents_collection.find_one(
             {"id": "5374c84f-631c-4faa-8241-da1e6980062b"}
         )
         visor_server_manager.update_torrent_object(
             {"_id": existing_item["_id"], "key": "value"}
         )
-        updated_item = torrents_collection.find_one(
-            {"_id": existing_item["_id"]}
-        )
+        updated_item = torrents_collection.find_one({"_id": existing_item["_id"]})
         assert updated_item == {"_id": existing_item["_id"], "key": "value"}

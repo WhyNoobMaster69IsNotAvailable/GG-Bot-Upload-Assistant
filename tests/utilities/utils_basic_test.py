@@ -1,20 +1,20 @@
 # GG Bot Upload Assistant
 # Copyright (C) 2022  Noob Master669
-import shutil
-
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
+import json
+import shutil
 import pytest
 import datetime
 
@@ -323,6 +323,11 @@ def test_basic_get_missing_screen_size(
                         "Format": "UTF-8",
                     }
                 ],
+                json.loads(
+                    _get_file_contents(
+                        f"{working_folder}{mediainfo_summary}Dragon.Booster.S01E01.The.Choosing.Part.1.AMZN.WEB-DL.DDP2.0.H.264-DRAGONE.json"
+                    )
+                ),
             ),
             id="summary_without_id",
         ),
@@ -514,6 +519,11 @@ def test_basic_get_missing_screen_size(
                         "Format": "PGS",
                     },
                 ],
+                json.loads(
+                    _get_file_contents(
+                        f"{working_folder}{mediainfo_summary}Venom.Let.There.Be.Carnage.2021.2160p.UHD.BluRay.REMUX.DV.HDR.HEVC.Atmos-TRiToN.json"
+                    )
+                ),
             ),
             id="summary_with_imdb_tmdb_movie",
         ),
@@ -544,6 +554,11 @@ def test_basic_get_missing_screen_size(
                         "Format": "UTF-8",
                     },
                 ],
+                json.loads(
+                    _get_file_contents(
+                        f"{working_folder}{mediainfo_summary}Peaky.Blinders.S06E01.Black.Day.2160p.iP.WEB-DL.DDP5.1.HLG.H.265-FLUX.json"
+                    )
+                ),
             ),
             id="summary_with_imdb_tmdb_tv",
         ),
@@ -581,6 +596,11 @@ def test_basic_get_missing_screen_size(
                         "Format": "UTF-8",
                     },
                 ],
+                json.loads(
+                    _get_file_contents(
+                        f"{working_folder}{mediainfo_summary}The.Great.S02E10.Wedding.2160p.HULU.WEB-DL.DDP5.1.DV.HEVC-NOSiViD.json"
+                    )
+                ),
             ),
             id="summary_with_imdb_tmdb__tvdb",
         ),

@@ -62,7 +62,6 @@ def start_server():
     app = Flask("gg-bot-upload-assistant-dummy")
 
     # api_key based search endpoint
-
     @app.route("/api/torrents/filter", methods=["GET"])
     def filter_torrents_dummy():
         sample_data = json.load(
@@ -78,7 +77,6 @@ def start_server():
             abort(403)
 
     # Bearer Token based search endpoint
-
     @app.route("/api/torrents/filter/bearer", methods=["GET"])
     def filter_torrents_dummy_bearer():
         sample_data = json.load(
@@ -95,7 +93,6 @@ def start_server():
             abort(403)
 
     # Header based search endpoint
-
     @app.route("/api/torrents/filter/header", methods=["GET"])
     def filter_torrents_dummy_header():
         sample_data = json.load(

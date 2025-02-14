@@ -1,7 +1,21 @@
+# GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 from modules.config import TrackerConfig
 import logging
-
-from utilities.utils import write_custom_user_inputs_to_description
 
 
 def add_announce_pid_to_payload(torrent_info, tracker_settings, tracker_config):
@@ -18,48 +32,3 @@ def check_successful_upload(response):
     else:
         logging.info("[CustomActions][TL] Upload to tracker 'FAILED'")
         return False, response_text
-
-
-def rewrite_description(torrent_info, tracker_settings, tracker_config):
-    logging.info(
-        "[CustomActions][TL] Preparing description in template needed for TL"
-    )
-    tl_description_file = torrent_info["description"].replace(
-        "description.txt", "tl_description.txt"
-    )
-
-    # writing custom_descriptions
-    if (
-        "custom_user_inputs" in torrent_info
-        and torrent_info["custom_user_inputs"] is not None
-    ):
-        write_custom_user_inputs_to_description(
-            torrent_info=torrent_info,
-            description_file_path=tl_description_file,
-            config=tracker_config,
-            tracker="TL",
-            bbcode_line_break=tracker_config["bbcode_line_break"],
-            debug=True,
-        )
-
-    with open(tl_description_file, "a", encoding="utf-8") as tl_description:
-        # writing mediainfo to description
-        mediainfo = open(torrent_info["mediainfo"]).read()
-        tl_description.write(f"..:: MediaInfo ::..\n{mediainfo}\n")
-        # writing screenshots to description
-        tl_description.write("..:: Screenshots ::..\n")
-        for screenshot in torrent_info["url_images"].split("\n"):
-            if len(screenshot.strip()) == 0:
-                continue
-            tl_description.write(f"[img]{screenshot}[/img]\n")
-        if torrent_info["release_group"] == "DrDooFenShMiRtZ":
-            tl_description.write(
-                "\n\n..:: Uploaded with [color=#ff0000]❤[/color] using GG-BOT Upload Assistantinator ::.."
-            )
-        else:
-            tl_description.write(
-                "\n\n..:: Uploaded with [color=#ff0000]❤[/color] using GG-BOT Upload Assistant ::.."
-            )
-
-    tracker_settings["description"] = tl_description_file
-    logging.info("[CustomActions][TL] Finished creating description for TL")

@@ -59,9 +59,10 @@ class MiscellaneousUtils:
                 f"the final torrent name "
             )
             return str(torrent_editions.group()).replace(".", " ")
-        except AttributeError:
-            logging.error(
-                "[MiscellaneousUtils] No custom 'edition' found for this torrent"
+        except AttributeError as e:
+            logging.exception(
+                "[MiscellaneousUtils] No custom 'edition' found for this torrent",
+                exc_info=e,
             )
         return None
 

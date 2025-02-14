@@ -30,14 +30,14 @@ RUN \
 
 
 # add local files
-COPY requirements/requirements_reuploader.txt .
+COPY requirements requirements
 RUN \
   echo "**** install pip packages ****" && \
-  pip install -r requirements_reuploader.txt && \
-  pip freeze > requirements_reuploader.txt
+  pip install -r requirements/requirements_reuploader.txt && \
+  pip freeze > requirements/requirements_reuploader.txt
 
 COPY . .
-RUN rm -r requirements/ requirements_reuploader.txt
+RUN rm -rf requirements
 RUN rm auto_upload.py && chmod +x auto_reupload.py
 
 # ports and volumes

@@ -48,7 +48,10 @@ from modules.constants import (
     VALIDATED_SITE_TEMPLATES_DIR,
     WORKING_DIR,
 )
-from modules.exceptions.exception import GGBotSentryCapturedException
+from modules.exceptions.exception import (
+    GGBotSentryCapturedException,
+    GGBotFatalException,
+)
 from modules.torrent_client import Clients, TorrentClientFactory
 
 console = Console()
@@ -301,18 +304,20 @@ class GenericUtils:
 
         if UploaderConfig().READABLE_TEMP_DIR:
             files = (
-                f"{file}/".replace("//", "/")
+                f"{file}{os.path.sep}".replace(
+                    f"{os.path.sep}{os.path.sep}", os.path.sep
+                )
                 .strip()
                 .replace(" ", ".")
                 .replace(":", ".")
                 .replace("'", "")
-                .split("/")[:-1]
+                .split(os.path.sep)[:-1]
             )
             files.reverse()
             unique_hash = files[0]
         else:
             unique_hash = self.get_hash(file)
-        unique_hash = f"{unique_hash}/"
+        unique_hash = f"{unique_hash}{os.path.sep}"
 
         if not Path(f"{working_dir}{unique_hash}").is_dir():
             os.mkdir(f"{working_dir}{unique_hash}")
@@ -343,13 +348,18 @@ class GenericUtils:
     def perform_guessit_on_filename(file_name):
         guessit_start_time = time.perf_counter()
 
-        if file_name.endswith("/"):
-            file_name_split = file_name[0 : len(file_name) - 1].split("/")
+        if file_name.endswith(os.path.sep):
+            file_name_split = file_name[0 : len(file_name) - 1].split(os.path.sep)
         else:
-            file_name_split = file_name.split("/")
+            file_name_split = file_name.split(os.path.sep)
         file_name = file_name_split[len(file_name_split) - 1]
 
         guess_it_result = guessit(file_name)
+
+        if "title" not in guess_it_result or not guess_it_result["title"]:
+            raise GGBotFatalException(
+                "Guessit could not even extract the title, something is really wrong with this filename."
+            )
 
         # Handle movie files with AKA to indicate multiple titles
         if " AKA " in guess_it_result["title"]:
@@ -553,11 +563,13 @@ class GenericUtils:
             )
 
             # Just in case the user didn't end the path with a forward slash...
-            uploader_accessible_path = f"{uploader_config.UPLOADER_PATH}/".replace(
-                "//", "/"
+            uploader_accessible_path = (
+                f"{uploader_config.UPLOADER_PATH}{os.path.sep}".replace(
+                    f"{os.path.sep}{os.path.sep}", os.path.sep
+                )
             )
             client_accessible_path = f"{uploader_config.TORRENT_CLIENT_PATH}/".replace(
-                "//", "/"
+                f"{os.path.sep}{os.path.sep}", os.path.sep
             )
 
             if "__MISCONFIGURED_PATH__/" in [
@@ -579,7 +591,9 @@ class GenericUtils:
             torrent_info["upload_media"] = torrent_info["upload_media"].replace(
                 uploader_accessible_path, client_accessible_path
             )
-        return f'{torrent_info["upload_media"]}/'.replace("//", "/")
+        return f'{torrent_info["upload_media"]}{os.path.sep}'.replace(
+            f"{os.path.sep}{os.path.sep}", os.path.sep
+        )
 
     @staticmethod
     def _post_mode_cross_seed(
@@ -614,16 +628,16 @@ class GenericUtils:
                 save_path = torrent_info["client_path"]
             else:
                 save_path = torrent_info["client_path"].replace(
-                    f'/{torrent_info["raw_file_name"]}', ""
+                    f'{os.path.sep}{torrent_info["raw_file_name"]}', ""
                 )
 
             # getting the proper .torrent file for the provided tracker
             torrent_file = None
             for file in glob.glob(
                 f"{WORKING_DIR.format(base_path=working_folder)}{torrent_info['working_folder']}"
-                + r"/*.torrent"
+                + rf"{os.path.sep}*.torrent"
             ):
-                if f"/{tracker}-" in file:
+                if f"{os.path.sep}{tracker}-" in file:
                     torrent_file = file
                     console.print(
                         f"Identified .torrent file \t'{file}' for tracker as '{tracker}'"
