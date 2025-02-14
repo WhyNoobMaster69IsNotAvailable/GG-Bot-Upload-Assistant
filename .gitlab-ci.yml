@@ -48,7 +48,7 @@ release-set:
 
 
 windows_tests:
-  image: mcr.microsoft.com/windows/python:3.9
+  image: winamd64/python:3.9
   stage: experiment
   before_script:
     - pip install -r requirements/requirements_test.txt
