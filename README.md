@@ -45,7 +45,7 @@ GG-BOT Upload Assistant is a torrent auto uploader to take the manual work out o
 # Main Features
 * Generate, parse and attach `Mediainfo` or `BDInfo` to torrent uploads
 * Support for Full Disk uploads
-* Support for per tracker custom description templates
+* Support for per tracker [Custom Description Templates](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Custom-Description-Templates)
 * Frame Accurate Screenshots
 * Generates, uploads and attach screenshots to torrent description
 * Ability to decide the thumbnail size for screenshots in bbcode
@@ -291,6 +291,8 @@ Starting from **v3.1.6** onwards, GG-Bot Upload Assistants have _**Sentry Error 
 ```
 docker run --rm -it \
     -v <PATH_TO_YOUR_MEDIA>:/data \
+    -v ./temp_upload:/app/temp_upload \
+    -v ./custom_description_templates:/app/description_templates/custom \
     --env-file config.env \
     noobmaster669/gg-bot-uploader -t ATH TSP -p "/data/<YOUR_FILE_FOLDER>"
 ```
@@ -755,6 +757,7 @@ See [CHANGELOG](CHANGELOG) for more info
 ### [Docker: Run Command Examples](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Docker-Run-Command-Examples)
 ### [Docker: Noob Friendly Setup Guide](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Noob-Friendly-Setup-Guide)
 ### [Support For New Trackers](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Support-For-New-Trackers)
+### [Custom Description Templates](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Custom-Description-Templates)
 <br>
 
 <sup>Free DNS provided by [Free DNS](https://freedns.afraid.org/)</sup>
