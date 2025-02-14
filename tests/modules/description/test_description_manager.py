@@ -417,5 +417,6 @@ line 3
         manager.set_custom_uploader_signature()
         assert (
             manager.description_file_data["internal"]["uploader_signature"]
-            == f"[center]{custom_signature}[/center]\n[center]Powered by GG-BOT Upload Assistant[/center]"
+            == f"[center]{custom_signature}[/center]\n[center]Powered by [url=https://gitlab.com/NoobMaster669/gg"
+            f"-bot-upload-assistant]GG-BOT Upload Assistant[/url][/center]"
         )
