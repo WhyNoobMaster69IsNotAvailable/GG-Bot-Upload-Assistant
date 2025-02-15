@@ -1866,6 +1866,18 @@ def reupload_job():
 # -------------- END of reupload_job --------------
 
 
+class GGBotReUploader:
+    def __init__(self):
+        pass
+
+    def start(self):
+        pass
+
+
+# if __name__ == "__main__":
+#     gg_bot_reuploader = GGBotReUploader()
+#     gg_bot_reuploader.start()
+
 # The scheduled job to fetch and parse torrents will be executed every minute
 # schedule.every(1).minutes.do(reupload_job)
 schedule.every(10).seconds.do(reupload_job)

@@ -151,3 +151,6 @@ devenv.local.nix
 
 # direnv
 .direnv
+dev_scripts/reuploader/apps/**
+dev_scripts/reuploader/data/**
+dev_scripts/reuploader/*.env
