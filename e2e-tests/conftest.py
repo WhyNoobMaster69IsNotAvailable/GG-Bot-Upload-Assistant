@@ -23,6 +23,7 @@ from typing import Dict
 
 import pytest
 import yaml
+from pymongo import MongoClient
 from testcontainers.core.container import DockerContainer
 from requests_mock import Mocker
 from testcontainers.core.network import Network
@@ -58,10 +59,32 @@ def docker_testing_network():
 
 
 @pytest.fixture(scope="module", autouse=True)
-def qbittorrent_container():
-    logging.info("Creating Qbittorrent docker container")
+def mongo_container(docker_testing_network):
+    logging.info("[TestContainers]Creating MongoDB docker container")
+    container = DockerContainer("mongo:latest")
+    container.with_bind_ports(27017, 27017)
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("mongo")
+
+    container.start()
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created a MongoDB container for e2e testing: {container_id}"
+    )
+    yield container
+    container.stop()
+    logging.info(
+        f"[TestContainers] Removed the MongoDB container used for e2e testing: {container_id}"
+    )
+
+
+@pytest.fixture(scope="module", autouse=True)
+def qbittorrent_container(docker_testing_network):
+    logging.info("[TestContainers]Creating Qbittorrent docker container")
     container = DockerContainer("linuxserver/qbittorrent:4.6.5")
     container.with_bind_ports(50001, 50001)
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("qbittorrent")
 
     container.with_env("WEBUI_PORT", "50001")
     container.with_env("PUID", "1000")
@@ -69,7 +92,6 @@ def qbittorrent_container():
     container.with_env("TZ", "UTC")
 
     container.start()
-    logging.info("Started Qbittorrent docker container")
     container_id = container._container.id
     logging.info(
         f"[TestContainers] Created a qbittorrent container for e2e testing: {container_id}"
@@ -78,6 +100,56 @@ def qbittorrent_container():
     container.stop()
     logging.info(
         f"[TestContainers] Removed the qbittorrent container used for e2e testing: {container_id}"
+    )
+
+
+@pytest.fixture(scope="module", autouse=True)
+def rutorrent_container(docker_testing_network):
+    logging.info("[TestContainers]Creating rutorrent docker container")
+    container = DockerContainer("crazymax/rtorrent-rutorrent:5.1.5-7.2")
+    container.with_bind_ports(8080, 50002)
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("rutorrent")
+
+    container.with_env("PUID", "1001")
+    container.with_env("PGID", "1001")
+    container.with_env("TZ", "UTC")
+
+    container.start()
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created a rutorrent container for e2e testing: {container_id}"
+    )
+    yield container
+    container.stop()
+    logging.info(
+        f"[TestContainers] Removed the rutorrent container used for e2e testing: {container_id}"
+    )
+
+
+@pytest.fixture(scope="module", autouse=True)
+def gg_bot_auto_reuploader_container(
+    mongo_container, rutorrent_credentials, working_folder, docker_testing_network
+):
+    logging.info("[TestContainers]Creating GGBot Auto-ReUploader docker container")
+    container = DockerContainer("noobmaster669/gg-bot-uploader:latest-reuploader")
+    container.with_bind_ports(30035, 30035)  # Visor server port
+    container.with_env_file(
+        f"{working_folder}/{e2e_resources_dir}/reupload-test.config.env"
+    )
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("reuploader")
+    container.with_command("-t TSP")
+
+    container.start()
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created a GGBot Auto-ReUploader container for e2e testing: {container_id}"
+    )
+    yield container
+    container.stop()
+    logging.info(
+        f"[TestContainers] Removed the GGBot Auto-ReUploader container used for e2e testing: {container_id}"
     )
 
 
@@ -141,29 +213,6 @@ def qbittorrent_credentials(qbittorrent_container):
     }
 
 
-@pytest.fixture(scope="module", autouse=True)
-def rutorrent_container():
-    logging.info("Creating rutorrent docker container")
-    container = DockerContainer("crazymax/rtorrent-rutorrent:5.1.5-7.2")
-    container.with_bind_ports(8080, 50002)
-
-    container.with_env("PUID", "1001")
-    container.with_env("PGID", "1001")
-    container.with_env("TZ", "UTC")
-    container.start()
-
-    logging.info("Started rutorrent docker container")
-    container_id = container._container.id
-    logging.info(
-        f"[TestContainers] Created a rutorrent container for e2e testing: {container_id}"
-    )
-    yield container
-    container.stop()
-    logging.info(
-        f"[TestContainers] Removed the rutorrent container used for e2e testing: {container_id}"
-    )
-
-
 @pytest.fixture(scope="module")
 def mock_server_config(working_folder):
     with open(
@@ -206,3 +255,9 @@ def mock_server(mock_server_config):
             server=mock, server_config=mock_server_config
         )
         yield mock
+
+
+@pytest.fixture(scope="module", autouse=True)
+def e2e_mongo_client(mongo_container):
+    MONGO_URL = f"mongodb://{mongo_container.get_container_host_ip()}:{mongo_container.get_exposed_port(27017)}/gg-bot-reuploader-e2e-tests"
+    yield MongoClient(MONGO_URL)
