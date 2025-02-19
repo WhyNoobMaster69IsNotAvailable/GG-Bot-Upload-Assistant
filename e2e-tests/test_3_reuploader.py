@@ -16,6 +16,7 @@
 import json
 import shutil
 import sys
+import time
 from pathlib import Path
 from unittest import mock
 
@@ -179,6 +180,8 @@ class TestAutoReuploader:
             category="GGBOT",
         )
 
+        time.sleep(10)
+
         reuploader._run()
         """
          A successful re-upload will have the following in Mongo Cache
@@ -189,7 +192,6 @@ class TestAutoReuploader:
         We also need to list all torrents from torrent client and ensure that the new torrent is seeding
             and the original torrent has been moved to a different category.
         """
-
         gg_bot_database = "gg-bot-auto-uploader"
         mongo_client: MongoClient = reuploader.cache.cache_client.mongo_client
         database = mongo_client.get_database(gg_bot_database)

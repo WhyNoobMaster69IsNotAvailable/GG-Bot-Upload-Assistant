@@ -39,3 +39,7 @@ class GGBotCacheClientException(GGBotUploaderException):
 class GGBotCacheNotInitializedException(GGBotCacheClientException):
     def __init__(self):
         super().__init__("Connection to cache not established")
+
+
+class GGBotRetryException(GGBotException):
+    pass

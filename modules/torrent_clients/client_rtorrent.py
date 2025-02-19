@@ -20,6 +20,8 @@ import logging
 import requests
 
 from modules.config import ClientConfig, ReUploaderConfig
+from modules.exceptions.exception import GGBotRetryException
+from modules.helpers import retry_on_failure
 
 rutorrent_keys = [
     "d.get_custom1",
@@ -211,13 +213,14 @@ class Rutorrent:
             logging.fatal(f"Failed to connect to rutorrent. Error:{response.text}")
             raise err
 
+    @retry_on_failure()
     def list_torrents(self):
         status_code, response = self.__call_server(
             f"{self.base_url}{self.__default_path}", data={"mode": "list"}
         )
         if status_code != 200:
             logging.error(f"[RuTorrent] Failed to list torrents. Error : {response}")
-            return []
+            raise GGBotRetryException(response)
 
         if isinstance(response["t"], list):
             return []
