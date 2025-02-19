@@ -51,7 +51,7 @@ class TestAutoReuploader:
 
         shutil.copy(
             f"{working_folder}/e2e-tests/resources/reupload-test.config.env",
-            f"{folder}/temp_config/reupload-test.config.env",
+            f"{folder}{temp_config_dir}/reupload-test.config.env",
         )
 
         yield
@@ -86,12 +86,12 @@ class TestAutoReuploader:
         ) as config_file:
             config_file.write(config_data)
 
-            yield
+        yield
 
     @mock.patch.object(
         sys,
         "argv",
-        ["test.py", "-t", "TSP", "PTP", "BLU"],
+        ["test.py", "-t", "TSP", "PTP", "BLU", "GPW", "--debug"],
     )
     def test_reuploader_setup(
         self, e2e_test_working_folder, setup_reuploader_env_with_dynamic_config
@@ -142,7 +142,7 @@ class TestAutoReuploader:
     @mock.patch.object(
         sys,
         "argv",
-        ["test.py", "-t", "TSP", "PTP", "BLU"],
+        ["test.py", "-t", "TSP", "PTP", "BLU", "GPW", "--debug"],
     )
     def test_reuploader_with_torrents(
         self, e2e_test_working_folder, setup_reuploader_env_with_dynamic_config

@@ -117,9 +117,16 @@ class GGBotReUploader:
 
         # Load the .env file that stores info like the tracker/image host API Keys & other info needed to upload
         if env_file_path is None:
-            load_dotenv(REUPLOADER_CONFIG.format(base_path=self.working_folder))
+            load_dotenv(
+                REUPLOADER_CONFIG.format(base_path=self.working_folder), override=True
+            )
         else:
-            load_dotenv(env_file_path)
+            logging.info(
+                "[GGBotReUploader] Loading environment variables from {}".format(
+                    env_file_path
+                )
+            )
+            load_dotenv(env_file_path, override=True)
 
         # Debug logs for the upload processing
         # Logger running in "w" : write mode
