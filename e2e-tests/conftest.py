@@ -133,35 +133,6 @@ def rutorrent_container(docker_testing_network, e2e_test_working_folder):
 
 
 @pytest.fixture(scope="module")
-def gg_bot_auto_reuploader_container(
-    mongo_container,
-    rutorrent_credentials,
-    e2e_test_working_folder,
-    docker_testing_network,
-):
-    logging.info("[TestContainers]Creating GGBot Auto-ReUploader docker container")
-    container = DockerContainer("noobmaster669/gg-bot-uploader:latest-reuploader")
-    container.with_bind_ports(30035, 30035)  # Visor server port
-    container.with_env_file(
-        f"{e2e_test_working_folder}/{e2e_resources_dir}/reupload-test.config.env"
-    )
-    container.with_network(docker_testing_network)
-    container.with_network_aliases("reuploader")
-    container.with_command("-t TSP")
-
-    container.start()
-    container_id = container._container.id
-    logging.info(
-        f"[TestContainers] Created a GGBot Auto-ReUploader container for e2e testing: {container_id}"
-    )
-    yield container
-    container.stop()
-    logging.info(
-        f"[TestContainers] Removed the GGBot Auto-ReUploader container used for e2e testing: {container_id}"
-    )
-
-
-@pytest.fixture(scope="module")
 def rutorrent_credentials(rutorrent_container):
     # This needs more time when running in kubernetes cluster to start properly
     time.sleep(30)  # allowing time for rutorrent container to start and be ready

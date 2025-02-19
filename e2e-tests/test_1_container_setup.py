@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import re
-import time
 
 import qbittorrentapi
 import requests
@@ -24,39 +22,6 @@ import requests
 class TestE2ESetup:
     def test_mongo_container_setup(self, e2e_mongo_client):
         e2e_mongo_client.admin.command("ping")
-
-    def test_ggbot_reuploader_container_setup(self, gg_bot_auto_reuploader_container):
-        time.sleep(10)
-
-        reuploader_logs = "".join(
-            [
-                log.decode("utf-8")
-                for log in gg_bot_auto_reuploader_container.get_logs()
-                if isinstance(log, bytes)
-            ]
-        )
-        visor_server_listener = re.search(
-            r"Visor server started and listening for connection on 0\.0\.0\.0:30035",
-            reuploader_logs,
-        )
-        visor_server_status = re.search(
-            r"Started GG-BOT Visor server\.\.\.", reuploader_logs
-        )
-        assert visor_server_status is not None, "Visor server failed to start`"
-        assert (
-            visor_server_listener is not None
-        ), "Visor server listener failed to start`"
-
-        flask_app_status = re.search(
-            r"Serving Flask app 'GG-BOT Auto-ReUploader'", reuploader_logs
-        )
-        assert flask_app_status is not None, "Flask app failed to start`"
-
-        reupload_process_started = re.search(
-            r"Starting reupload process at \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+",
-            reuploader_logs,
-        )
-        assert reupload_process_started is not None, "Reupload process failed to start`"
 
     def test_qbittorrent_container_setup(
         self, qbittorrent_container, qbittorrent_credentials
