@@ -427,7 +427,8 @@ class GGBotReUploader:
             config, self.torrent_info
         )
 
-        # Call the function that will search each site for dupes and return a similarity percentage, if it exceeds what the user sets in config.env we skip the upload
+        # Call the function that will search each site for dupes and return a similarity percentage, if it exceeds
+        # what the user sets in config.env we skip the upload
         try:
             return DupeUtils().search_for_dupes_api(
                 tracker=tracker,
@@ -743,7 +744,8 @@ class GGBotReUploader:
             console.print("Upload failed.", style="bold red")
             try:
                 logging.critical(
-                    f'[GGBotReUploader] 400 was returned on that upload, this is a problem with the site ({upload_to}). Error: Error {response.json()["error"] if "error" in response.json() else response.json()}'
+                    f'[GGBotReUploader] 400 was returned on that upload, this is a problem with the site ({upload_to}).'
+                    f' Error: Error {response.json()["error"] if "error" in response.json() else response.json()}'
                 )
             except Exception:
                 logging.critical(
@@ -785,7 +787,7 @@ class GGBotReUploader:
         console.rule("Analyzing & Identifying Video", style="red", align="center")
         console.line(count=1)
 
-        # ------------ Save obvious info we are almost guaranteed to get from guessit into torrent_info dict ------------ #
+        # -------- Save obvious info we are almost guaranteed to get from guessit into torrent_info dict -------- #
         # But we can immediately assign some values now like Title & Year
         if not guess_it_result["title"]:
             raise AssertionError(
@@ -934,7 +936,8 @@ class GGBotReUploader:
         keys_we_need_but_missing_torrent_info_list.append("mediainfo")
 
         # ------------ GuessIt doesn't return a video/audio codec that we should use ------------ #
-        # For 'x264', 'AVC', and 'H.264' GuessIt will return 'H.264' which might be a little misleading since things like 'x264' is used for encodes while AVC for Remuxs (usually) etc
+        # For 'x264', 'AVC', and 'H.264' GuessIt will return 'H.264' which might be a little misleading
+        # since things like 'x264' is used for encodes while AVC for Remuxs (usually) etc
         # For audio it will insert "Dolby Digital Plus" into the dict when what we want is "DD+"
         # ------------ If we are missing any other "basic info" we try to identify it here ------------ #
         if len(keys_we_need_but_missing_torrent_info) != 0:
@@ -946,11 +949,13 @@ class GGBotReUploader:
             )
             # Show the user what is missing & the next steps
             console.print(
-                f"[bold red underline]Unable to automatically detect the following info from the FILENAME:[/bold red underline] [green]{keys_we_need_but_missing_torrent_info}[/green]"
+                f"[bold red underline]Unable to automatically detect the following info from the FILENAME:[/bold red "
+                f"underline] [green]{keys_we_need_but_missing_torrent_info}[/green]"
             )
 
-        # We do some extra processing for the audio & video codecs since they are pretty important for the upload process & accuracy so they get appended each time
-        # ['mediainfo', 'video_codec', 'audio_codec'] or ['video_codec', 'audio_codec'] for disks
+        # We do some extra processing for the audio & video codecs since they are pretty important for the upload
+        # process & accuracy so they get appended each time ['mediainfo', 'video_codec', 'audio_codec'] or [
+        # 'video_codec', 'audio_codec'] for disks
         for identify_me in keys_we_need_but_missing_torrent_info_list:
             if identify_me not in keys_we_need_but_missing_torrent_info:
                 keys_we_need_but_missing_torrent_info.append(identify_me)
@@ -1049,7 +1054,8 @@ class GGBotReUploader:
                     else None
                 )
                 logging.debug(
-                    f"Getting value for {column_query_key} with display {column_display_value} as {torrent_info_key_failsafe} for the torrent details result table"
+                    f"Getting value for {column_query_key} with display {column_display_value} as "
+                    f"{torrent_info_key_failsafe} for the torrent details result table"
                 )
                 basic_info.append(torrent_info_key_failsafe)
 
@@ -1267,8 +1273,14 @@ class GGBotReUploader:
                 logging.info(
                     f"[Main] `raw_video_file` is missing in torrent_info. Hence updating client save path to {save_path}"
                 )
+
+        working_dir = WORKING_DIR.format(base_path=self.working_folder)
+        normalized_path = GenericUtils.normalize_for_system_path(
+            self.torrent_info["torrent_title"]
+        )
+
         self.torrent_client.upload_torrent(
-            torrent=f'{WORKING_DIR.format(base_path=self.working_folder)}{self.torrent_info["working_folder"]}{tracker}-{GenericUtils.normalize_for_system_path(self.torrent_info["torrent_title"])}.torrent',
+            torrent=f'{working_dir}{self.torrent_info["working_folder"]}{tracker}-{normalized_path}.torrent',
             save_path=save_path,
             use_auto_torrent_management=False,
             is_skip_checking=True,
@@ -1389,10 +1401,12 @@ class GGBotReUploader:
 
             if video_codec != pymediainfo_video_codec:
                 logging.error(
-                    f"[BasicUtils] Regex extracted video_codec [{video_codec}] and pymediainfo extracted video_codec [{pymediainfo_video_codec}] doesn't match!!"
+                    f"[BasicUtils] Regex extracted video_codec [{video_codec}] and pymediainfo "
+                    f"extracted video_codec [{pymediainfo_video_codec}] doesn't match!!"
                 )
                 logging.info(
-                    "[BasicUtils] If `--force_pymediainfo` or `-fpm` is provided as argument, PyMediaInfo video_codec will be used, else regex extracted video_codec will be used"
+                    "[BasicUtils] If `--force_pymediainfo` or `-fpm` is provided as argument, PyMediaInfo video_codec "
+                    "will be used, else regex extracted video_codec will be used"
                 )
             return (
                 pymediainfo_video_codec if self.args.force_pymediainfo else video_codec
@@ -1519,15 +1533,17 @@ class GGBotReUploader:
                     "Adding Do-Vi from file name. Marking existing of Dolby Vision"
                 )
 
-        # use regex (sourced and slightly modified from official radarr repo) to find torrent editions (Extended, Criterion, Theatrical, etc)
+        # use regex (sourced and slightly modified from official radarr repo) to find torrent editions
+        # (Extended, Criterion, Theatrical, etc)
         # https://github.com/Radarr/Radarr/blob/5799b3dc4724dcc6f5f016e8ce4f57cc1939682b/src/NzbDrone.Core/Parser/Parser.cs#L21
         self.torrent_info["edition"] = MiscellaneousUtils.identify_bluray_edition(
             self.torrent_info["upload_media"]
         )
 
-        # --------- Fix scene group tags --------- #
-        # Whilst most scene group names are just capitalized but occasionally as you can see ^^ some are not (e.g. KOGi)
-        # either way we don't want to be capitalizing everything (e.g. we want 'NTb' not 'NTB') so we still need a dict of scene groups and their proper capitalization
+        # --------- Fix scene group tags --------- # Whilst most scene group names are just capitalized but
+        # occasionally as you can see ^^ some are not (e.g. KOGi) either way we don't want to be capitalizing
+        # everything (e.g. we want 'NTb' not 'NTB') so we still need a dict of scene groups and their proper
+        # capitalization
         if "release_group" in self.torrent_info:
             (
                 scene,

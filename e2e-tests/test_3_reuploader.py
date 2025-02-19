@@ -244,4 +244,15 @@ class TestAutoReuploader:
             '"Successfully uploaded torrent"}'
         )
 
-        # TODO: list torrents from rutorrent and verify the cross seeds
+        all_torrents = reuploader.torrent_client.list_all_torrents()
+        assert len(all_torrents) == 2
+        for torrent in all_torrents:
+            if torrent["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80":
+                assert torrent["category"] == "GGBotCrossSeed_Source"
+            if torrent["hash"] == "607AFF625031CD1F68A8B9C62B044112945F6C9A":
+                assert torrent["category"] == "GGBotCrossSeed"
+
+        assert all_torrents[0]["size"] == all_torrents[0]["size"]
+        assert all_torrents[0]["completed"] == all_torrents[0]["completed"]
+        assert all_torrents[0]["content_path"] == all_torrents[0]["content_path"]
+        assert all_torrents[0]["save_path"] == all_torrents[0]["save_path"]

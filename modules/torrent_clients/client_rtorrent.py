@@ -220,6 +220,27 @@ class Rutorrent:
             logging.fatal(f"Failed to connect to rutorrent. Error:{response.text}")
             raise err
 
+    def _list_all_torrents(self):
+        status_code, response = self.__call_server(
+            f"{self.base_url}{self.__default_path}", data={"mode": "list"}
+        )
+        if status_code != 200:
+            logging.error(f"[RuTorrent] Failed to list torrents. Error : {response}")
+            raise GGBotRetryException(response)
+
+        if isinstance(response["t"], list):
+            return {}
+
+        return response["t"].items()
+
+    @retry_on_failure()
+    def list_all_torrents(self):
+        response = self._list_all_torrents()
+
+        return list(
+            map(self.__extract_necessary_keys, map(self.__get_torrent_info, response))
+        )
+
     @retry_on_failure()
     def list_torrents(self):
         status_code, response = self.__call_server(

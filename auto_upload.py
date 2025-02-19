@@ -407,16 +407,17 @@ class GGBotUploadAssistant:
             )
             return False
 
-        # If the user provides this arg with the title right after in double quotes then we automatically use that
-        # If the user does not manually provide the title (Most common) then we pull the renaming template from *.json & use all the info we gathered earlier to generate a title
-        # -------- format the torrent title --------
+        # If the user provides this arg with the title right after in double quotes then we automatically use that If
+        # the user does not manually provide the title (Most common) then we pull the renaming template from *.json &
+        # use all the info we gathered earlier to generate a title -------- format the torrent title --------
         self.torrent_info["torrent_title"] = (
             str(self.args.title[0])
             if self.args.title
             else translation_utilities.format_title(config, self.torrent_info)
         )
 
-        # Call the function that will search each site for dupes and return a similarity percentage, if it exceeds what the user sets in config.env we skip the upload
+        # Call the function that will search each site for dupes and return a similarity percentage, if it exceeds
+        # what the user sets in config.env we skip the upload
         try:
             return DupeUtils().search_for_dupes_api(
                 tracker=tracker,
@@ -640,7 +641,8 @@ class GGBotUploadAssistant:
             keys_we_need_but_missing_torrent_info_list.append("mediainfo")
 
         # ------------ GuessIt doesn't return a video/audio codec that we should use ------------ #
-        # For 'x264', 'AVC', and 'H.264' GuessIt will return 'H.264' which might be a little misleading since things like 'x264' is used for encodes while AVC for Remuxs (usually) etc
+        # For 'x264', 'AVC', and 'H.264' GuessIt will return 'H.264' which might be a little misleading
+        # since things like 'x264' is used for encodes while AVC for Remuxs (usually) etc
         # For audio it will insert "Dolby Digital Plus" into the dict when what we want is "DD+"
         # ------------ If we are missing any other "basic info" we try to identify it here ------------ #
         if len(keys_we_need_but_missing_torrent_info) != 0:
@@ -652,11 +654,13 @@ class GGBotUploadAssistant:
             )
             # Show the user what is missing & the next steps
             console.print(
-                f"[bold red underline]Unable to automatically detect the following info from the FILENAME:[/bold red underline] [green]{keys_we_need_but_missing_torrent_info}[/green]"
+                f"[bold red underline]Unable to automatically detect the following info from the FILENAME:[/bold red "
+                f"underline] [green]{keys_we_need_but_missing_torrent_info}[/green]"
             )
 
-        # We do some extra processing for the audio & video codecs since they are pretty important for the upload process & accuracy so they get appended each time
-        # ['mediainfo', 'video_codec', 'audio_codec'] or ['video_codec', 'audio_codec'] for disks
+        # We do some extra processing for the audio & video codecs since they are pretty important for the upload
+        # process & accuracy so they get appended each time ['mediainfo', 'video_codec', 'audio_codec'] or [
+        # 'video_codec', 'audio_codec'] for disks
         for identify_me in keys_we_need_but_missing_torrent_info_list:
             if identify_me not in keys_we_need_but_missing_torrent_info:
                 keys_we_need_but_missing_torrent_info.append(identify_me)
@@ -772,7 +776,8 @@ class GGBotUploadAssistant:
                     else None
                 )
                 logging.debug(
-                    f"Getting value for {column_query_key} with display {column_display_value} as {torrent_info_key_failsafe} for the torrent details result table"
+                    f"Getting value for {column_query_key} with display {column_display_value} as "
+                    f"{torrent_info_key_failsafe} for the torrent details result table"
                 )
                 basic_info.append(torrent_info_key_failsafe)
 
@@ -894,10 +899,12 @@ class GGBotUploadAssistant:
 
             if video_codec != pymediainfo_video_codec:
                 logging.error(
-                    f"[BasicUtils] Regex extracted video_codec [{video_codec}] and pymediainfo extracted video_codec [{pymediainfo_video_codec}] doesn't match!!"
+                    f"[BasicUtils] Regex extracted video_codec [{video_codec}] and pymediainfo extracted "
+                    f"video_codec [{pymediainfo_video_codec}] doesn't match!!"
                 )
                 logging.info(
-                    "[BasicUtils] If `--force_pymediainfo` or `-fpm` is provided as argument, PyMediaInfo video_codec will be used, else regex extracted video_codec will be used"
+                    "[BasicUtils] If `--force_pymediainfo` or `-fpm` is provided as argument, PyMediaInfo video_codec "
+                    "will be used, else regex extracted video_codec will be used"
                 )
             return (
                 pymediainfo_video_codec if self.args.force_pymediainfo else video_codec
@@ -1021,15 +1028,17 @@ class GGBotUploadAssistant:
                     "Adding Do-Vi from file name. Marking existing of Dolby Vision"
                 )
 
-        # use regex (sourced and slightly modified from official radarr repo) to find torrent editions (Extended, Criterion, Theatrical, etc)
+        # use regex (sourced and slightly modified from official radarr repo) to find torrent editions
+        # (Extended, Criterion, Theatrical, etc)
         # https://github.com/Radarr/Radarr/blob/5799b3dc4724dcc6f5f016e8ce4f57cc1939682b/src/NzbDrone.Core/Parser/Parser.cs#L21
         self.torrent_info["edition"] = MiscellaneousUtils.identify_bluray_edition(
             self.torrent_info["upload_media"]
         )
 
-        # --------- Fix scene group tags --------- #
-        # Whilst most scene group names are just capitalized but occasionally as you can see ^^ some are not (e.g. KOGi)
-        # either way we don't want to be capitalizing everything (e.g. we want 'NTb' not 'NTB') so we still need a dict of scene groups and their proper capitalization
+        # --------- Fix scene group tags --------- # Whilst most scene group names are just capitalized but
+        # occasionally as you can see ^^ some are not (e.g. KOGi) either way we don't want to be capitalizing
+        # everything (e.g. we want 'NTb' not 'NTB') so we still need a dict of scene groups and their proper
+        # capitalization
         if "release_group" in self.torrent_info:
             # this is one place where we can identify scene groups
             (
@@ -1538,10 +1547,12 @@ class GGBotUploadAssistant:
                 )
                 # This is to deal with the 500 internal server error responses BLU has been recently returning
                 logging.error(
-                    f"[TrackerUpload] HTTP response status code '{response.status_code}' was returned (500=Internal Server Error)"
+                    f"[TrackerUpload] HTTP response status code '{response.status_code}' was returned (500=Internal "
+                    f"Server Error)"
                 )
                 logging.info(
-                    "[TrackerUpload] This doesn't mean the upload failed, instead the site simply isn't returning the upload status"
+                    "[TrackerUpload] This doesn't mean the upload failed, instead the site simply isn't returning the "
+                    "upload status"
                 )
 
             elif response.status_code == 400:
@@ -1551,11 +1562,13 @@ class GGBotUploadAssistant:
                 console.print("Upload failed.", style="bold red")
                 try:
                     logging.critical(
-                        f'[TrackerUpload] 400 was returned on that upload, this is a problem with the site ({self.tracker}). Error: Error {response.json()["error"] if "error" in response.json() else response.json()}'
+                        f'[TrackerUpload] 400 was returned on that upload, this is a problem with the '
+                        f'site ({self.tracker}). Error: Error '
+                        f'{response.json()["error"] if "error" in response.json() else response.json()}'
                     )
                 except Exception:
                     logging.critical(
-                        f"[TrackerUpload] 400 was returned on that upload, this is a problem with the site ({self.tracker})."
+                        f"[TrackerUpload] 400 was returned for upload, this is a problem with site ({self.tracker})."
                     )
                 logging.error("[TrackerUpload] Upload failed")
 
@@ -2200,7 +2213,8 @@ class GGBotUploadAssistant:
                     logging.debug(
                         f"[Main] Dumping torrent_info contents to log before dupe check: \n{pformat(self.torrent_info)}"
                     )
-                    # Call the function that will search each site for dupes and return a similarity percentage, if it exceeds what the user sets in config.env we skip the upload
+                    # Call the function that will search each site for dupes and return a similarity percentage,
+                    # if it exceeds what the user sets in config.env we skip the upload
                     dupe_check_response = self.check_for_dupes_in_tracker(
                         tracker, temp_tracker_api_key
                     )
@@ -2214,8 +2228,9 @@ class GGBotUploadAssistant:
                         upload_report[tracker]["message"] = "Duplicate Upload"
                         upload_report[tracker]["post_process"] = "Skipped"
                         upload_report[tracker]["post_message"] = "Upload Was Skipped"
-                        # If dupe was found & the script is auto_mode OR if the user responds with 'n' for the 'dupe found, continue?' prompt
-                        #  we will essentially stop the current 'for loops' iteration & jump back to the beginning to start next cycle (if exists else quits)
+                        # If dupe was found & the script is auto_mode OR if the user responds with 'n' for the 'dupe
+                        # found, continue?' prompt we will essentially stop the current 'for loops' iteration & jump
+                        # back to the beginning to start next cycle (if exists else quits)
                         continue
 
                 # -------- Generate .torrent file --------
