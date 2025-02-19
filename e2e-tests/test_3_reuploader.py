@@ -168,7 +168,7 @@ class TestAutoReuploader:
         mongo_client: MongoClient = reuploader.cache.cache_client.mongo_client
         assert mongo_client is not None
 
-        gg_bot_database = "gg-bot-auto-uploader"
+        gg_bot_database = "gg-bot-reuploader"
         expected_collections = [
             "MetaData_TMDB",
             "ReUpload_Torrent",
