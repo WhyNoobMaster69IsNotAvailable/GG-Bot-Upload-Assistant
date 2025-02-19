@@ -16,6 +16,7 @@
 import json
 import shutil
 import sys
+import time
 from pathlib import Path
 from unittest import mock
 
@@ -40,7 +41,7 @@ def clean_up(pth):
 
 
 class TestAutoReuploader:
-    @pytest.fixture(scope="class", autouse=True)
+    @pytest.fixture(autouse=True)
     def run_around_tests(self):
         folder = f"{working_folder}{temp_working_dir}"
 
@@ -109,7 +110,7 @@ class TestAutoReuploader:
 
             config_data = config_data.replace(
                 "<<CLIENT_HOST_PLACEHOLDER>>",
-                f"http://{qbittorrent_credentials['host']}",
+                f"{qbittorrent_credentials['host']}",
             )
             config_data = config_data.replace(
                 "<<CLIENT_PORT_PLACEHOLDER>>", qbittorrent_credentials["port"]
@@ -122,6 +123,11 @@ class TestAutoReuploader:
             config_data = config_data.replace(
                 "client_password=",
                 f'client_password={qbittorrent_credentials["password"]}',
+            )
+
+            config_data = config_data.replace(
+                "VISOR_SERVER_PORT=30035",
+                "VISOR_SERVER_PORT=30036",
             )
 
         with open(
@@ -342,7 +348,7 @@ class TestAutoReuploader:
             is_skip_checking=False,
             category="GGBOT",
         )
-
+        time.sleep(5)
         reuploader._run()
         """
          A successful re-upload will have the following in Mongo Cache
@@ -382,7 +388,7 @@ class TestAutoReuploader:
         torrent_collection = database.get_collection("ReUpload_Torrent")
         torrents = list(torrent_collection.find({}))
         assert len(torrents) == 1
-        assert torrents[0]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80"
+        assert torrents[0]["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80"
         assert (
             torrents[0]["name"]
             == "Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv"
@@ -391,7 +397,7 @@ class TestAutoReuploader:
         assert torrents[0]["upload_attempt"] == 1
         assert torrents[0]["possible_matches"] == "None"
         assert torrents[0]["torrent"] is not None
-        assert "F97062F80387BBBD8C1D2F04DBD3830D0706FF80" in torrents[0]["torrent"]
+        assert "f97062f80387bbbd8c1d2f04dbd3830d0706ff80" in torrents[0]["torrent"]
         assert torrents[0]["movie_db"] is not None
         assert torrents[0]["movie_db"] == json.dumps(expected_movie_db_data)
         assert torrents[0]["id"] is not None
@@ -399,7 +405,7 @@ class TestAutoReuploader:
         job_collection = database.get_collection("ReUpload_JobRepository")
         jobs = list(job_collection.find({}))
         assert len(jobs) == 1
-        assert jobs[0]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80"
+        assert jobs[0]["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80"
         assert jobs[0]["tracker"] == "TSP"
         assert jobs[0]["status"] == "SUCCESS"
         assert jobs[0]["job_id"] is not None
@@ -411,10 +417,7 @@ class TestAutoReuploader:
         all_torrents = reuploader.torrent_client.list_all_torrents()
         assert len(all_torrents) == 2
         for torrent in all_torrents:
-            if (
-                torrent["hash"].lower()
-                == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
-            ):
+            if torrent["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80":
                 assert torrent["category"] == "GGBotCrossSeed_Source"
             if (
                 torrent["hash"].lower()

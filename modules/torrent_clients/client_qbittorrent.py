@@ -119,9 +119,10 @@ class Qbittorrent:
         return self.qbt_client.torrent_categories
 
     def __create_category(self, name, save_path):
-        self.__get_torrent_categories().create_category(
-            name=name, save_path=save_path
-        )
+        self.__get_torrent_categories().create_category(name=name, save_path=save_path)
+
+    def list_all_torrents(self):
+        return list(map(self.__extract_necessary_keys, self.qbt_client.torrents_info()))
 
     def list_torrents(self):
         logging.debug(f"[Qbittorrent] Listing torrents at {datetime.now()}")
