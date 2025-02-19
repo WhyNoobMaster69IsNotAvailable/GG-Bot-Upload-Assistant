@@ -15,7 +15,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import enum
+import logging
 from typing import Union
+from modules.torrent_clients.client_rtorrent import Rutorrent
+from modules.torrent_clients.client_qbittorrent import Qbittorrent
 
 
 # Using enum class create enumerations
@@ -41,6 +44,9 @@ class TorrentClient:
         TorrentClients are created via the TorrentClientFactory.
         """
         self.client = client
+        logging.info(
+            "[TorrentClient] Available Torrent clients: %s", [Rutorrent, Qbittorrent]
+        )
 
     def hello(self):
         self.client.hello()

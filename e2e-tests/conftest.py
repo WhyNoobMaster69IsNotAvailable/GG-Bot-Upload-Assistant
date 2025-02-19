@@ -79,7 +79,7 @@ def mongo_container(docker_testing_network):
 
 
 @pytest.fixture(scope="module", autouse=True)
-def qbittorrent_container(docker_testing_network):
+def qbittorrent_container(docker_testing_network, e2e_test_working_folder):
     logging.info("[TestContainers]Creating Qbittorrent docker container")
     container = DockerContainer("linuxserver/qbittorrent:4.6.5")
     container.with_bind_ports(50001, 50001)
@@ -90,6 +90,11 @@ def qbittorrent_container(docker_testing_network):
     container.with_env("PUID", "1000")
     container.with_env("PGID", "1000")
     container.with_env("TZ", "UTC")
+    # the paths needs to be same to allow reuploader to access the media files
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+    )
 
     container.start()
     container_id = container._container.id

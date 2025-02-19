@@ -47,10 +47,7 @@ class Mongo:
             try:
                 self.mongo_client = self._get_mongo_client()
                 self.mongo_client.admin.command("ping")
-                # self.database = self.mongo_client[
-                #     self.config.CACHE_DATABASE
-                # ] list(self.mongo_client.list_databases())
-                self.database = self.mongo_client["gg-bot-auto-uploader"]
+                self.database = self.mongo_client[self.config.CACHE_DATABASE]
                 self._create_collections()
                 self.is_mongo_initialized = True
             except Exception as ex:
