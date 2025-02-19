@@ -435,8 +435,8 @@ class AutoReUploaderManager:
         tracker_status_map: Dict[str, Tuple[TrackerUploadStatus, Union[Dict, Any]]],
     ) -> None:
         # saving tracker status to job repo
-        for trkr, response in tracker_status_map.items():
-            self._save_job_repo_entry(info_hash, trkr, JobStatus.FAILED, response[1])
+        # for trkr, response in tracker_status_map.items():
+        #     self._save_job_repo_entry(info_hash, trkr, JobStatus.FAILED, response[1])
 
         torrent_status = self.get_client_label_for_torrent(tracker_status_map)
         if torrent_status is None:
@@ -454,7 +454,7 @@ class AutoReUploaderManager:
             # upload successful to all trackers
             return None  # None tells client to set source label as category
 
-        if any(
+        if all(
             status[0] != TrackerUploadStatus.SUCCESS
             for trkr, status in tracker_status_map.items()
         ):

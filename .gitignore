@@ -143,6 +143,7 @@ tvmaze_search.py
 
 !e2e-tests/resources/*.mkv
 !e2e-tests/resources/How.I.Met.Your.Mother.S09.1080p.DSNP.WEB-DL.DDP7.1.H.264-ReleaseGroup/*.mkv
+!e2e-tests/resources/Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv.torrent
 dev_scripts/gibberish/*
 description_templates/custom/**
 # Devenv

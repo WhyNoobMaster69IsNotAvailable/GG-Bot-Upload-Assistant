@@ -14,12 +14,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import base64
 import logging
 import re
 import time
 from pathlib import Path
 from typing import Dict
+from unittest import mock
 
 import pytest
 import yaml
@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope="module", autouse=True)
-def working_folder():
+def e2e_test_working_folder():
     yield Path(__file__).resolve().parent.parent
 
 
@@ -104,12 +104,17 @@ def qbittorrent_container(docker_testing_network):
 
 
 @pytest.fixture(scope="module", autouse=True)
-def rutorrent_container(docker_testing_network):
+def rutorrent_container(docker_testing_network, e2e_test_working_folder):
     logging.info("[TestContainers]Creating rutorrent docker container")
     container = DockerContainer("crazymax/rtorrent-rutorrent:5.1.5-7.2")
     container.with_bind_ports(8080, 50002)
     container.with_network(docker_testing_network)
     container.with_network_aliases("rutorrent")
+    # the paths needs to be same to allow reuploader to access the media files
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+    )
 
     container.with_env("PUID", "1001")
     container.with_env("PGID", "1001")
@@ -127,15 +132,18 @@ def rutorrent_container(docker_testing_network):
     )
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(scope="module")
 def gg_bot_auto_reuploader_container(
-    mongo_container, rutorrent_credentials, working_folder, docker_testing_network
+    mongo_container,
+    rutorrent_credentials,
+    e2e_test_working_folder,
+    docker_testing_network,
 ):
     logging.info("[TestContainers]Creating GGBot Auto-ReUploader docker container")
     container = DockerContainer("noobmaster669/gg-bot-uploader:latest-reuploader")
     container.with_bind_ports(30035, 30035)  # Visor server port
     container.with_env_file(
-        f"{working_folder}/{e2e_resources_dir}/reupload-test.config.env"
+        f"{e2e_test_working_folder}/{e2e_resources_dir}/reupload-test.config.env"
     )
     container.with_network(docker_testing_network)
     container.with_network_aliases("reuploader")
@@ -174,9 +182,10 @@ def rutorrent_credentials(rutorrent_container):
     yield {
         "host": rutorrent_container.get_container_host_ip(),
         "port": rutorrent_container.get_exposed_port(8080),
-        "hashed": base64.b64encode("admin:admin".encode("ascii")).decode("ascii"),
-        "username": "admin",
-        "password": "admin",
+        "hashed": "",
+        # "hashed": base64.b64encode("admin:admin".encode("ascii")).decode("ascii"),
+        "username": "",
+        "password": "",
     }
 
 
@@ -214,9 +223,9 @@ def qbittorrent_credentials(qbittorrent_container):
 
 
 @pytest.fixture(scope="module")
-def mock_server_config(working_folder):
+def mock_server_config(e2e_test_working_folder):
     with open(
-        f"{working_folder}{e2e_resources_dir}/mock_server_config.yml", "r"
+        f"{e2e_test_working_folder}{e2e_resources_dir}/mock_server_config.yml", "r"
     ) as file:
         config = yaml.safe_load(file)
     return config
@@ -261,3 +270,18 @@ def mock_server(mock_server_config):
 def e2e_mongo_client(mongo_container):
     MONGO_URL = f"mongodb://{mongo_container.get_container_host_ip()}:{mongo_container.get_exposed_port(27017)}/gg-bot-reuploader-e2e-tests"
     yield MongoClient(MONGO_URL)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def patched_mediainfo_libraries():
+    lib_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "libs"))
+
+    with mock.patch("pymediainfo.MediaInfo._get_library_paths") as mock_get_paths:
+        if sys.platform == "darwin":
+            mock_get_paths.return_value = (
+                os.path.join(lib_dir, "libmediainfo.0.dylib"),
+                os.path.join(lib_dir, "libmediainfo.dylib"),
+            )
+        else:
+            mock_get_paths.return_value = ("libmediainfo.so.0",)
+        yield

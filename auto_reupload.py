@@ -59,6 +59,7 @@ from modules.constants import (
     WORKING_DIR,
     SCREENSHOTS_RESULT_FILE_PATH,
     BLURAY_REGIONS_MAP,
+    TRACKER_API_KEYS,
 )
 from modules.description.description_manager import GGBotDescriptionManager
 from modules.exceptions.exception import GGBotUploaderException, GGBotFatalException
@@ -104,7 +105,7 @@ class GGBotReUploader:
     # TODO: move this to a parameter and possibly with these message as reason and show them to user???
     blacklist_trackers = ["PTP", "GPW"]
 
-    def __init__(self):
+    def __init__(self, env_file_path=None):
         # Import & set some global variables that we reuse later
         # This shows the full path to this files location
         self.working_folder = os.path.dirname(os.path.realpath(__file__))
@@ -115,7 +116,10 @@ class GGBotReUploader:
         self.torrent_info = {}
 
         # Load the .env file that stores info like the tracker/image host API Keys & other info needed to upload
-        load_dotenv(REUPLOADER_CONFIG.format(base_path=self.working_folder))
+        if env_file_path is None:
+            load_dotenv(REUPLOADER_CONFIG.format(base_path=self.working_folder))
+        else:
+            load_dotenv(env_file_path)
 
         # Debug logs for the upload processing
         # Logger running in "w" : write mode
@@ -238,7 +242,7 @@ class GGBotReUploader:
 
         # the `prepare_tracker_api_keys_dict` prepares the api_keys_dict and also does mandatory property validations
         self.api_keys_dict = GenericUtils.prepare_and_validate_tracker_api_keys_dict(
-            "./parameters/tracker/api_keys.json"
+            TRACKER_API_KEYS.format(base_path=self.working_folder)
         )
 
         self._display_banner()
@@ -345,7 +349,7 @@ class GGBotReUploader:
         return server
 
     def run(self):
-        schedule.every(10).seconds.do(self.__run)
+        schedule.every(10).seconds.do(self._run)
 
         print(f"Starting reupload process at {datetime.now()}")
         logging.info("Started GG-BOT Auto-Reuploader")
@@ -353,7 +357,7 @@ class GGBotReUploader:
         while True:
             schedule.run_pending()
 
-    def __run(self):
+    def _run(self):
         logging.info("---------------------------------------------------------------")
         logging.info("------------------ Starting new reupload job ------------------")
         logging.info("---------------------------------------------------------------")
