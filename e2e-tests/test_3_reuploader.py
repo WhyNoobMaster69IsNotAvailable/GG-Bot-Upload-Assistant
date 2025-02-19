@@ -243,3 +243,5 @@ class TestAutoReuploader:
             '{"success": true, "status_code": 0, "data": [], "status_message": '
             '"Successfully uploaded torrent"}'
         )
+
+        # TODO: list torrents from rutorrent and verify the cross seeds
