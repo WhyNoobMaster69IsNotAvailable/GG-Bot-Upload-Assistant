@@ -16,7 +16,6 @@
 import json
 import shutil
 import sys
-import time
 from pathlib import Path
 from unittest import mock
 
@@ -179,8 +178,6 @@ class TestAutoReuploader:
             is_skip_checking=False,
             category="GGBOT",
         )
-
-        time.sleep(10)
 
         reuploader._run()
         """

@@ -46,9 +46,11 @@ class Rutorrent:
     __disk_size_path = "/plugins/diskspace/action.php"
     __default_path = "/plugins/httprpc/action.php"
     __upload_torrent_path = "/php/addtorrent.php"
+    __get_plugins_path = "/php/getplugins.php"
 
-    def __call_server(self, url, data=None, files=None, header=None):
-        response = requests.post(
+    def __call_server(self, url, method="POST", data=None, files=None, header=None):
+        response = requests.request(
+            method,
             url,
             data=data if data is not None else {},
             files=files,
@@ -208,6 +210,11 @@ class Rutorrent:
             _, response = self.__call_server(f"{self.base_url}{self.__disk_size_path}")
             print(
                 f"Rutorrent Storage: {self.__format_bytes(response['free'])} free out of {self.__format_bytes(response['total'])}"
+            )
+            # Loading the plugins. This call us needed to ensure that all the plugins are loaded.
+            # Open issue in crazymax docker images: https://github.com/crazy-max/docker-rtorrent-rutorrent/issues/247
+            self.__call_server(
+                f"{self.base_url}{self.__get_plugins_path}", method="GET"
             )
         except Exception as err:
             logging.fatal(f"Failed to connect to rutorrent. Error:{response.text}")
