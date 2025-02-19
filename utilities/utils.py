@@ -454,8 +454,13 @@ class GenericUtils:
         api_keys = json.load(open(api_keys_file_path))
         api_keys_dict = dict()
         for value in api_keys:
-            api_key = GGBotConfig().get_config(value.upper(), "")
-            if len(api_key.strip()) == 0 or api_key.startswith("#"):
+            api_key = GGBotConfig().get_config(value.upper())
+            if (
+                api_key is None
+                or len(api_key.strip()) == 0
+                or api_key.startswith("#")
+                or api_key == ""
+            ):
                 continue
             api_keys_dict[value] = api_key
 

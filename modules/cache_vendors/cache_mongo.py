@@ -18,6 +18,7 @@ import functools
 import logging
 
 from pymongo import MongoClient
+from pymongo.errors import CollectionInvalid
 
 from modules.config import CacheConfig
 from modules.exceptions.exception import (
@@ -46,15 +47,11 @@ class Mongo:
             try:
                 self.mongo_client = self._get_mongo_client()
                 self.mongo_client.admin.command("ping")
-                # self.database = self.mongo_client[
-                #     self.config.CACHE_DATABASE
-                # ]
-                self.database = self.mongo_client["gg-bot-auto-uploader"]
+                self.database = self.mongo_client[self.config.CACHE_DATABASE]
+                self._create_collections()
                 self.is_mongo_initialized = True
             except Exception as ex:
-                logging.fatal(
-                    f"[Cache] Failed to connect to Mongo DB. Error: {ex}"
-                )
+                logging.fatal(f"[Cache] Failed to connect to Mongo DB. Error: {ex}")
                 raise GGBotCacheClientException(
                     f"Failed to connect to Mongo DB. Error: {ex}"
                 )
@@ -84,6 +81,19 @@ class Mongo:
             print("Failed to initialize connection to Mongo server")
             return False
 
+    def _create_collection_if_not_exist(self, collection_name):
+        try:
+            self.database.create_collection(collection_name)
+        except CollectionInvalid:
+            # collection already exists. Let's suppress this
+            pass
+
+    def _create_collections(self):
+        # This manual creation is needed because the collections created are not visible in external tools.
+        collections = ["ReUpload_Torrent", "ReUpload_JobRepository", "MetaData_TMDB"]
+        for collection in collections:
+            self._create_collection_if_not_exist(collection)
+
     def __get_collection(self, key):
         if not self.is_mongo_initialized:
             raise GGBotCacheNotInitializedException()
@@ -104,9 +114,7 @@ class Mongo:
             # no hash provided in key. hence we need to use the user provided query
             # if user has not provided any query then we'll raise an exception
             if query is None:
-                raise Exception(
-                    "No hash or query provided. Cannot delete document"
-                )
+                raise Exception("No hash or query provided. Cannot delete document")
             # returns the number of documents deleted
             return collection.delete_many(query)
         else:

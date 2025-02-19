@@ -1,16 +1,19 @@
 # GG Bot Upload Assistant
-# Copyright (C) 2022  Noob Master669
+# Copyright (C) 2025  Noob Master669
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 
 import json
 import os
@@ -18,10 +21,11 @@ from pathlib import Path
 
 import pytest
 
+from modules.reuploader.enums import TorrentStatus
+from modules.reuploader.reupload_manager import AutoReUploaderManager
 from modules.torrent_clients.client_qbittorrent import Qbittorrent
-from utilities.utils_reupload import TorrentStatus, AutoReUploaderManager
 
-working_folder = Path(__file__).resolve().parent.parent.parent
+working_folder = Path(__file__).resolve().parent.parent.parent.parent
 
 
 class TestAutoReUploaderManager:
@@ -35,12 +39,8 @@ class TestAutoReUploaderManager:
 
     @pytest.fixture()
     def mock_qbit_client(self, mocker):
-        mocker.patch(
-            "qbittorrentapi.auth.AuthAPIMixIn.auth_log_in", return_value=None
-        )
-        mocker.patch(
-            "os.getenv", side_effect=self.__dynamic_trackers_side_effect
-        )
+        mocker.patch("qbittorrentapi.auth.AuthAPIMixIn.auth_log_in", return_value=None)
+        mocker.patch("os.getenv", side_effect=self.__dynamic_trackers_side_effect)
         yield Qbittorrent()
 
     @pytest.fixture()
@@ -84,9 +84,7 @@ class TestAutoReUploaderManager:
             pytest.param([], None, id="status_empty_in_cache"),
         ],
     )
-    def test_get_torrent_status(
-        self, return_data, expected, reupload_manager, mocker
-    ):
+    def test_get_torrent_status(self, return_data, expected, reupload_manager, mocker):
         mocker.patch("modules.cache.Cache.get", return_value=return_data)
         assert reupload_manager.get_torrent_status("INFO_HASH") == expected
 
@@ -105,9 +103,7 @@ class TestAutoReUploaderManager:
             pytest.param(
                 [{"status": "SUCCESS"}], True, id="status_is_ready_for_success"
             ),
-            pytest.param(
-                [{"status": "FAILED"}], True, id="status_is_ready_for_failed"
-            ),
+            pytest.param([{"status": "FAILED"}], True, id="status_is_ready_for_failed"),
             pytest.param(
                 [{"status": "PARTIALLY_SUCCESSFUL"}],
                 True,
@@ -136,9 +132,7 @@ class TestAutoReUploaderManager:
     ):
         mocker.patch("modules.cache.Cache.get", return_value=return_data)
         assert (
-            reupload_manager.is_un_processable_data_present_in_cache(
-                "INFO_HASH"
-            )
+            reupload_manager.is_un_processable_data_present_in_cache("INFO_HASH")
             == expected
         )
         # TODO: renamed method to start with _
@@ -199,9 +193,7 @@ class TestAutoReUploaderManager:
             ),
         ],
     )
-    def test_get_cached_data(
-        self, return_data, expected, reupload_manager, mocker
-    ):
+    def test_get_cached_data(self, return_data, expected, reupload_manager, mocker):
         mocker.patch("modules.cache.Cache.get", return_value=return_data)
         assert reupload_manager.get_cached_data("info_hash") == expected
 
@@ -222,9 +214,7 @@ class TestAutoReUploaderManager:
         mocker.patch("modules.cache.Cache.get", return_value=return_data)
         mocker.patch("modules.cache.Cache.save", return_value=None)
         assert (
-            reupload_manager.update_torrent_status("info_hash", new_status)[
-                "status"
-            ]
+            reupload_manager.update_torrent_status("info_hash", new_status)["status"]
             == expected
         )
 
@@ -297,8 +287,7 @@ class TestAutoReUploaderManager:
     ):
         mocker.patch("modules.cache.Cache.get", return_value=movie_db)
         assert (
-            reupload_manager.cached_moviedb_details(cached_data, "", "", "")
-            == expected
+            reupload_manager.cached_moviedb_details(cached_data, "", "", "") == expected
         )
 
     @pytest.mark.parametrize(
@@ -442,9 +431,7 @@ class TestAutoReUploaderManager:
                 "tmdb_movie_db",
                 id="data_from_movie_db",
             ),
-            pytest.param(
-                {"tmdb": None}, None, None, "tmdb", "", id="none_in_movie_db"
-            ),
+            pytest.param({"tmdb": None}, None, None, "tmdb", "", id="none_in_movie_db"),
             pytest.param(
                 {"imdb": "imdb_movie_db"},
                 None,
@@ -561,16 +548,11 @@ class TestAutoReUploaderManager:
         mocker.patch(
             "os.getenv", side_effect=self.__torrent_path_translation_side_effect
         )
-        reupload_manager = AutoReUploaderManager(
-            cache=mock_cache, client=mock_client
-        )
+        reupload_manager = AutoReUploaderManager(cache=mock_cache, client=mock_client)
         reupload_manager.perform_path_translation = os.getenv(
             "translation_needed", False
         )
-        assert (
-            reupload_manager.translate_torrent_path(torrent_path)
-            == expected_path
-        )
+        assert reupload_manager.translate_torrent_path(torrent_path) == expected_path
 
     @pytest.mark.parametrize(
         ("torrent_path", "expected_path"),
@@ -589,10 +571,7 @@ class TestAutoReUploaderManager:
             "os.getenv",
             side_effect=self.__torrent_path_not_translation_side_effect,
         )
-        assert (
-            reupload_manager.translate_torrent_path(torrent_path)
-            == expected_path
-        )
+        assert reupload_manager.translate_torrent_path(torrent_path) == expected_path
 
     @staticmethod
     def __dynamic_trackers_side_effect(param, default=None):
@@ -717,8 +696,7 @@ class TestAutoReUploaderManager:
         mocker.patch("modules.cache.Cache.get", return_value=current_status)
 
         assert (
-            reupload_manager.mark_successful_upload(torrent, "TRACKER", {})
-            == expected
+            reupload_manager.mark_successful_upload(torrent, "TRACKER", {}) == expected
         )
 
     @pytest.mark.parametrize(
@@ -755,7 +733,4 @@ class TestAutoReUploaderManager:
     ):
         mocker.patch("modules.cache.Cache.get", return_value=current_status)
 
-        assert (
-            reupload_manager.mark_failed_upload(torrent, "TRACKER", {})
-            == expected
-        )
+        assert reupload_manager.mark_failed_upload(torrent, "TRACKER", {}) == expected

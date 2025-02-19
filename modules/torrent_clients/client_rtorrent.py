@@ -18,10 +18,10 @@ import base64
 import logging
 
 import requests
-import sentry_sdk
 
 from modules.config import ClientConfig, ReUploaderConfig
-from modules.exceptions.exception import GGBotSentryCapturedException
+from modules.exceptions.exception import GGBotRetryException
+from modules.helpers import retry_on_failure
 
 rutorrent_keys = [
     "d.get_custom1",
@@ -46,18 +46,20 @@ class Rutorrent:
     __disk_size_path = "/plugins/diskspace/action.php"
     __default_path = "/plugins/httprpc/action.php"
     __upload_torrent_path = "/php/addtorrent.php"
+    __get_plugins_path = "/php/getplugins.php"
 
-    def __call_server(self, url, data=None, files=None, header=None):
-        response = requests.post(
+    def __call_server(self, url, method="POST", data=None, files=None, header=None):
+        response = requests.request(
+            method,
             url,
             data=data if data is not None else {},
             files=files,
             headers=header or self.header,
         )
         return (
-            response.json()
+            (response.status_code, response.json())
             if "application/json" in response.headers.get("Content-Type")
-            else response
+            else (response.status_code, response.text)
         )
 
     @staticmethod
@@ -200,32 +202,57 @@ class Rutorrent:
             raise err
 
     def hello(self):
-        response = self.__call_server(f"{self.base_url}{self.__cpu_load_path}")
+        _, response = self.__call_server(f"{self.base_url}{self.__cpu_load_path}")
         try:
             if not isinstance(response, dict):
                 raise Exception("Failed to connect to rutorrent instance.")
             print(f"Rutorrent CPU Load: {response['load']}%")
-            response = self.__call_server(f"{self.base_url}{self.__disk_size_path}")
+            _, response = self.__call_server(f"{self.base_url}{self.__disk_size_path}")
             print(
                 f"Rutorrent Storage: {self.__format_bytes(response['free'])} free out of {self.__format_bytes(response['total'])}"
+            )
+            # Loading the plugins. This call us needed to ensure that all the plugins are loaded.
+            # Open issue in crazymax docker images: https://github.com/crazy-max/docker-rtorrent-rutorrent/issues/247
+            self.__call_server(
+                f"{self.base_url}{self.__get_plugins_path}", method="GET"
             )
         except Exception as err:
             logging.fatal(f"Failed to connect to rutorrent. Error:{response.text}")
             raise err
 
-    def list_torrents(self):
-        response = self.__call_server(
+    def _list_all_torrents(self):
+        status_code, response = self.__call_server(
             f"{self.base_url}{self.__default_path}", data={"mode": "list"}
         )
-        try:
-            if isinstance(response["t"], list):
-                return []
-        except TypeError as e:
-            # SentryDebug: sending more details to Sentry for debugging.
-            with sentry_sdk.new_scope() as scope:
-                scope.set_extra("response_from_server", response)
-                sentry_sdk.capture_exception(e)
-            raise GGBotSentryCapturedException(e)
+        if status_code != 200:
+            logging.error(f"[RuTorrent] Failed to list torrents. Error : {response}")
+            raise GGBotRetryException(response)
+
+        if isinstance(response["t"], list):
+            return {}
+
+        return response["t"].items()
+
+    @retry_on_failure()
+    def list_all_torrents(self):
+        response = self._list_all_torrents()
+
+        return list(
+            map(self.__extract_necessary_keys, map(self.__get_torrent_info, response))
+        )
+
+    @retry_on_failure()
+    def list_torrents(self):
+        status_code, response = self.__call_server(
+            f"{self.base_url}{self.__default_path}", data={"mode": "list"}
+        )
+        if status_code != 200:
+            logging.error(f"[RuTorrent] Failed to list torrents. Error : {response}")
+            raise GGBotRetryException(response)
+
+        if isinstance(response["t"], list):
+            return []
+
         return list(
             map(
                 self.__extract_necessary_keys,
@@ -246,7 +273,7 @@ class Rutorrent:
     ):
         category = category if category is not None else self.seed_label
         logging.info(f"[Rutorrent] Uploading torrent with category {category}")
-        self.__call_server(
+        status_code, response = self.__call_server(
             f"{self.base_url}{self.__upload_torrent_path}",
             data={
                 "fast_resume": "1" if is_skip_checking else "0",
@@ -254,6 +281,9 @@ class Rutorrent:
                 "dir_edit": save_path,
             },
             files={"torrent_file": open(torrent, "rb")},
+        )
+        logging.info(
+            f"[Rutorrent] Torrent upload response. Status Code: {status_code} <=> Response: {response}"
         )
 
     def update_torrent_category(self, info_hash, category_name=None):
@@ -263,7 +293,7 @@ class Rutorrent:
         logging.info(
             f"[Rutorrent] Updating category of torrent with hash {info_hash} to {category_name}"
         )
-        response = self.__call_server(
+        _, response = self.__call_server(
             f"{self.base_url}{self.__default_path}",
             data={
                 "mode": "setlabel",

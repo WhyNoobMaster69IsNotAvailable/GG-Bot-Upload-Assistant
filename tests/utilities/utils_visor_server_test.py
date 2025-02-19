@@ -30,7 +30,7 @@ class TestVisorServerManager:
 
     @pytest.fixture(scope="class")
     def mongo_database(self, mock_mongo_client):
-        yield mock_mongo_client.get_database("gg-bot-auto-uploader")
+        yield mock_mongo_client.get_database("Mongo")
 
     @pytest.fixture(scope="class")
     def torrents_collection(self, mongo_database):

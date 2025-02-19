@@ -130,24 +130,25 @@ def __cross_seed_with_translation_side_effect(param, default):
 def __mock_upload_torrent(
     torrent, save_path, use_auto_torrent_management, is_skip_checking
 ):
-    return (torrent, save_path, use_auto_torrent_management, is_skip_checking)
+    return torrent, save_path, use_auto_torrent_management, is_skip_checking
 
 
 def test_client_upload_tv_season_with_translation(mocker):
-    torrent_info = {}
-    torrent_info["raw_file_name"] = "Arcane.S01.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES"
-    torrent_info["raw_video_file"] = (
-        "/gg-bot-upload-assistant/files/Arcane.S01.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES/Arcane.S01E01.Welcome.to.the.Playground.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES.mkv"
-    )
-    torrent_info["upload_media"] = (
-        "/gg-bot-upload-assistant/files/Arcane.S01.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES/"
-    )
-    torrent_info["TRACKER_upload_status"] = True
-    torrent_info["type"] = "tv"
-    torrent_info["working_folder"] = "test_working_folder/"
-    torrent_info["complete_season"] = "1"
-    torrent_info["daily_episodes"] = "0"
-    torrent_info["individual_episodes"] = "0"
+    torrent_info = {
+        "raw_file_name": "Arcane.S01.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES",
+        "raw_video_file": (
+            "/gg-bot-upload-assistant/files/Arcane.S01.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES/Arcane.S01E01.Welcome.to.the.Playground.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES.mkv"
+        ),
+        "upload_media": (
+            "/gg-bot-upload-assistant/files/Arcane.S01.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES/"
+        ),
+        "TRACKER_upload_status": True,
+        "type": "tv",
+        "working_folder": "test_working_folder/",
+        "complete_season": "1",
+        "daily_episodes": "0",
+        "individual_episodes": "0",
+    }
     tracker = "TRACKER"
 
     mocker.patch("os.getenv", side_effect=__cross_seed_with_translation_side_effect)
@@ -172,19 +173,20 @@ def test_client_upload_tv_season_with_translation(mocker):
 
 
 def test_client_upload_tv_episode_with_translation(mocker):
-    torrent_info = {}
-    torrent_info["raw_file_name"] = (
-        "Arcane.S01E01.Welcome.to.the.Playground.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES.mkv"
-    )
-    torrent_info["upload_media"] = (
-        "/gg-bot-upload-assistant/files/Arcane.S01.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES/Arcane.S01E01.Welcome.to.the.Playground.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES.mkv"
-    )
-    torrent_info["TRACKER_upload_status"] = True
-    torrent_info["type"] = "tv"
-    torrent_info["working_folder"] = "test_working_folder/"
-    torrent_info["complete_season"] = "0"
-    torrent_info["daily_episodes"] = "0"
-    torrent_info["individual_episodes"] = "1"
+    torrent_info = {
+        "raw_file_name": (
+            "Arcane.S01E01.Welcome.to.the.Playground.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES.mkv"
+        ),
+        "upload_media": (
+            "/gg-bot-upload-assistant/files/Arcane.S01.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES/Arcane.S01E01.Welcome.to.the.Playground.1080p.NF.WEB-DL.DDP5.1.HDR.HEVC-TEPES.mkv"
+        ),
+        "TRACKER_upload_status": True,
+        "type": "tv",
+        "working_folder": "test_working_folder/",
+        "complete_season": "0",
+        "daily_episodes": "0",
+        "individual_episodes": "1",
+    }
     tracker = "TRACKER"
 
     mocker.patch("os.getenv", side_effect=__cross_seed_with_translation_side_effect)

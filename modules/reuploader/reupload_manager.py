@@ -1,5 +1,5 @@
 # GG Bot Upload Assistant
-# Copyright (C) 2022  Noob Master669
+# Copyright (C) 2025  Noob Master669
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
 import datetime
 import json
 import logging
@@ -23,65 +24,22 @@ from typing import Dict, Tuple, Union, Any
 
 from modules.cache import Cache
 from modules.config import ReUploaderConfig
+from modules.reuploader.constants import (
+    TORRENT_DB_KEY_PREFIX,
+    UPLOAD_RETRY_LIMIT,
+    JOB_REPO_DB_KEY_PREFIX,
+    TMDB_DB_KEY_PREFIX,
+    torrent_failure_messages,
+    client_labels_for_failure,
+)
+from modules.reuploader.enums import (
+    TorrentStatus,
+    JobStatus,
+    TorrentFailureStatus,
+    TrackerUploadStatus,
+)
 from modules.torrent_client import TorrentClient
 from utilities.utils import GenericUtils
-
-TORRENT_DB_KEY_PREFIX = "ReUpload::Torrent"
-JOB_REPO_DB_KEY_PREFIX = "ReUpload::JobRepository"
-TMDB_DB_KEY_PREFIX = "MetaData::TMDB"
-UPLOAD_RETRY_LIMIT = 3
-
-
-class TrackerUploadStatus:
-    PENDING = "PENDING"
-    SUCCESS = "SUCCESS"
-    FAILED = "FAILED"
-    DUPE = "DUPE"
-    BANNED_GROUP = "BANNED_GROUP"
-    PAYLOAD_ERROR = "PAYLOAD_ERROR"
-
-
-class TorrentStatus:
-    SUCCESS = "SUCCESS"
-    FAILED = "FAILED"
-    PARTIALLY_SUCCESSFUL = "PARTIALLY_SUCCESSFUL"
-    TMDB_IDENTIFICATION_FAILED = "TMDB_IDENTIFICATION_FAILED"
-    PENDING = "PENDING"
-    DUPE_CHECK_FAILED = "DUPE_CHECK_FAILED"
-    READY_FOR_PROCESSING = "READY_FOR_PROCESSING"
-    KNOWN_FAILURE = "KNOWN_FAILURE"
-    # unrecoverable error. Needs to check the log or console to resolve them. Not automatic fix available
-    UNKNOWN_FAILURE = "UNKNOWN_FAILURE"
-
-
-class TorrentFailureStatus:
-    RAR_EXTRACTION_FAILED = "RAR_EXTRACTION_FAILED"
-    TMDB_IDENTIFICATION_FAILED = "TMDB_IDENTIFICATION_FAILED"
-    DUPE_CHECK_FAILED = "DUPE_CHECK_FAILED"
-    TYPE_AND_BASIC_INFO_ERROR = "TYPE_AND_BASIC_INFO_ERROR"
-    UNKNOWN_FAILURE = "UNKNOWN_FAILURE"
-
-
-torrent_failure_messages = {
-    TorrentFailureStatus.RAR_EXTRACTION_FAILED: "Failed to extract rared contents",
-    TorrentFailureStatus.TMDB_IDENTIFICATION_FAILED: "Failed to identify proper TMDb ID",
-    TorrentFailureStatus.TYPE_AND_BASIC_INFO_ERROR: "Type and basic info of the torrent could not be identified.",
-    TorrentFailureStatus.DUPE_CHECK_FAILED: "A dupe of this torrent already exists in tracker",
-    TorrentFailureStatus.UNKNOWN_FAILURE: "Unknown Failure. Please get in touch with dev :(",
-}
-
-client_labels_for_failure = {
-    TorrentFailureStatus.RAR_EXTRACTION_FAILED: "GGBOT_ERROR_RAR_EXTRACTION",
-    TorrentFailureStatus.TMDB_IDENTIFICATION_FAILED: "TMDB_IDENTIFICATION_FAILED",
-    TorrentFailureStatus.TYPE_AND_BASIC_INFO_ERROR: "GGBOT_ERROR_TYPE_AND_BASIC",
-    TorrentFailureStatus.DUPE_CHECK_FAILED: "DUPE_CHECK_FAILED",
-    TorrentFailureStatus.UNKNOWN_FAILURE: "GGBOT_ERROR_UNKNOWN_FAILURE",
-}
-
-
-class JobStatus:
-    SUCCESS = "SUCCESS"
-    FAILED = "FAILED"
 
 
 class AutoReUploaderManager:
@@ -477,8 +435,8 @@ class AutoReUploaderManager:
         tracker_status_map: Dict[str, Tuple[TrackerUploadStatus, Union[Dict, Any]]],
     ) -> None:
         # saving tracker status to job repo
-        for trkr, response in tracker_status_map.items():
-            self._save_job_repo_entry(info_hash, trkr, JobStatus.FAILED, response[1])
+        # for trkr, response in tracker_status_map.items():
+        #     self._save_job_repo_entry(info_hash, trkr, JobStatus.FAILED, response[1])
 
         torrent_status = self.get_client_label_for_torrent(tracker_status_map)
         if torrent_status is None:
@@ -496,7 +454,7 @@ class AutoReUploaderManager:
             # upload successful to all trackers
             return None  # None tells client to set source label as category
 
-        if any(
+        if all(
             status[0] != TrackerUploadStatus.SUCCESS
             for trkr, status in tracker_status_map.items()
         ):
