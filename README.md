@@ -371,6 +371,7 @@ pip install -r requirements/requirements.txt
 # Roadmap
 ### v3.1.9
 - [ ] New Tracker: UHDBits
+- [X] E2E Tests for reuploader
 - [ ] Support for encrypted values from config
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
