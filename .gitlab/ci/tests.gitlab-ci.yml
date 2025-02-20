@@ -82,9 +82,10 @@ unit-test:
   variables:
     SOURCE_DIRECTORY: gg-bot-upload-assistant
   script:
+    - pip install codecov-cli
     - pip install -r requirements/requirements_test.txt
     - pip freeze > requirements/requirements_test.txt
-    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml --cov=./ tests/
+    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml -o junit_family=legacy --cov=./ tests/
     # generating xml coverage report for various platforms
     - coverage report
     - coverage xml -o coverage.xml
@@ -94,6 +95,7 @@ unit-test:
     - curl -Os https://uploader.codecov.io/latest/alpine/codecov
     - chmod +x codecov
     - ./codecov -R .
+    - codecovcli do-upload --report-type test_results --file junit_report.xml
     # sending coverage report for codacy
     - curl -Os https://coverage.codacy.com/get.sh
     - chmod +x get.sh
