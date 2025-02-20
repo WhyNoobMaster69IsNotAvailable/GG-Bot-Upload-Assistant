@@ -244,7 +244,7 @@ to catch any errors / exceptions that happen in the application and fix them pro
     </tbody>
 </table>
 
-## Supported image Hosts
+## Supported Image Hosts
 
 <table>
     <tbody>
@@ -301,7 +301,7 @@ to catch any errors / exceptions that happen in the application and fix them pro
 
 # Basic setup for Upload Assistant
 
-## Docker (recommended):
+## Docker (recommended)
 
 1. Create new folder / dir [`mkdir GGBotUploader && cd GGBotUploader`]
 2. Download `samples/assistant/config.env` to the newly created folder (`GGBotUploader`)
@@ -321,7 +321,7 @@ docker run --rm -it \
 > See [DockerHub](https://hub.docker.com/r/noobmaster669/gg-bot-uploader/tags) for various tags
 <br />
 
-## Bare Metal / VM:
+## Bare Metal / VM
 
 1. Clone this repository `git clone https://gitlab.com/NoobMaster669/gg-bot-upload-assistant.git`
 
