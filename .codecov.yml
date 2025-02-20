@@ -2,6 +2,7 @@ codecov:
   bot: NoobMaster669
 ignore:
   - (?s:[^\/]+_test\.py.*)\Z
+  - (?s:[^\/]+test_\.py.*)\Z
   - ^__init__.py.*
 coverage:
   precision: 2

@@ -33,18 +33,23 @@ e2e-test:
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
   script:
+    - pip install codecov-cli
     - pip install -r requirements/requirements_test.txt
     - pip freeze > requirements/requirements_test.txt
-    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml --cov=./ e2e-tests/
+    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml -o junit_family=legacy --cov=./ e2e-tests/
+
     # generating xml coverage report for various platforms
     - coverage report
     - coverage xml -o coverage.xml
     - sed -i "s=<source>.*${SOURCE_DIRECTORY}</source>=<source>./${SOURCE_DIRECTORY}</source>=g" coverage.xml
     - sed -i "s;filename=\";filename=\"${SOURCE_DIRECTORY}/;g" coverage.xml
+
     # sending coverage report to codecov
     - curl -Os https://uploader.codecov.io/latest/alpine/codecov
     - chmod +x codecov
-    - ./codecov -R .
+    - ./codecov -R -F e2e-test .
+    - codecovcli do-upload --report-type test_results --file junit_report.xml
+
     # sending coverage report for codacy
     - curl -Os https://coverage.codacy.com/get.sh
     - chmod +x get.sh
@@ -86,16 +91,19 @@ unit-test:
     - pip install -r requirements/requirements_test.txt
     - pip freeze > requirements/requirements_test.txt
     - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml -o junit_family=legacy --cov=./ tests/
+
     # generating xml coverage report for various platforms
     - coverage report
     - coverage xml -o coverage.xml
     - sed -i "s=<source>.*${SOURCE_DIRECTORY}</source>=<source>./${SOURCE_DIRECTORY}</source>=g" coverage.xml
     - sed -i "s;filename=\";filename=\"${SOURCE_DIRECTORY}/;g" coverage.xml
+
     # sending coverage report to codecov
     - curl -Os https://uploader.codecov.io/latest/alpine/codecov
     - chmod +x codecov
-    - ./codecov -R .
+    - ./codecov -R -F unit-test .
     - codecovcli do-upload --report-type test_results --file junit_report.xml
+
     # sending coverage report for codacy
     - curl -Os https://coverage.codacy.com/get.sh
     - chmod +x get.sh
