@@ -36,7 +36,7 @@ e2e-test:
     - pip install codecov-cli
     - pip install -r requirements/requirements_test.txt
     - pip freeze > requirements/requirements_test.txt
-    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml -o junit_family=legacy --cov=./ e2e-tests/
+    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=e2e-test.junit.xml -o junit_family=legacy --cov=./ e2e-tests/
 
     # generating xml coverage report for various platforms
     - coverage report
@@ -47,8 +47,8 @@ e2e-test:
     # sending coverage report to codecov
     - curl -Os https://uploader.codecov.io/latest/alpine/codecov
     - chmod +x codecov
-    - ./codecov -R -F e2e-test .
-    - codecovcli do-upload --report-type test_results --file junit_report.xml
+    - ./codecov -F e2e-test --verbose -R .
+    - codecovcli do-upload --report-type test_results --file e2e-test.junit.xml
 
     # sending coverage report for codacy
     - curl -Os https://coverage.codacy.com/get.sh
@@ -90,7 +90,7 @@ unit-test:
     - pip install codecov-cli
     - pip install -r requirements/requirements_test.txt
     - pip freeze > requirements/requirements_test.txt
-    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=junit_report.xml -o junit_family=legacy --cov=./ tests/
+    - pytest -vv --show-capture=stdout --cov-report=html --junitxml=unit-test.junit.xml -o junit_family=legacy --cov=./ tests/
 
     # generating xml coverage report for various platforms
     - coverage report
@@ -101,8 +101,8 @@ unit-test:
     # sending coverage report to codecov
     - curl -Os https://uploader.codecov.io/latest/alpine/codecov
     - chmod +x codecov
-    - ./codecov -R -F unit-test .
-    - codecovcli do-upload --report-type test_results --file junit_report.xml
+    - /codecov -F unit-test --verbose -R .
+    - codecovcli do-upload --report-type test_results --file unit-test.junit.xml
 
     # sending coverage report for codacy
     - curl -Os https://coverage.codacy.com/get.sh
