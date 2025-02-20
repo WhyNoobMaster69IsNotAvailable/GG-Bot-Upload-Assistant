@@ -31,7 +31,10 @@ from rich.prompt import Prompt
 
 from modules.bdinfo.bdinfo_parser import BDInfoParser
 from modules.config import UploadAssistantConfig
-from modules.exceptions.exception import GGBotSentryCapturedException
+from modules.exceptions.exception import (
+    GGBotSentryCapturedException,
+    GGBotFatalException,
+)
 
 console = Console()
 
@@ -741,13 +744,21 @@ class BasicUtils:
                 "[BasicUtils] This is a full disk upload. Skipping mediainfo generation..."
             )
 
-    def basic_get_mediainfo(self, raw_file):
+    @staticmethod
+    def basic_get_mediainfo(raw_file):
         logging.debug(f"[BasicUtils] Mediainfo will parse the file: {raw_file}")
-        meddiainfo_start_time = time.perf_counter()
-        media_info_result = MediaInfo.parse(raw_file)
-        meddiainfo_end_time = time.perf_counter()
+        mediainfo_start_time = time.perf_counter()
+        try:
+            media_info_result = MediaInfo.parse(raw_file)
+        except FileNotFoundError as e:
+            logging.error(
+                f"[BasicUtils] The provided file {raw_file} was not found.", exc_info=e
+            )
+            raise GGBotFatalException(e)
+        mediainfo_end_time = time.perf_counter()
         logging.debug(
-            f"[BasicUtils] Time taken for mediainfo to parse the file {raw_file} :: {(meddiainfo_end_time - meddiainfo_start_time)}"
+            f"[BasicUtils] Time taken for mediainfo to parse the "
+            f"file {raw_file} :: {(mediainfo_end_time - mediainfo_start_time)}"
         )
         return media_info_result
 

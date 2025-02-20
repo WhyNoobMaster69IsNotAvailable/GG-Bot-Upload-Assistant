@@ -748,10 +748,14 @@ class GGBotReUploader:
                     f' Error: Error {response.json()["error"] if "error" in response.json() else response.json()}'
                 )
             except Exception:
-                logging.critical(
-                    f"[GGBotReUploader] 400 was returned on that upload, this is a problem with the site ({upload_to})."
+                logging.error(
+                    f"[GGBotReUploader] 400 was returned on that upload, this is a problem with the site ({upload_to}).",
+                    extra={"error": response.text},
                 )
-            logging.error("[TrackerUpload] Upload failed")
+            logging.error(
+                f"[TrackerUpload] Upload failed to tracker {upload_to}",
+                extra={"error": response.text},
+            )
             return False, response.status_code
 
         else:
@@ -941,10 +945,10 @@ class GGBotReUploader:
         # For audio it will insert "Dolby Digital Plus" into the dict when what we want is "DD+"
         # ------------ If we are missing any other "basic info" we try to identify it here ------------ #
         if len(keys_we_need_but_missing_torrent_info) != 0:
-            logging.error(
+            logging.warning(
                 "[GGBotReUploader] Unable to automatically extract all the required info from the FILENAME"
             )
-            logging.error(
+            logging.warning(
                 f"[GGBotReUploader] We are missing this info: {keys_we_need_but_missing_torrent_info}"
             )
             # Show the user what is missing & the next steps
@@ -1157,7 +1161,7 @@ class GGBotReUploader:
             # True == dupe_found
             # False == no_dupes/continue upload
             if dupe_check_response:
-                logging.error(
+                logging.warning(
                     f"[Main] Could not upload to: {tracker} because we found a dupe on site"
                 )
                 # If dupe was found & the script is auto_mode OR if the user responds with 'n' for the 'dupe
@@ -1829,7 +1833,7 @@ class GGBotReUploader:
             # If dupes are present and user decided to stop upload, for single tracker uploads we stop operation
             # immediately True == dupe_found False == no_dupes/continue upload
             if dupe_check_response:
-                logging.error(
+                logging.warning(
                     f"[Main] Could not upload to: {tracker} because we found a dupe on site"
                 )
                 logging.info(

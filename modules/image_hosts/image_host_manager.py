@@ -62,7 +62,7 @@ class GGBotImageHostManager:
             index += 1
             image_hosts.append(img_host)
         if len(image_hosts) == 0:
-            logging.error(
+            logging.warning(
                 "[GGBotScreenshotManager::init] All image-hosts are disabled/not set "
                 '(try setting "img_host_1=imgbox" in config.env)'
             )
@@ -84,7 +84,7 @@ class GGBotImageHostManager:
             if ImageHostConfig().IMAGE_HOST_BY_API_KEY(image_host) is not None:
                 valid_image_hosts.append(image_host)
                 continue
-            logging.error(
+            logging.warning(
                 f"[GGBotScreenshotManager::init]Can't upload to {image_host} without an API key"
             )
             console.print(

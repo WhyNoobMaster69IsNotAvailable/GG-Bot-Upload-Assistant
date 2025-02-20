@@ -646,11 +646,11 @@ class GGBotUploadAssistant:
         # For audio it will insert "Dolby Digital Plus" into the dict when what we want is "DD+"
         # ------------ If we are missing any other "basic info" we try to identify it here ------------ #
         if len(keys_we_need_but_missing_torrent_info) != 0:
-            logging.error(
-                "Unable to automatically extract all the required info from the FILENAME"
+            logging.warning(
+                "[Main] Unable to automatically extract all the required info from the FILENAME"
             )
-            logging.error(
-                f"We are missing this info: {keys_we_need_but_missing_torrent_info}"
+            logging.warning(
+                f"[Main] We are missing this info: {keys_we_need_but_missing_torrent_info}"
             )
             # Show the user what is missing & the next steps
             console.print(
@@ -1393,7 +1393,7 @@ class GGBotUploadAssistant:
                 )
                 return False
 
-        logging.fatal(
+        logging.info(
             f"[TrackerUpload] URL: {url_masked} \n Data: {payload} \n Files: {files}"
         )
 
@@ -2026,7 +2026,7 @@ class GGBotUploadAssistant:
                 # True == dupe_found
                 # False == no_dupes/continue upload
                 if dupe_check_response:
-                    logging.error(
+                    logging.warning(
                         f"[Main] Could not upload to: {tracker} because we found a dupe on site"
                     )
                     upload_report[tracker]["upload"] = "Skipped"
@@ -2221,7 +2221,7 @@ class GGBotUploadAssistant:
                     # True == dupe_found
                     # False == no_dupes/continue upload
                     if dupe_check_response:
-                        logging.error(
+                        logging.warning(
                             f"[Main] Could not upload to: {tracker} because we found a dupe on site"
                         )
                         upload_report[tracker]["upload"] = "Skipped"

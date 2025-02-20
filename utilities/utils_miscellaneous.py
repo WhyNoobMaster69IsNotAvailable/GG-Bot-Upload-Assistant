@@ -44,27 +44,26 @@ class MiscellaneousUtils:
         # use regex (sourced and slightly modified from official radarr repo) to find torrent editions (Extended,
         # Criterion, Theatrical, etc) https://github.com/Radarr/Radarr/blob/5799b3dc4724dcc6f5f016e8ce4f57cc1939682b/src
         # /NzbDrone.Core/Parser/Parser.cs#L21
-        try:
-            torrent_editions = re.search(
-                r"((Recut.|Extended.|Ultimate.|Criterion.|International.)?("
-                r"Director.?s|Collector.?s|Theatrical|Ultimate|Final|Criterion|International(?=(.("
-                r"Cut|Edition|Version|Collection)))|Extended|Rogue|Special|Despecialized|\d{2,3}(th)?.Anniversary)(.("
-                r"Cut|Edition|Version|Collection))?(.("
-                r"Extended|Uncensored|Remastered|Unrated|Uncut|IMAX|FANRES|Fan.?Edit))?|("
-                r"Uncensored|Remastered|Unrated|Uncut|IMAX|Fan.?Edit|FANRES|Edition|Restored|(234)in1))",
-                upload_media,
-            )
+        torrent_editions = re.search(
+            r"((Recut.|Extended.|Ultimate.|Criterion.|International.)?("
+            r"Director.?s|Collector.?s|Theatrical|Ultimate|Final|Criterion|International(?=(.("
+            r"Cut|Edition|Version|Collection)))|Extended|Rogue|Special|Despecialized|\d{2,3}(th)?.Anniversary)(.("
+            r"Cut|Edition|Version|Collection))?(.("
+            r"Extended|Uncensored|Remastered|Unrated|Uncut|IMAX|FANRES|Fan.?Edit))?|("
+            r"Uncensored|Remastered|Unrated|Uncut|IMAX|Fan.?Edit|FANRES|Edition|Restored|(234)in1))",
+            upload_media,
+        )
+        if torrent_editions is None:
             logging.info(
-                f"[MiscellaneousUtils] extracted '{str(torrent_editions.group()).replace('.', ' ')}' as the 'edition' for "
-                f"the final torrent name "
-            )
-            return str(torrent_editions.group()).replace(".", " ")
-        except AttributeError as e:
-            logging.exception(
                 "[MiscellaneousUtils] No custom 'edition' found for this torrent",
-                exc_info=e,
             )
-        return None
+            return None
+
+        logging.info(
+            f"[MiscellaneousUtils] extracted '{str(torrent_editions.group()).replace('.', ' ')}' as the 'edition' for "
+            f"the final torrent name "
+        )
+        return str(torrent_editions.group()).replace(".", " ")
 
     @staticmethod
     def identify_bluray_disc_type(
