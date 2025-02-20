@@ -60,7 +60,7 @@ e2e-test:
     expose_as: E2E test and coverage results
     paths:
       - coverage.xml
-      - junit_report.xml
+      - e2e-test.junit.xml
       - coverage
       - assistant.log
     reports:
@@ -68,7 +68,7 @@ e2e-test:
         coverage_format: cobertura
         path: coverage.xml
       junit:
-        - junit_report.xml
+        - e2e-test.junit.xml
     expire_in: 90 days
   environment:
     name: e2e-test/reports/$CI_COMMIT_REF_NAME
@@ -114,14 +114,14 @@ unit-test:
     expose_as: Unit test and coverage results
     paths:
       - coverage.xml
-      - junit_report.xml
+      - unit-test.junit.xml
       - coverage
     reports:
       coverage_report:
         coverage_format: cobertura
         path: coverage.xml
       junit:
-        - junit_report.xml
+        - unit-test.junit.xml
     expire_in: 90 days
   environment:
     name: test/reports/$CI_COMMIT_REF_NAME
