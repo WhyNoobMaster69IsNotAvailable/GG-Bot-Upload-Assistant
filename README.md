@@ -426,10 +426,12 @@ pip install -r requirements/requirements.txt
 - [ ] Use IMDB GraphQL Api
 - [ ] Use Anilist GraphQL Api
 - [X] E2E Tests for reuploader
+- [X] Moved sys argument / cli args to yaml file
 - [ ] Support for encrypted values from config
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
+- [X] Issue#202: FNP updated 1080i identifier
 
 ### v3.2.0
 

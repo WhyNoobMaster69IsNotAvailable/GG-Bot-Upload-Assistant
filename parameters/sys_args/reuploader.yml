@@ -1,0 +1,83 @@
+# GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+name: "GG-BOT Auto Reuploader"
+description: "An automated torrent re-uploading tool that monitors directories, updates metadata, and re-uploads to specified trackers with minimal user intervention."
+epilog: "Ensures torrents remain available by automating re-uploads. Configure settings properly before use. For more details, visit the official repository."
+
+arguments:
+  common:
+    - destination: "-t"
+      optional_string: "--trackers"
+      nargs: "*"
+      help: "Tracker(s) to upload to. Space-separates if multiple (no commas)"
+    - destination: "-a"
+      optional_string: "--all_trackers"
+      action: "store_true"
+      help: "Select all trackers that can be uploaded to"
+    - destination: "-anon"
+      action: "store_true"
+      help: "Tf you want your upload to be anonymous (no other info needed, just input '-anon'"
+
+  uncommon:
+    - destination: "-disc"
+      action: "store_true"
+      help: "Unsupported for AutoReuploader. Added for compatibility with upload assistant"
+    - destination: "-d"
+      optional_string: "--debug"
+      action: "store_true"
+      help: "Used for debugging. Writes debug lines to log file"
+    - destination: "-mkt"
+      optional_string: "--use_mktorrent"
+      action: "store_true"
+      help: "Use mktorrent instead of torf (Latest git version only)"
+    - destination: "-fpm"
+      optional_string: "--force_pymediainfo"
+      action: "store_true"
+      help: "Force use PyMediaInfo to extract video codec over regex extraction from file name"
+    - destination: "-ss"
+      optional_string: "--skip_screenshots"
+      action: "store_true"
+      help: "Skip screenshot generation and upload for a run (overrides config.env)"
+    - destination: "-let"
+      optional_string: "--load_external_templates"
+      action: "store_true"
+      help: "Load external site templates from ./external/site_templates location"
+    - destination: "-tag"
+      optional_string: "--tags"
+      nargs: "*"
+      help: "Send custom tags to all trackers"
+
+  internal:
+    - destination: "-internal"
+      action: "store_true"
+      help: "(Internal) Used to mark an upload as 'Internal'"
+    - destination: "-freeleech"
+      nargs: "*"
+      action: "store_true"
+      help: "(Internal) Used to give a new upload freeleech"
+    - destination: "-featured"
+      action: "store_true"
+      help: "(Internal) feature a new upload"
+    - destination: "-doubleup"
+      action: "store_true"
+      help: "(Internal) Give a new upload 'double up' status"
+    - destination: "-tripleup"
+      action: "store_true"
+      help: "(Internal) Give a new upload 'triple up' status [XBTIT Exclusive]"
+    - destination: "-sticky"
+      action: "store_true"
+      help: "(Internal) Pin the new upload"

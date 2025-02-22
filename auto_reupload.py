@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import argparse
 import base64
 import glob
 import json
@@ -60,12 +59,15 @@ from modules.constants import (
     SCREENSHOTS_RESULT_FILE_PATH,
     BLURAY_REGIONS_MAP,
     TRACKER_API_KEYS,
+    REUPLOADER_ARGUMENTS_CONFIG,
 )
 from modules.description.description_manager import GGBotDescriptionManager
 from modules.exceptions.exception import GGBotUploaderException, GGBotFatalException
 from modules.reuploader.enums import TrackerUploadStatus, TorrentFailureStatus
 from modules.reuploader.reupload_manager import AutoReUploaderManager
 from modules.sentry_config import SentryConfig
+from modules.sys_arguments.arg_parser import GGBotArgumentParser
+from modules.sys_arguments.arg_reader import GGBotArgReader
 from utilities.utils import GenericUtils
 from utilities.utils_basic import BasicUtils
 from utilities.utils_dupes import DupeUtils
@@ -154,97 +156,11 @@ class GGBotReUploader:
         self.auto_mode = "true"
 
         # Setup args
-        parser = argparse.ArgumentParser()
-
-        common_args = parser.add_argument_group("Commonly Used Arguments")
-        common_args.add_argument(
-            "-t",
-            "--trackers",
-            nargs="*",
-            help="Tracker(s) to upload to. Space-separates if multiple (no commas)",
-        )
-        common_args.add_argument(
-            "-a",
-            "--all_trackers",
-            action="store_true",
-            help="Select all trackers that can be uploaded to",
-        )
-        common_args.add_argument(
-            "-anon",
-            action="store_true",
-            help="Tf you want your upload to be anonymous (no other info needed, just input '-anon'",
+        self.args = self._read_system_arguments_config(
+            REUPLOADER_ARGUMENTS_CONFIG.format(base_path=self.working_folder)
         )
 
-        uncommon_args = parser.add_argument_group("Less Common Arguments")
-        uncommon_args.add_argument(
-            "-d",
-            "--debug",
-            action="store_true",
-            help="Used for debugging. Writes debug lines to log file",
-        )
-        uncommon_args.add_argument(
-            "-mkt",
-            "--use_mktorrent",
-            action="store_true",
-            help="Use mktorrent instead of torf (Latest git version only)",
-        )
-        uncommon_args.add_argument(
-            "-fpm",
-            "--force_pymediainfo",
-            action="store_true",
-            help="Force use PyMediaInfo to extract video codec over regex extraction from file name",
-        )
-        uncommon_args.add_argument(
-            "-ss",
-            "--skip_screenshots",
-            action="store_true",
-            help="Skip screenshot generation and upload for a run (overrides config.env)",
-        )
-        uncommon_args.add_argument(
-            "-disc",
-            action="store_true",
-            help="Unsupported for AutoReuploader. Added for compatibility with upload assistant",
-        )
-        uncommon_args.add_argument(
-            "-let",
-            "--load_external_templates",
-            action="store_true",
-            help="When enabled uploader will load external site templates from ./external/site_templates location",
-        )
-        uncommon_args.add_argument(
-            "-tag", "--tags", nargs="*", help="Send custom tags to all trackers"
-        )
-
-        # args for Internal uploads
-        internal_args = parser.add_argument_group("Internal Upload Arguments")
-        internal_args.add_argument(
-            "-internal",
-            action="store_true",
-            help="(Internal) Used to mark an upload as 'Internal'",
-        )
-        internal_args.add_argument(
-            "-freeleech",
-            action="store_true",
-            help="(Internal) Used to give a new upload freeleech",
-        )
-        internal_args.add_argument(
-            "-featured", action="store_true", help="(Internal) feature a new upload"
-        )
-        internal_args.add_argument(
-            "-doubleup",
-            action="store_true",
-            help="(Internal) Give a new upload 'double up' status",
-        )
-        internal_args.add_argument(
-            "-tripleup",
-            action="store_true",
-            help="(Internal) Give a new upload 'triple up' status [XBTIT Exclusive]",
-        )
-        internal_args.add_argument(
-            "-sticky", action="store_true", help="(Internal) Pin the new upload"
-        )
-
-        self.args = parser.parse_args()
+        # Setup Loggers
         self._setup_loggers(self.args)
 
         # the `prepare_tracker_api_keys_dict` prepares the api_keys_dict and also does mandatory property validations
@@ -1985,6 +1901,12 @@ class GGBotReUploader:
                 ignore_errors=SentryConfig.sentry_ignored_errors(),
                 before_send=SentryConfig.before_send,
             )
+
+    @staticmethod
+    def _read_system_arguments_config(config_file: str):
+        arg_config_reader = GGBotArgReader(config_file)
+        parser = GGBotArgumentParser(arg_config_reader.read_and_get_config())
+        return parser.parse_args()
 
     @staticmethod
     def _setup_loggers(args):

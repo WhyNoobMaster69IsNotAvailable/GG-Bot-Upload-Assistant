@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import argparse
 import base64
 import glob
 import json
@@ -71,10 +70,13 @@ from modules.constants import (
     STREAMING_SERVICES_REVERSE_MAP,
     TAG_GROUPINGS,
     CUSTOM_TEXT_COMPONENTS,
+    UPLOAD_ASSISTANT_ARGUMENTS_CONFIG,
 )
 from modules.description.description_manager import GGBotDescriptionManager
 from modules.exceptions.exception import GGBotSentryCapturedException, GGBotException
 from modules.sentry_config import SentryConfig
+from modules.sys_arguments.arg_parser import GGBotArgumentParser
+from modules.sys_arguments.arg_reader import GGBotArgReader
 
 # Method that will search for dupes in trackers.
 from modules.template_schema_validator import TemplateSchemaValidator
@@ -180,200 +182,12 @@ class GGBotUploadAssistant:
         )
 
         # Setup args
-        parser = argparse.ArgumentParser()
-
-        # Required Arguments [Mandatory]
-        required_args = parser.add_argument_group("Required Arguments")
-        required_args.add_argument(
-            "-p",
-            "--path",
-            nargs="*",
-            required=True,
-            help="Use this to provide path(s) to file/folder",
+        self.args = self._read_system_arguments_config(
+            UPLOAD_ASSISTANT_ARGUMENTS_CONFIG.format(base_path=self.working_folder)
         )
 
-        # Commonly used args:
-        common_args = parser.add_argument_group("Commonly Used Arguments")
-        common_args.add_argument(
-            "-t",
-            "--trackers",
-            nargs="*",
-            help="Tracker(s) to upload to. Space-separates if multiple (no commas)",
-        )
-        common_args.add_argument(
-            "-a",
-            "--all_trackers",
-            action="store_true",
-            help="Select all trackers that can be uploaded to",
-        )
-        common_args.add_argument(
-            "-tmdb", nargs=1, help="Use this to manually provide the TMDB ID"
-        )
-        common_args.add_argument(
-            "-imdb", nargs=1, help="Use this to manually provide the IMDB ID"
-        )
-        common_args.add_argument(
-            "-tvmaze", nargs=1, help="Use this to manually provide the TVmaze ID"
-        )
-        common_args.add_argument(
-            "-tvdb", nargs=1, help="Use this to manually provide the TVDB ID"
-        )
-        common_args.add_argument(
-            "-mal",
-            nargs=1,
-            help="Use this to manually provide the MAL ID. If uploader detects any MAL id during search, this will be ignored.",
-        )
-        common_args.add_argument(
-            "-anon",
-            action="store_true",
-            help="Tf you want your upload to be anonymous (no other info needed, just input '-anon'",
-        )
-
-        # Less commonly used args (Not essential for most)
-        uncommon_args = parser.add_argument_group("Less Common Arguments")
-        uncommon_args.add_argument(
-            "-title", nargs=1, help="Custom title provided by the user"
-        )
-        uncommon_args.add_argument(
-            "-rg",
-            "--release_group",
-            nargs=1,
-            help="Set the release group for an upload",
-        )
-        uncommon_args.add_argument(
-            "-type", nargs=1, help="Use to manually specify 'movie' or 'tv'"
-        )
-        uncommon_args.add_argument(
-            "-reupload",
-            nargs="*",
-            help="This is used in conjunction with autodl to automatically re-upload any filter matches",
-        )
-        uncommon_args.add_argument(
-            "-batch",
-            action="store_true",
-            help="Pass this arg if you want to upload all the files/folder within the folder you specify with the '-p' arg",
-        )
-        uncommon_args.add_argument(
-            "-disc",
-            action="store_true",
-            help="If you are uploading a raw dvd/bluray disc you need to pass this arg",
-        )
-        uncommon_args.add_argument(
-            "-e",
-            "--edition",
-            nargs="*",
-            help="Manually provide an 'edition' (e.g. Criterion Collection, Extended, Remastered, etc)",
-        )
-        uncommon_args.add_argument(
-            "-nfo",
-            nargs=1,
-            help="Use this to provide the path to an nfo file you want to upload",
-        )
-        uncommon_args.add_argument(
-            "-d",
-            "--debug",
-            action="store_true",
-            help="Used for debugging. Writes debug lines to log file",
-        )
-        uncommon_args.add_argument(
-            "-dry",
-            "--dry_run",
-            action="store_true",
-            help="Used for debugging. Writes debug lines to log and will also skip the upload",
-        )
-        uncommon_args.add_argument(
-            "-mkt",
-            "--use_mktorrent",
-            action="store_true",
-            help="Use mktorrent instead of torf (Latest git version only)",
-        )
-        uncommon_args.add_argument(
-            "-fpm",
-            "--force_pymediainfo",
-            action="store_true",
-            help="Force use PyMediaInfo to extract video codec over regex extraction from file name",
-        )
-        uncommon_args.add_argument(
-            "-ss",
-            "--skip_screenshots",
-            action="store_true",
-            help="Skip screenshot generation and upload for a run (overrides config.env)",
-        )
-        uncommon_args.add_argument(
-            "-r",
-            "--resume",
-            action="store_true",
-            help="Resume previously unfinished upload.",
-        )
-        uncommon_args.add_argument(
-            "-3d", action="store_true", help="Mark the upload as 3D content"
-        )
-        uncommon_args.add_argument(
-            "-foreign",
-            action="store_true",
-            help="Mark the upload as foreign content [Non-English]",
-        )
-        uncommon_args.add_argument(
-            "-amf",
-            "--allow_multiple_files",
-            action="store_true",
-            help="Override the default behavior and allow multiple files to be added in one torrent",
-        )
-        uncommon_args.add_argument(
-            "-let",
-            "--load_external_templates",
-            action="store_true",
-            help="When enabled uploader will load external site templates from ./external/site_templates location",
-        )
-        uncommon_args.add_argument(
-            "-ato",
-            "--auto",
-            action="store_true",
-            help="Enabled auto mode for this particular upload",
-        )
-        uncommon_args.add_argument(
-            "-tag", "--tags", nargs="*", help="Send custom tags to all trackers"
-        )
-
-        # args for Internal uploads
-        internal_args = parser.add_argument_group("Internal Upload Arguments")
-        internal_args.add_argument(
-            "-internal",
-            action="store_true",
-            help="(Internal) Used to mark an upload as 'Internal'",
-        )
-        internal_args.add_argument(
-            "-freeleech",
-            action="store_true",
-            help="(Internal) Used to give a new upload freeleech",
-        )
-        internal_args.add_argument(
-            "-featured", action="store_true", help="(Internal) feature a new upload"
-        )
-        internal_args.add_argument(
-            "-personal", action="store_true", help="Mark an upload as personal release"
-        )
-        internal_args.add_argument(
-            "-doubleup",
-            action="store_true",
-            help="(Internal) Give a new upload 'double up' status",
-        )
-        internal_args.add_argument(
-            "-tripleup",
-            action="store_true",
-            help="(Internal) Give a new upload 'triple up' status [XBTIT Exclusive]",
-        )
-        internal_args.add_argument(
-            "-sticky", action="store_true", help="(Internal) Pin the new upload"
-        )
-        internal_args.add_argument(
-            "-exclusive",
-            nargs=1,
-            choices=["0", "1", "2", "3"],
-            help="(Internal) Set an upload as exclusive for n days",
-        )
-
-        self.args = parser.parse_args()
+        # Setup Loggers
+        self._setup_loggers(self.args)
 
         # Import 'auto_mode' status
         self.upload_assistant_config = UploadAssistantConfig()
@@ -1621,22 +1435,6 @@ class GGBotUploadAssistant:
             self.args.dry_run if self.args.dry_run is True else self.args.debug
         )
 
-        if self.args.debug:
-            logging.getLogger().setLevel(logging.DEBUG)
-            logging.getLogger("torf").setLevel(logging.INFO)
-            logging.getLogger("rebulk.rules").setLevel(logging.INFO)
-            logging.getLogger("rebulk.rebulk").setLevel(logging.INFO)
-            logging.getLogger("rebulk.processors").setLevel(logging.INFO)
-            logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
-            logging.debug(f"Arguments provided by user: {self.args}")
-
-        # Disabling the logs from cinemagoer
-        logging.getLogger("imdbpy").disabled = True
-        logging.getLogger("imdbpy.parser").disabled = True
-        logging.getLogger("imdbpy.parser.http").disabled = True
-        logging.getLogger("imdbpy.parser.http.piculet").disabled = True
-        logging.getLogger("imdbpy.parser.http.build_person").disabled = True
-
         """
         ----------------------- Full Disk & BDInfo CLI Related Notes -----------------------
         There is no way to use the `bdinfo_script` to create a bdinfocli docker container implementation inside a
@@ -2457,6 +2255,32 @@ class GGBotUploadAssistant:
             script_end_time = time.perf_counter()
             total_run_time = f"{script_end_time - script_start_time:0.4f}"
             logging.info(f"[Main] Total runtime is {total_run_time} seconds")
+
+    @staticmethod
+    def _read_system_arguments_config(config_file: str):
+        arg_config_reader = GGBotArgReader(config_file)
+        parser = GGBotArgumentParser(arg_config_reader.read_and_get_config())
+        return parser.parse_args()
+
+    @staticmethod
+    def _setup_loggers(args):
+        # Disabling the logs from cinemagoer
+        logging.getLogger("imdbpy").disabled = True
+        logging.getLogger("imdbpy.parser").disabled = True
+        logging.getLogger("imdbpy.parser.http").disabled = True
+        logging.getLogger("imdbpy.parser.http.piculet").disabled = True
+        logging.getLogger("imdbpy.parser.http.build_person").disabled = True
+
+        if not args.debug:
+            return
+
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.getLogger("torf").setLevel(logging.INFO)
+        logging.getLogger("rebulk.rules").setLevel(logging.INFO)
+        logging.getLogger("rebulk.rebulk").setLevel(logging.INFO)
+        logging.getLogger("rebulk.processors").setLevel(logging.INFO)
+        logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
+        logging.debug(f"[UploadAssistant] Arguments provided by user: {args}")
 
 
 if __name__ == "__main__":
