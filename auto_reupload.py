@@ -123,21 +123,7 @@ class GGBotReUploader:
                 REUPLOADER_CONFIG.format(base_path=self.working_folder), override=True
             )
         else:
-            logging.info(
-                "[GGBotReUploader] Loading environment variables from {}".format(
-                    env_file_path
-                )
-            )
             load_dotenv(env_file_path, override=True)
-
-        # Debug logs for the upload processing
-        # Logger running in "w" : write mode
-        logging.basicConfig(
-            filename=REUPLOADER_LOG.format(base_path=self.working_folder),
-            filemode="w",
-            level=logging.INFO,
-            format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
-        )
 
         self._initialize_sentry_sdk()
 
@@ -161,7 +147,7 @@ class GGBotReUploader:
         )
 
         # Setup Loggers
-        self._setup_loggers(self.args)
+        self._setup_loggers(args=self.args, working_folder=self.working_folder)
 
         # the `prepare_tracker_api_keys_dict` prepares the api_keys_dict and also does mandatory property validations
         self.api_keys_dict = GenericUtils.prepare_and_validate_tracker_api_keys_dict(
@@ -1889,18 +1875,20 @@ class GGBotReUploader:
     @staticmethod
     def _initialize_sentry_sdk():
         sentry_config = SentryErrorTrackingConfig()
-        if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is True:
-            sentry_sdk.init(
-                environment="production",
-                server_name="GG Bot Auto Re-uploader",
-                dsn="https://4093e406eb754b20a2a7f6d15e6b34c0@ggbot.bot.nu/1",
-                traces_sample_rate=1.0,
-                profiles_sample_rate=1.0,
-                attach_stacktrace=True,
-                shutdown_timeout=20,
-                ignore_errors=SentryConfig.sentry_ignored_errors(),
-                before_send=SentryConfig.before_send,
-            )
+        if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is False:
+            return
+
+        sentry_sdk.init(
+            environment="production",
+            server_name="GG Bot Auto Re-uploader",
+            dsn="https://4093e406eb754b20a2a7f6d15e6b34c0@ggbot.bot.nu/1",
+            traces_sample_rate=1.0,
+            profiles_sample_rate=1.0,
+            attach_stacktrace=True,
+            shutdown_timeout=20,
+            ignore_errors=SentryConfig.sentry_ignored_errors(),
+            before_send=SentryConfig.before_send,
+        )
 
     @staticmethod
     def _read_system_arguments_config(config_file: str):
@@ -1909,7 +1897,16 @@ class GGBotReUploader:
         return parser.parse_args()
 
     @staticmethod
-    def _setup_loggers(args):
+    def _setup_loggers(*, args, working_folder):
+        # Debug logs for the upload processing
+        # Logger running in "w" : write mode
+        logging.basicConfig(
+            filename=REUPLOADER_LOG.format(base_path=working_folder),
+            filemode="w",
+            level=logging.INFO,
+            format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
+        )
+
         # Disabling the logs from cinemagoer
         logging.getLogger("imdbpy").disabled = True
         logging.getLogger("imdbpy.parser").disabled = True

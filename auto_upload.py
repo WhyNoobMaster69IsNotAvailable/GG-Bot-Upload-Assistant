@@ -73,7 +73,11 @@ from modules.constants import (
     UPLOAD_ASSISTANT_ARGUMENTS_CONFIG,
 )
 from modules.description.description_manager import GGBotDescriptionManager
-from modules.exceptions.exception import GGBotSentryCapturedException, GGBotException
+from modules.exceptions.exception import (
+    GGBotSentryCapturedException,
+    GGBotException,
+    GGBotFatalException,
+)
 from modules.sentry_config import SentryConfig
 from modules.sys_arguments.arg_parser import GGBotArgumentParser
 from modules.sys_arguments.arg_reader import GGBotArgReader
@@ -119,23 +123,6 @@ class GGBotUploadAssistant:
         self.config = {}
         self.tracker = None  # the current tracker to which we are uploading to
         self.bdinfo_parser = None  # Will be initialized depending on the environment
-        # Debug logs for the upload processing
-        # Logger running in "w" : write mode
-        # Create a custom log format with UTF-8 encoding
-        log_format = logging.Formatter(
-            "%(asctime)s | %(name)s | %(levelname)s | %(message)s", "%Y-%m-%d %H:%M:%S"
-        )
-
-        handler = logging.FileHandler(
-            ASSISTANT_LOG.format(base_path=self.working_folder),
-            mode="w",
-            encoding="utf-8",
-        )
-        handler.setFormatter(log_format)
-
-        # Add the FileHandler to the root logger
-        logging.root.addHandler(handler)
-        logging.root.setLevel(logging.INFO)
 
         # Load the .env file that stores info like the tracker/image host API Keys & other info needed to upload
         if env_file_path is None:
@@ -143,24 +130,9 @@ class GGBotUploadAssistant:
                 ASSISTANT_CONFIG.format(base_path=self.working_folder), override=True
             )
         else:
-            logging.info(
-                "[Main] Loading environment variables from {}".format(env_file_path)
-            )
             load_dotenv(env_file_path, override=True)
 
-        sentry_config = SentryErrorTrackingConfig()
-        if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is True:
-            sentry_sdk.init(
-                environment="production",
-                server_name="GG Bot Upload Assistant",
-                dsn="https://4093e406eb754b20a2a7f6d15e6b34c0@ggbot.bot.nu/1",
-                traces_sample_rate=1.0,
-                profiles_sample_rate=1.0,
-                attach_stacktrace=True,
-                shutdown_timeout=20,
-                ignore_errors=SentryConfig.sentry_ignored_errors(),
-                before_send=SentryConfig.before_send,
-            )
+        self._initialize_sentry_sdk()
 
         # By default, we load the templates from site_templates/ path
         # If user has provided load_external_templates argument then we'll update this path to a different one
@@ -187,7 +159,7 @@ class GGBotUploadAssistant:
         )
 
         # Setup Loggers
-        self._setup_loggers(self.args)
+        self._setup_loggers(args=self.args, working_folder=self.working_folder)
 
         # Import 'auto_mode' status
         self.upload_assistant_config = UploadAssistantConfig()
@@ -916,7 +888,8 @@ class GGBotUploadAssistant:
 
     # -------------- END of identify_miscellaneous_details --------------
 
-    def display_upload_report(self, upload_report: Dict) -> None:
+    @staticmethod
+    def display_upload_report(upload_report: Dict) -> None:
         console.line(count=2)
         console.rule("Upload Report", style="red", align="center")
         console.line(count=1)
@@ -1420,7 +1393,7 @@ class GGBotUploadAssistant:
         logging.info(f" {'-' * 24} Starting new upload {'-' * 24} ")
 
         if self.args.tripleup and self.args.doubleup:
-            logging.error(
+            logging.warning(
                 "[Main] User tried to pass tripleup and doubleup together. Stopping torrent upload process"
             )
             console.print(
@@ -1428,12 +1401,12 @@ class GGBotUploadAssistant:
                 style="bright_red",
             )
             console.print("Exiting...\n", style="bright_red bold")
-            sys.exit()
+            raise GGBotFatalException(
+                "tripleup and doubleup flags cannot be used together."
+            )
 
         # Dry run mode, mainly intended to be used during development
-        self.args.debug = (
-            self.args.dry_run if self.args.dry_run is True else self.args.debug
-        )
+        self.args.debug = True if self.args.dry_run is True else self.args.debug
 
         """
         ----------------------- Full Disk & BDInfo CLI Related Notes -----------------------
@@ -1493,12 +1466,13 @@ class GGBotUploadAssistant:
             console.print(
                 "[bold red on white] ---------------------------- :warning: Unsupported Operation :warning: ---------------------------- [/bold red on white]"
             )
-            sys.exit(
-                console.print(
-                    "\nQuiting upload process since Full Disk uploads are not allowed in this image.\n",
-                    style="bold red",
-                    highlight=False,
-                )
+            console.print(
+                "\nQuiting upload process since Full Disk uploads are not allowed in this image.\n",
+                style="bold red",
+                highlight=False,
+            )
+            raise GGBotFatalException(
+                "Full Disk uploads are not allowed in this image."
             )
 
         # Set the value of args.path to a variable that we can overwrite with a path translation later (if needed)
@@ -2263,7 +2237,24 @@ class GGBotUploadAssistant:
         return parser.parse_args()
 
     @staticmethod
-    def _setup_loggers(args):
+    def _setup_loggers(*, args, working_folder):
+        # Debug logs for the upload processing
+        # Logger running in "w" : write mode
+        # Create a custom log format with UTF-8 encoding
+        log_format = logging.Formatter(
+            "%(asctime)s | %(name)s | %(levelname)s | %(message)s", "%Y-%m-%d %H:%M:%S"
+        )
+        handler = logging.FileHandler(
+            ASSISTANT_LOG.format(base_path=working_folder),
+            mode="w",
+            encoding="utf-8",
+        )
+        handler.setFormatter(log_format)
+
+        # Add the FileHandler to the root logger
+        logging.root.addHandler(handler)
+        logging.root.setLevel(logging.INFO)
+
         # Disabling the logs from cinemagoer
         logging.getLogger("imdbpy").disabled = True
         logging.getLogger("imdbpy.parser").disabled = True
@@ -2281,6 +2272,24 @@ class GGBotUploadAssistant:
         logging.getLogger("rebulk.processors").setLevel(logging.INFO)
         logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
         logging.debug(f"[UploadAssistant] Arguments provided by user: {args}")
+
+    @staticmethod
+    def _initialize_sentry_sdk():
+        sentry_config = SentryErrorTrackingConfig()
+        if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is False:
+            return
+
+        sentry_sdk.init(
+            environment="production",
+            server_name="GG Bot Upload Assistant",
+            dsn="https://4093e406eb754b20a2a7f6d15e6b34c0@ggbot.bot.nu/1",
+            traces_sample_rate=1.0,
+            profiles_sample_rate=1.0,
+            attach_stacktrace=True,
+            shutdown_timeout=20,
+            ignore_errors=SentryConfig.sentry_ignored_errors(),
+            before_send=SentryConfig.before_send,
+        )
 
 
 if __name__ == "__main__":
