@@ -119,23 +119,6 @@ class GGBotUploadAssistant:
         self.config = {}
         self.tracker = None  # the current tracker to which we are uploading to
         self.bdinfo_parser = None  # Will be initialized depending on the environment
-        # Debug logs for the upload processing
-        # Logger running in "w" : write mode
-        # Create a custom log format with UTF-8 encoding
-        log_format = logging.Formatter(
-            "%(asctime)s | %(name)s | %(levelname)s | %(message)s", "%Y-%m-%d %H:%M:%S"
-        )
-
-        handler = logging.FileHandler(
-            ASSISTANT_LOG.format(base_path=self.working_folder),
-            mode="w",
-            encoding="utf-8",
-        )
-        handler.setFormatter(log_format)
-
-        # Add the FileHandler to the root logger
-        logging.root.addHandler(handler)
-        logging.root.setLevel(logging.INFO)
 
         # Load the .env file that stores info like the tracker/image host API Keys & other info needed to upload
         if env_file_path is None:
@@ -143,24 +126,9 @@ class GGBotUploadAssistant:
                 ASSISTANT_CONFIG.format(base_path=self.working_folder), override=True
             )
         else:
-            logging.info(
-                "[Main] Loading environment variables from {}".format(env_file_path)
-            )
             load_dotenv(env_file_path, override=True)
 
-        sentry_config = SentryErrorTrackingConfig()
-        if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is True:
-            sentry_sdk.init(
-                environment="production",
-                server_name="GG Bot Upload Assistant",
-                dsn="https://4093e406eb754b20a2a7f6d15e6b34c0@ggbot.bot.nu/1",
-                traces_sample_rate=1.0,
-                profiles_sample_rate=1.0,
-                attach_stacktrace=True,
-                shutdown_timeout=20,
-                ignore_errors=SentryConfig.sentry_ignored_errors(),
-                before_send=SentryConfig.before_send,
-            )
+        self._initialize_sentry_sdk()
 
         # By default, we load the templates from site_templates/ path
         # If user has provided load_external_templates argument then we'll update this path to a different one
@@ -187,7 +155,7 @@ class GGBotUploadAssistant:
         )
 
         # Setup Loggers
-        self._setup_loggers(self.args)
+        self._setup_loggers(args=self.args, working_folder=self.working_folder)
 
         # Import 'auto_mode' status
         self.upload_assistant_config = UploadAssistantConfig()
@@ -2263,7 +2231,24 @@ class GGBotUploadAssistant:
         return parser.parse_args()
 
     @staticmethod
-    def _setup_loggers(args):
+    def _setup_loggers(*, args, working_folder):
+        # Debug logs for the upload processing
+        # Logger running in "w" : write mode
+        # Create a custom log format with UTF-8 encoding
+        log_format = logging.Formatter(
+            "%(asctime)s | %(name)s | %(levelname)s | %(message)s", "%Y-%m-%d %H:%M:%S"
+        )
+        handler = logging.FileHandler(
+            ASSISTANT_LOG.format(base_path=working_folder),
+            mode="w",
+            encoding="utf-8",
+        )
+        handler.setFormatter(log_format)
+
+        # Add the FileHandler to the root logger
+        logging.root.addHandler(handler)
+        logging.root.setLevel(logging.INFO)
+
         # Disabling the logs from cinemagoer
         logging.getLogger("imdbpy").disabled = True
         logging.getLogger("imdbpy.parser").disabled = True
@@ -2281,6 +2266,24 @@ class GGBotUploadAssistant:
         logging.getLogger("rebulk.processors").setLevel(logging.INFO)
         logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
         logging.debug(f"[UploadAssistant] Arguments provided by user: {args}")
+
+    @staticmethod
+    def _initialize_sentry_sdk():
+        sentry_config = SentryErrorTrackingConfig()
+        if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is False:
+            return
+
+        sentry_sdk.init(
+            environment="production",
+            server_name="GG Bot Upload Assistant",
+            dsn="https://4093e406eb754b20a2a7f6d15e6b34c0@ggbot.bot.nu/1",
+            traces_sample_rate=1.0,
+            profiles_sample_rate=1.0,
+            attach_stacktrace=True,
+            shutdown_timeout=20,
+            ignore_errors=SentryConfig.sentry_ignored_errors(),
+            before_send=SentryConfig.before_send,
+        )
 
 
 if __name__ == "__main__":
