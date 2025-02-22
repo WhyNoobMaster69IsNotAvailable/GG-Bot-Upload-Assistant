@@ -73,7 +73,11 @@ from modules.constants import (
     UPLOAD_ASSISTANT_ARGUMENTS_CONFIG,
 )
 from modules.description.description_manager import GGBotDescriptionManager
-from modules.exceptions.exception import GGBotSentryCapturedException, GGBotException
+from modules.exceptions.exception import (
+    GGBotSentryCapturedException,
+    GGBotException,
+    GGBotFatalException,
+)
 from modules.sentry_config import SentryConfig
 from modules.sys_arguments.arg_parser import GGBotArgumentParser
 from modules.sys_arguments.arg_reader import GGBotArgReader
@@ -884,7 +888,8 @@ class GGBotUploadAssistant:
 
     # -------------- END of identify_miscellaneous_details --------------
 
-    def display_upload_report(self, upload_report: Dict) -> None:
+    @staticmethod
+    def display_upload_report(upload_report: Dict) -> None:
         console.line(count=2)
         console.rule("Upload Report", style="red", align="center")
         console.line(count=1)
@@ -1388,7 +1393,7 @@ class GGBotUploadAssistant:
         logging.info(f" {'-' * 24} Starting new upload {'-' * 24} ")
 
         if self.args.tripleup and self.args.doubleup:
-            logging.error(
+            logging.warning(
                 "[Main] User tried to pass tripleup and doubleup together. Stopping torrent upload process"
             )
             console.print(
@@ -1396,12 +1401,12 @@ class GGBotUploadAssistant:
                 style="bright_red",
             )
             console.print("Exiting...\n", style="bright_red bold")
-            sys.exit()
+            raise GGBotFatalException(
+                "tripleup and doubleup flags cannot be used together."
+            )
 
         # Dry run mode, mainly intended to be used during development
-        self.args.debug = (
-            self.args.dry_run if self.args.dry_run is True else self.args.debug
-        )
+        self.args.debug = True if self.args.dry_run is True else self.args.debug
 
         """
         ----------------------- Full Disk & BDInfo CLI Related Notes -----------------------
@@ -1461,12 +1466,13 @@ class GGBotUploadAssistant:
             console.print(
                 "[bold red on white] ---------------------------- :warning: Unsupported Operation :warning: ---------------------------- [/bold red on white]"
             )
-            sys.exit(
-                console.print(
-                    "\nQuiting upload process since Full Disk uploads are not allowed in this image.\n",
-                    style="bold red",
-                    highlight=False,
-                )
+            console.print(
+                "\nQuiting upload process since Full Disk uploads are not allowed in this image.\n",
+                style="bold red",
+                highlight=False,
+            )
+            raise GGBotFatalException(
+                "Full Disk uploads are not allowed in this image."
             )
 
         # Set the value of args.path to a variable that we can overwrite with a path translation later (if needed)
