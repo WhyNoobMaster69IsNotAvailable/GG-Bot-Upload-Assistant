@@ -24,6 +24,7 @@ from typing import Dict, Tuple, Union, Any
 
 from modules.cache import Cache
 from modules.config import ReUploaderConfig
+from modules.exceptions.exception import GGBotFatalException
 from modules.reuploader.constants import (
     TORRENT_DB_KEY_PREFIX,
     UPLOAD_RETRY_LIMIT,
@@ -336,7 +337,7 @@ class AutoReUploaderManager:
                 api_keys_dict=api_keys_dict,
                 all_trackers_list=all_trackers_list,
             )
-        except AssertionError:
+        except GGBotFatalException:
             logging.error(
                 f"[ReUploadUtils] None of the trackers dynamic trackers {dynamic_trackers} have a valid "
                 f"configuration. Proceeding with fall back trackers {original_upload_to_trackers}"

@@ -20,6 +20,7 @@ import hashlib
 
 from pathlib import Path
 
+from modules.exceptions.exception import GGBotFatalException
 from utilities.utils import GenericUtils
 
 working_folder = Path(__file__).resolve().parent.parent.parent.parent
@@ -110,7 +111,7 @@ def test_get_and_validate_configured_trackers_failures(trackers, all_trackers, m
         f"{working_folder}/parameters/tracker/api_keys.json"
     )
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(GGBotFatalException):
         assert GenericUtils().get_and_validate_configured_trackers(
             trackers, all_trackers, api_keys_dict, acronym_to_tracker.keys()
         )

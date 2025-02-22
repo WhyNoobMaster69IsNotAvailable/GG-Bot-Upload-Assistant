@@ -31,6 +31,11 @@ TMDB_TO_MAL_MAPPING = "{base_path}/parameters/mal_mapping/tmdb_to_mal_mapping.js
 IMDB_TO_MAL_MAPPING = "{base_path}/parameters/mal_mapping/imdb_to_mal_mapping.json"
 TVDB_TO_MAL_MAPPING = "{base_path}/parameters/mal_mapping/tvdb_to_mal_mapping.json"
 
+UPLOAD_ASSISTANT_ARGUMENTS_CONFIG = (
+    "{base_path}/parameters/sys_args/upload_assistant.yml"
+)
+REUPLOADER_ARGUMENTS_CONFIG = "{base_path}/parameters/sys_args/reuploader.yml"
+
 # Working dir paths
 # Note: The `sub_folder` is expected to end with a '/'
 WORKING_DIR = "{base_path}/temp_upload/"

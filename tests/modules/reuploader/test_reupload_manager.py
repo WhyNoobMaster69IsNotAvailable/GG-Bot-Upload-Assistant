@@ -641,7 +641,7 @@ class TestAutoReUploaderManager:
             ),
         ],
     )
-    def test_get_available_dynamic_trackers_qbittorrnet(
+    def test_get_available_dynamic_trackers_qbittorrent(
         self,
         torrent,
         upload_to_trackers,

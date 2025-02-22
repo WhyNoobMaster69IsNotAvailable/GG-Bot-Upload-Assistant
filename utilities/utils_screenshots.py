@@ -20,7 +20,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Tuple, List, Dict
 
-from ffmpy import FFmpeg
+from ffmpy import FFmpeg, FFExecutableNotFoundError
 from rich.console import Console
 from rich.progress import track
 
@@ -32,6 +32,7 @@ from modules.constants import (
     UPLOADS_COMPLETE_MARKER_PATH,
     SCREENSHOTS_RESULT_FILE_PATH,
 )
+from modules.exceptions.exception import GGBotFatalException
 from modules.image_hosts.image_host_manager import GGBotImageHostManager
 from modules.image_hosts.image_upload_status import GGBotImageUploadStatus
 from utilities.utils import GenericUtils
@@ -151,7 +152,7 @@ class GGBotScreenshotManager:
                 "[b][color=#FF0000][size=22]No Screenshots Available[/size][/color][/b]"
             )
             file2.write("No Screenshots Available")
-        logging.error(
+        logging.warning(
             "[GGBotScreenshotManager::generate_screenshots] Continuing upload without screenshots "
             "because no image hosts have been configured properly"
         )
@@ -197,11 +198,19 @@ class GGBotScreenshotManager:
 
     def _generate_screenshot(self, *, output_file, timestamp):
         if not self._does_screenshot_exist(output_file):
-            self._run_ffmpeg(
-                upload_media=self.upload_media,
-                timestamp=timestamp,
-                output_file=output_file,
-            )
+            try:
+                self._run_ffmpeg(
+                    upload_media=self.upload_media,
+                    timestamp=timestamp,
+                    output_file=output_file,
+                )
+            except FFExecutableNotFoundError as e:
+                logging.error(
+                    "[GGBotScreenshotManager::generate_screenshots] ffmpeg executable is not "
+                    "present in current environment",
+                    exc_info=e,
+                )
+                raise GGBotFatalException(e)
         else:
             logging.info(
                 f"[GGBotScreenshotManager::generate_screenshots] Continuing with existing screenshot "

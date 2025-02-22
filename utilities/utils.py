@@ -537,10 +537,10 @@ class GenericUtils:
         #   2. the site is not supported, or
         #   3. the API key isn't provided
         if len(upload_to_trackers) < 1:
-            logging.exception(
+            logging.error(
                 "[Utils] No valid trackers specified for upload destination (e.g. BHD, BLU, ACM)"
             )
-            raise AssertionError(
+            raise GGBotFatalException(
                 "Provide at least 1 tracker we can upload to (e.g. BHD, BLU, ACM)"
             )
 

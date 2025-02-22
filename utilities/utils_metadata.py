@@ -1214,7 +1214,7 @@ def fill_database_ids(
             possible_matches = _search_and_get_possible_matches(torrent_info, auto_mode)
 
     else:
-        logging.error(
+        logging.info(
             "[MetadataUtils] No ids provided by user / mediainfo. Falling back to TMDB search by title & year"
         )
         possible_matches = _search_and_get_possible_matches(torrent_info, auto_mode)
