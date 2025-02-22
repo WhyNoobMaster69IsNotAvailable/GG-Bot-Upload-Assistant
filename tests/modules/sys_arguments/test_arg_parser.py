@@ -38,6 +38,7 @@ class TestGGBotArgumentParser:
                 dest="-p",
                 option_strings="--path",
                 nargs="*",
+                required=True,
                 help_string="Use this to provide path(s) to file/folder",
             ),
             GGBotArgumentType.REQUIRED,

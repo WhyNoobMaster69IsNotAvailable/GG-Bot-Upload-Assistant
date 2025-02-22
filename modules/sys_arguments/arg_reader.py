@@ -60,7 +60,7 @@ class GGBotArgReader:
             dest=argument.get("destination"),
             option_strings=argument.get("optional_string"),
             nargs=nargs,
-            required=argument.get("required"),
+            required=bool(argument.get("required", False)),
             help_string=argument.get("help"),
             action=argument.get("action"),
             choices=argument.get("choices"),

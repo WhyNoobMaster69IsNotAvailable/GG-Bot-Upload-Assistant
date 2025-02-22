@@ -24,7 +24,7 @@ class GGBotArgumentEntry:
         dest,
         option_strings: Optional[str] = None,
         nargs: Optional[Union[str, int]] = None,
-        required: bool = True,
+        required: bool = False,
         help_string: str = "",
         choices: Optional[List[str]] = None,
         action: Optional[str] = None,
@@ -46,13 +46,13 @@ class GGBotArgumentEntry:
         if self.action == "store_true":
             return {
                 "action": self.action,
-                "required": self.required,
+                "required": self.required or False,
                 "help": self.help_string,
             }
         return {
             "action": self.action,
             "nargs": self.nargs,
-            "required": self.required,
+            "required": self.required or False,
             "help": self.help_string,
             "choices": self.choices,
         }
