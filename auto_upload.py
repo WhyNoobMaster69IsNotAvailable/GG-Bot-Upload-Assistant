@@ -929,7 +929,7 @@ class GGBotUploadAssistant:
         payload = {}
         files = []
         display_files = {}
-        requests_orchestator = requests
+        requests_orchestrator = requests
 
         logging.debug(
             "::::::::::::::::::::::::::::: Tracker settings that will be used for creating payload :::::::::::::::::::::::::::::"
@@ -986,7 +986,7 @@ class GGBotUploadAssistant:
                 )
 
                 logging.info("[TrackerUpload] Loading custom action to get cookie")
-                requests_orchestator = requests_orchestator.Session()
+                requests_orchestrator = requests_orchestrator.Session()
                 custom_action = GenericUtils.load_custom_actions(
                     "action"
                 )  # FIXME: THis is broken. Figure out how to get the actual action key here.
@@ -995,8 +995,10 @@ class GGBotUploadAssistant:
                 )
 
                 logging.info("[TrackerUpload] Setting cookie to session")
-                # here we are storing the session on the requests_orchestator object
-                requests_orchestator.cookies.update(pickle.load(open(cookiefile, "rb")))
+                # here we are storing the session on the requests_orchestrator object
+                requests_orchestrator.cookies.update(
+                    pickle.load(open(cookiefile, "rb"))
+                )
             else:
                 # TODO add support for cookie based authentication
                 logging.fatal(
@@ -1186,11 +1188,11 @@ class GGBotUploadAssistant:
 
         if not self.args.dry_run:  # skipping tracker upload during dry runs
             if self.config["technical_jargons"]["payload_type"] == "JSON":
-                response = requests_orchestator.request(
+                response = requests_orchestrator.request(
                     "POST", url, json=payload, files=files, headers=headers
                 )
             else:
-                response = requests_orchestator.request(
+                response = requests_orchestrator.request(
                     "POST", url, data=payload, files=files, headers=headers
                 )
 
