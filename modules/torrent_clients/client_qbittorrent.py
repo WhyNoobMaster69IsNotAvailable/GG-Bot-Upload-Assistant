@@ -66,7 +66,7 @@ class Qbittorrent(GGBotTorrentClientTemplate):
         # `seed_label` is the label which will be added to the cross-seeded torrents
         self.seed_label = self.reuploader_config.CROSS_SEED_LABEL
         # `source_label` is the label which will be added to the original torrent in the client
-        self.source_label = self.reuploader_config.SOURCE_LABEL
+        self.source_label = f"{self.seed_label}_Source"
 
         try:
             logging.info(

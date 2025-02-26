@@ -20,7 +20,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Optional
 
-from transmission_rpc import Client, Torrent, Session
+import transmission_rpc
+from transmission_rpc import Torrent, Session
 from modules.config import ReUploaderConfig, ClientConfig
 from modules.torrent_clients.base import GGBotTorrentClientTemplate
 
@@ -51,7 +52,7 @@ class Transmission(GGBotTorrentClientTemplate):
         super().__init__()
         logging.info("[Transmission] Connecting to the Transmission instance...")
         self.client_config = ClientConfig()
-        self.mission_client = Client(
+        self.mission_client = transmission_rpc.Client(
             host=self.client_config.CLIENT_HOST,
             port=self.client_config.CLIENT_PORT,
             path=self.client_config.CLIENT_PATH or "/transmission/rpc",
@@ -71,7 +72,7 @@ class Transmission(GGBotTorrentClientTemplate):
         # `seed_label` is the label which will be added to the cross-seeded torrents
         self.seed_label = self.config.CROSS_SEED_LABEL
         # `source_label` is the label which will be added to the original torrent in the client
-        self.source_label = self.config.SOURCE_LABEL
+        self.source_label = f"{self.seed_label}_Source"
 
     def hello(self) -> None:
         session: Session = self.mission_client.get_session()

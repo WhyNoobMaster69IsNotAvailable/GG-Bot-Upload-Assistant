@@ -37,8 +37,8 @@ def __reuploader_dynamic_mode(param, default=None):
     return default
 
 
-def test_init_qbit(mocker):
-    mocker.patch("transmission_rpc.client.Client")
+def test_init_transmission(mocker):
+    mocker.patch("transmission_rpc.Client")
     mocker.patch("os.getenv", side_effect=__reuploader_default_mode)
     transmission = Transmission()
 
@@ -48,8 +48,8 @@ def test_init_qbit(mocker):
     assert transmission.source_label == "GG_BOT_CROSS_SEED_TEST_Source"
 
 
-def test_init_qbit_dynamic_reuploader(mocker):
-    mocker.patch("transmission_rpc.client.Client")
+def test_init_transmission_dynamic_reuploader(mocker):
+    mocker.patch("transmission_rpc.Client")
     mocker.patch("os.getenv", side_effect=__reuploader_dynamic_mode)
     transmission = Transmission()
 
@@ -84,7 +84,7 @@ def test_init_qbit_dynamic_reuploader(mocker):
     ],
 )
 def test_get_dynamic_trackers(torrent, expected, mocker):
-    mocker.patch("transmission_rpc.client.Client")
+    mocker.patch("transmission_rpc.Client")
     mocker.patch("os.getenv", side_effect=__reuploader_dynamic_mode)
     transmission = Transmission()
     assert transmission.get_dynamic_trackers(torrent) == expected
@@ -103,7 +103,7 @@ def test_get_dynamic_trackers(torrent, expected, mocker):
     ],
 )
 def test_get_dynamic_trackers_when_disabled(torrent, expected, mocker):
-    mocker.patch("transmission_rpc.client.Client")
+    mocker.patch("transmission_rpc.Client")
     mocker.patch("os.getenv", side_effect=__reuploader_default_mode)
     transmission = Transmission()
     assert transmission.get_dynamic_trackers(torrent) == expected
