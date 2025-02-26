@@ -16,12 +16,14 @@
 
 import base64
 import logging
+from typing import Optional
 
 import requests
 
 from modules.config import ClientConfig, ReUploaderConfig
 from modules.exceptions.exception import GGBotRetryException
 from modules.helpers import retry_on_failure
+from modules.torrent_clients.base import GGBotTorrentClientTemplate
 
 rutorrent_keys = [
     "d.get_custom1",
@@ -40,7 +42,7 @@ rutorrent_keys_translation = {
 }
 
 
-class Rutorrent:
+class Rutorrent(GGBotTorrentClientTemplate):
     __connection_check_path = "/plugins/check_port/action.php?init"
     __cpu_load_path = "/plugins/cpuload/action.php"
     __disk_size_path = "/plugins/diskspace/action.php"
@@ -179,6 +181,7 @@ class Rutorrent:
             self.header = {"Authorization": f"Basic {hashed}"}
         else:
             self.header = {}
+
         self.dynamic_tracker_selection = (
             self.reuploader_config.DYNAMIC_TRACKER_SELECTION
         )
@@ -188,10 +191,11 @@ class Rutorrent:
         else:
             # `target_label` is the label of the torrents that we are interested in
             self.target_label = self.reuploader_config.REUPLOAD_LABEL
+
         # `seed_label` is the label which will be added to the cross-seeded torrents
         self.seed_label = self.reuploader_config.CROSS_SEED_LABEL
         # `source_label` is the label which will be added to the original torrent in the client
-        self.source_label = f"{self.seed_label}_Source"
+        self.source_label = self.reuploader_config.SOURCE_LABEL
 
         try:
             logging.info("[Rutorrent] Checking connection to Rutorrent")
@@ -286,10 +290,10 @@ class Rutorrent:
             f"[Rutorrent] Torrent upload response. Status Code: {status_code} <=> Response: {response}"
         )
 
-    def update_torrent_category(self, info_hash, category_name=None):
-        category_name = (
-            category_name if category_name is not None else self.source_label
-        )
+    def update_torrent_category(
+        self, info_hash: str, category_name: Optional[str] = None
+    ) -> None:
+        category_name = self.source_label if category_name is None else category_name
         logging.info(
             f"[Rutorrent] Updating category of torrent with hash {info_hash} to {category_name}"
         )

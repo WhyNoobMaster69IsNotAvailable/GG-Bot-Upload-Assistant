@@ -16,10 +16,12 @@
 
 import logging
 from datetime import datetime
+from typing import Optional
 
 import qbittorrentapi
 
 from modules.config import ClientConfig, ReUploaderConfig
+from modules.torrent_clients.base import GGBotTorrentClientTemplate
 
 qbt_keys = [
     "category",
@@ -33,7 +35,7 @@ qbt_keys = [
 ]
 
 
-class Qbittorrent:
+class Qbittorrent(GGBotTorrentClientTemplate):
     """
     Client Specific Configurations
     Host, Port, Username, Password
@@ -59,10 +61,11 @@ class Qbittorrent:
         else:
             # `target_label` is the label of the torrents that we are interested in
             self.target_label = self.reuploader_config.REUPLOAD_LABEL
+
         # `seed_label` is the label which will be added to the cross-seeded torrents
         self.seed_label = self.reuploader_config.CROSS_SEED_LABEL
         # `source_label` is the label which will be added to the original torrent in the client
-        self.source_label = f"{self.seed_label}_Source"
+        self.source_label = self.reuploader_config.SOURCE_LABEL
 
         try:
             logging.info(
@@ -150,13 +153,15 @@ class Qbittorrent:
         )
         # self.qbt_client.torrents_resume(info_hash)
 
-    def update_torrent_category(self, info_hash, category_name):
-        category_name = (
-            category_name if category_name is not None else self.source_label
-        )
+    def update_torrent_category(
+        self, info_hash: str, category_name: Optional[str] = None
+    ) -> None:
+        category_name = self.source_label if category_name is None else category_name
+
         if category_name not in list(self.__list_categories()):
             # if the category  `category_name` doesn't exist we create it
             self.__create_category(category_name, None)
+
         self.qbt_client.torrents_set_category(
             category=category_name, torrent_hashes=info_hash
         )

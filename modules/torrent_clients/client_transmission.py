@@ -15,21 +15,28 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import logging
-
+import re
 from datetime import datetime
-from transmission_rpc import Client
-from modules.config import ReUploaderConfig
+from pathlib import Path
 
-qbt_keys = [
-    "category",
-    "completed",
-    "content_path",
-    "hash",
+from transmission_rpc import Client, Torrent, Session
+from modules.config import ReUploaderConfig, ClientConfig
+
+transmission_keys = [
+    "labels[0]",
+    "haveValid",
+    "downloadDir",
+    "hashString",
     "name",
-    "save_path",
-    "size",
-    "tracker",
+    "totalSize",
 ]
+transmission_keys_translation = {
+    "downloadDir": "save_path",
+    "totalSize": "size",
+    "hashString": "hash",
+    "haveValid": "completed",
+    "labels[0]": "category",
+}
 
 
 class Transmission:
@@ -39,61 +46,97 @@ class Transmission:
     """
 
     def __init__(self):
-        logging.info(
-            "[Transmission] Connecting to the Transmission instance..."
-        )
+        logging.info("[Transmission] Connecting to the Transmission instance...")
+        self.client_config = ClientConfig()
         self.mission_client = Client(
-            host="192.168.0.127",
-            port="9093",
-            path="/transmission/"
-            # username='admin',
-            # password='admin'
+            host=self.client_config.CLIENT_HOST,
+            port=self.client_config.CLIENT_PORT,
+            path=self.client_config.CLIENT_PATH or "/transmission/rpc",
+            username=self.client_config.CLIENT_USERNAME,
+            password=self.client_config.CLIENT_PASSWORD,
         )
         self.config = ReUploaderConfig()
-        # `target_label` is the label of the torrents that we are interested in
-        self.target_label = self.config.REUPLOAD_LABEL
+
+        self.dynamic_tracker_selection = self.config.DYNAMIC_TRACKER_SELECTION
+        if self.dynamic_tracker_selection:
+            # reuploader running in dynamic tracker selection mode
+            self.target_label = "GGBOT"
+        else:
+            # `target_label` is the label of the torrents that we are interested in
+            self.target_label = self.config.REUPLOAD_LABEL
+
         # `seed_label` is the label which will be added to the cross-seeded torrents
         self.seed_label = self.config.CROSS_SEED_LABEL
         # `source_label` is the label which will be added to the original torrent in the client
         self.source_label = self.config.SOURCE_LABEL
 
     def hello(self):
-        logging.info(
-            f"[Qbittorrent] Hello from qbittorrent {self.qbt_client.app.version} and web api {self.qbt_client.app.web_api_version}"
-        )
-        print(f"qBittorrent: {self.qbt_client.app.version}")
-        print(f"qBittorrent Web API: {self.qbt_client.app.web_api_version}")
+        session: Session = self.mission_client.get_session()
+        print(f"Transmission Version: {session.version}")
+        print(f"Transmission RPC Version: {session.rpc_version}")
+        print(f"Transmission RPC SemVer: {session.rpc_version_semver}")
 
-    def __match_label(self, torrent):
+        logging.info(
+            "[Transmission] Hello from Transmission. Obtained Transmission Session"
+        )
+        logging.info(f"[Transmission] Transmission Version: {session.version}")
+        logging.info(f"[Transmission] Transmission RPC Version: {session.rpc_version}")
+        logging.info(
+            f"[Transmission] Transmission RPC SemVer: {session.rpc_version_semver}"
+        )
+
+    def __match_label(self, torrent: Torrent):
         # we don't want to consider cross-seeded torrents uploaded by the bot
-        if self.seed_label == torrent.category:
+        labels = torrent.fields["labels"] or []
+        label = labels[0] if len(labels) > 0 else ""
+
+        if self.seed_label == label:
             return False
         # user wants to ignore labels, hence we'll consider all the torrents
         if self.target_label == "IGNORE_LABEL":
             return True
-        return torrent.category == self.target_label
+        return label == self.target_label
 
-    def __extract_necessary_keys(self, torrent):
-        return {key: value for key, value in torrent.items() if key in qbt_keys}
+    @staticmethod
+    def __do_key_translation(key):
+        return (
+            transmission_keys_translation[key]
+            if key in transmission_keys_translation
+            else key
+        )
 
-    # torrents_set_category
-    def __list_categories(self):
-        return self.__get_torrent_categories().categories
+    def __extract_necessary_keys(self, torrent: Torrent):
+        torrent_data = {
+            self.__do_key_translation(key): self.__get_key_from_torrent(torrent, key)
+            for key in transmission_keys
+        }
+        torrent_data["save_path"] = f"{torrent_data['save_path']}/".replace("//", "/")
+        torrent_data["content_path"] = (
+            f"{torrent_data['save_path']}{torrent_data['name']}"
+        )
+        return torrent_data
 
-    def __get_torrent_categories(self):
-        return self.qbt_client.torrent_categories
+    @staticmethod
+    def __get_key_from_torrent(torrent: Torrent, key: str):
+        match = re.match(r"([a-zA-Z_]+)\[(\d+)]", key)
+        if match is None:
+            return torrent.fields[key]
 
-    def __create_category(self, name, save_path):
-        self.__get_torrent_categories().create_category(
-            name=name, save_path=save_path
+        key = match.group(1)
+        index = int(match.group(2))
+        return torrent.fields[key][index]
+
+    def list_all_torrents(self):
+        return list(
+            map(self.__extract_necessary_keys, self.mission_client.get_torrents())
         )
 
     def list_torrents(self):
-        logging.debug(f"[Qbittorrent] Listing torrents at {datetime.now()}")
+        logging.debug(f"[Transmission] Listing torrents at {datetime.now()}")
         return list(
             map(
                 self.__extract_necessary_keys,
-                filter(self.__match_label, self.qbt_client.torrents_info()),
+                filter(self.__match_label, self.mission_client.get_torrents()),
             )
         )
 
@@ -105,25 +148,21 @@ class Transmission:
         is_skip_checking,
         category=None,
     ):
-        self.qbt_client.torrents_add(
-            torrent_files=torrent_path,
-            save_path=save_path,
-            category=category if category is not None else self.seed_label,
-            use_auto_torrent_management=use_auto_torrent_management,
-            is_skip_checking=is_skip_checking,
+        uploaded_torrent: Torrent = self.mission_client.add_torrent(
+            torrent=Path(torrent_path),
+            download_dir=save_path,
+            labels=[category if category is not None else self.seed_label],
+            paused=False,
         )
-        # self.qbt_client.torrents_resume(info_hash)
+        logging.info(
+            f"[Transmission] Uploaded torrent: {uploaded_torrent.fields['hashString']}"
+        )
 
     def update_torrent_category(self, info_hash, category_name):
         category_name = (
             category_name if category_name is not None else self.source_label
         )
-        if category_name not in list(self.__list_categories()):
-            # if the category  `category_name` doesn't exist we create it
-            self.__create_category(category_name, None)
-        self.qbt_client.torrents_set_category(
-            category=category_name, torrent_hashes=info_hash
+        self.mission_client.change_torrent(ids=info_hash, labels=[category_name])
+        logging.info(
+            f"[Transmission] Updated torrent: [{info_hash}] category to [{category_name}]"
         )
-
-
-transmission = Transmission()

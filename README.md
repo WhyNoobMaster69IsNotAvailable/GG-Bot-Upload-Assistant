@@ -426,6 +426,7 @@ pip install -r requirements/requirements.txt
 - [ ] Use IMDB GraphQL Api
 - [ ] Use Anilist GraphQL Api
 - [X] E2E Tests for reuploader
+- [X] Added support for Transmission
 - [X] Moved sys argument / cli args to yaml file
 - [ ] Support for encrypted values from config
 - [ ] Issue#79: Not able to cross-seed rared releases
