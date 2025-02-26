@@ -107,7 +107,7 @@ to catch any errors / exceptions that happen in the application and fix them pro
             <td><strong>Site Name</strong></td>
         </tr>
         <tr style="text-align: center">
-            <td rowspan="22"><strong>UNIT3D</strong></td>
+            <td rowspan="23"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
             <td><strong><a href="https://eiga.moi">AsianCinema</a></strong></td>
         </tr>
@@ -194,6 +194,10 @@ to catch any errors / exceptions that happen in the application and fix them pro
         <tr style="text-align: center">
             <td><strong>PSS</strong></td>
             <td><strong><a href="https://privatesilverscreen.cc">Private Silver Screen</a></strong></td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>SPL</strong></td>
+            <td><strong><a href="https://seedpool.org/">Seed Pool</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td rowspan="2"><strong>XBTIT</strong></td>
