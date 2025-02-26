@@ -17,11 +17,23 @@
 
 import qbittorrentapi
 import requests
+from transmission_rpc import Client
 
 
 class TestE2ESetup:
     def test_mongo_container_setup(self, e2e_mongo_client):
         e2e_mongo_client.admin.command("ping")
+
+    def test_transmission_container_setup(self, transmission_credentials):
+        self.mission_client = Client(
+            host=transmission_credentials["host"],
+            port=transmission_credentials["port"],
+            path="/transmission/rpc",
+            username=transmission_credentials["username"],
+            password=transmission_credentials["password"],
+        )
+        session = self.mission_client.get_session()
+        assert session is not None
 
     def test_qbittorrent_container_setup(
         self, qbittorrent_container, qbittorrent_credentials

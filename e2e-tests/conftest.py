@@ -109,6 +109,38 @@ def qbittorrent_container(docker_testing_network, e2e_test_working_folder):
 
 
 @pytest.fixture(scope="module", autouse=True)
+def transmission_container(docker_testing_network, e2e_test_working_folder):
+    logging.info("[TestContainers]Creating Transmission docker container")
+    container = DockerContainer("lscr.io/linuxserver/transmission:latest")
+    container.with_bind_ports(9091, 9091)
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("transmission")
+
+    container.with_env("PUID", "1000")
+    container.with_env("PGID", "1000")
+    container.with_env("TZ", "UTC")
+    container.with_env("USER", "TRANSMISSION_USER")
+    container.with_env("PASS", "TRANSMISSION_USER_PASSWORD")
+
+    # the paths needs to be same to allow reuploader to access the media files
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+    )
+
+    container.start()
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created Transmission container for e2e testing: {container_id}"
+    )
+    yield container
+    container.stop()
+    logging.info(
+        f"[TestContainers] Removed the Transmission container used for e2e testing: {container_id}"
+    )
+
+
+@pytest.fixture(scope="module", autouse=True)
 def rutorrent_container(docker_testing_network, e2e_test_working_folder):
     logging.info("[TestContainers]Creating rutorrent docker container")
     container = DockerContainer("crazymax/rtorrent-rutorrent:5.1.5-7.2")
@@ -162,6 +194,37 @@ def rutorrent_credentials(rutorrent_container):
         # "hashed": base64.b64encode("admin:admin".encode("ascii")).decode("ascii"),
         "username": "",
         "password": "",
+    }
+
+
+@pytest.fixture(scope="module")
+def transmission_credentials(transmission_container):
+    time.sleep(2)  # allowing time for transmission container to start properly
+
+    transmission_logs = "".join(
+        [
+            log.decode("utf-8")
+            for log in transmission_container.get_logs()
+            if isinstance(log, bytes)
+        ]
+    )
+    match1 = re.search(
+        r"Connection to localhost \(127\.0\.0\.1\) 9091 port \[tcp/.*] succeeded!",
+        transmission_logs,
+    )
+    match2 = re.search(r"\[ls\.io-init] done\.", transmission_logs)
+
+    assert bool(match1) is True, "Failed to connect to transmission host"
+    assert bool(match2) is True, "Transmission container didn't start as expected"
+
+    host = transmission_container.get_container_host_ip()
+    port = transmission_container.get_exposed_port(9091)
+
+    yield {
+        "host": host,
+        "port": port,
+        "username": "TRANSMISSION_USER",
+        "password": "TRANSMISSION_USER_PASSWORD",
     }
 
 

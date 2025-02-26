@@ -155,3 +155,5 @@ devenv.local.nix
 dev_scripts/reuploader/apps/**
 dev_scripts/reuploader/data/**
 dev_scripts/reuploader/*.env
+
+modules/uploader

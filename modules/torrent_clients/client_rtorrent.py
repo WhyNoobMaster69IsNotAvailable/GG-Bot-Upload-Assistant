@@ -16,12 +16,14 @@
 
 import base64
 import logging
+from typing import Optional
 
 import requests
 
 from modules.config import ClientConfig, ReUploaderConfig
 from modules.exceptions.exception import GGBotRetryException
 from modules.helpers import retry_on_failure
+from modules.torrent_clients.base import GGBotTorrentClientTemplate
 
 rutorrent_keys = [
     "d.get_custom1",
@@ -40,7 +42,7 @@ rutorrent_keys_translation = {
 }
 
 
-class Rutorrent:
+class Rutorrent(GGBotTorrentClientTemplate):
     __connection_check_path = "/plugins/check_port/action.php?init"
     __cpu_load_path = "/plugins/cpuload/action.php"
     __disk_size_path = "/plugins/diskspace/action.php"
@@ -104,19 +106,6 @@ class Rutorrent:
             "d.is_multi_file": data[33],
         }
 
-    def get_dynamic_trackers(self, torrent):
-        # a sanity check just to be sure
-        if self.dynamic_tracker_selection:
-            # this torrent is the translated data hence category instead of d.custom1
-            category = torrent["category"]
-            # removing any trailing ::
-            if category.endswith("::"):
-                category = category[:-2]
-            trackers = category.split("::")
-            return trackers[1:]  # first entry will always be GGBOT
-        else:
-            return []
-
     def __match_label(self, torrent):
         # we don't want to consider cross-seeded torrents uploaded by the bot
         if self.seed_label == torrent["d.get_custom1"]:
@@ -160,6 +149,7 @@ class Rutorrent:
         return f"{int(size)} {power_labels[n]}B"
 
     def __init__(self):
+        super().__init__()
         self.client_config = ClientConfig()
         self.reuploader_config = ReUploaderConfig()
         self.host = self.client_config.CLIENT_HOST
@@ -179,6 +169,7 @@ class Rutorrent:
             self.header = {"Authorization": f"Basic {hashed}"}
         else:
             self.header = {}
+
         self.dynamic_tracker_selection = (
             self.reuploader_config.DYNAMIC_TRACKER_SELECTION
         )
@@ -188,6 +179,7 @@ class Rutorrent:
         else:
             # `target_label` is the label of the torrents that we are interested in
             self.target_label = self.reuploader_config.REUPLOAD_LABEL
+
         # `seed_label` is the label which will be added to the cross-seeded torrents
         self.seed_label = self.reuploader_config.CROSS_SEED_LABEL
         # `source_label` is the label which will be added to the original torrent in the client
@@ -286,10 +278,10 @@ class Rutorrent:
             f"[Rutorrent] Torrent upload response. Status Code: {status_code} <=> Response: {response}"
         )
 
-    def update_torrent_category(self, info_hash, category_name=None):
-        category_name = (
-            category_name if category_name is not None else self.source_label
-        )
+    def update_torrent_category(
+        self, info_hash: str, category_name: Optional[str] = None
+    ) -> None:
+        category_name = self.source_label if category_name is None else category_name
         logging.info(
             f"[Rutorrent] Updating category of torrent with hash {info_hash} to {category_name}"
         )
