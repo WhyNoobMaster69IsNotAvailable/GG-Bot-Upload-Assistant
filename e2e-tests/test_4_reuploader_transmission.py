@@ -101,7 +101,7 @@ class TestAutoReuploaderQBittorrent:
 
             config_data = config_data.replace(
                 "VISOR_SERVER_PORT=30035",
-                "VISOR_SERVER_PORT=30036",
+                "VISOR_SERVER_PORT=30037",
             )
 
         with open(
