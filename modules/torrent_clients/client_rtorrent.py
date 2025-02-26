@@ -106,19 +106,6 @@ class Rutorrent(GGBotTorrentClientTemplate):
             "d.is_multi_file": data[33],
         }
 
-    def get_dynamic_trackers(self, torrent):
-        # a sanity check just to be sure
-        if self.dynamic_tracker_selection:
-            # this torrent is the translated data hence category instead of d.custom1
-            category = torrent["category"]
-            # removing any trailing ::
-            if category.endswith("::"):
-                category = category[:-2]
-            trackers = category.split("::")
-            return trackers[1:]  # first entry will always be GGBOT
-        else:
-            return []
-
     def __match_label(self, torrent):
         # we don't want to consider cross-seeded torrents uploaded by the bot
         if self.seed_label == torrent["d.get_custom1"]:
@@ -162,6 +149,7 @@ class Rutorrent(GGBotTorrentClientTemplate):
         return f"{int(size)} {power_labels[n]}B"
 
     def __init__(self):
+        super().__init__()
         self.client_config = ClientConfig()
         self.reuploader_config = ReUploaderConfig()
         self.host = self.client_config.CLIENT_HOST

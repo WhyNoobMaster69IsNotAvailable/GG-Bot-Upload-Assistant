@@ -1,16 +1,16 @@
 # GG Bot Upload Assistant
 # Copyright (C) 2022  Noob Master669
-
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -18,9 +18,11 @@ import logging
 import re
 from datetime import datetime
 from pathlib import Path
+from typing import List, Dict, Optional
 
 from transmission_rpc import Client, Torrent, Session
 from modules.config import ReUploaderConfig, ClientConfig
+from modules.torrent_clients.base import GGBotTorrentClientTemplate
 
 transmission_keys = [
     "labels[0]",
@@ -39,13 +41,14 @@ transmission_keys_translation = {
 }
 
 
-class Transmission:
+class Transmission(GGBotTorrentClientTemplate):
     """
     Client Specific Configurations
     Host, Port, Username, Password
     """
 
     def __init__(self):
+        super().__init__()
         logging.info("[Transmission] Connecting to the Transmission instance...")
         self.client_config = ClientConfig()
         self.mission_client = Client(
@@ -70,7 +73,7 @@ class Transmission:
         # `source_label` is the label which will be added to the original torrent in the client
         self.source_label = self.config.SOURCE_LABEL
 
-    def hello(self):
+    def hello(self) -> None:
         session: Session = self.mission_client.get_session()
         print(f"Transmission Version: {session.version}")
         print(f"Transmission RPC Version: {session.rpc_version}")
@@ -83,6 +86,49 @@ class Transmission:
         logging.info(f"[Transmission] Transmission RPC Version: {session.rpc_version}")
         logging.info(
             f"[Transmission] Transmission RPC SemVer: {session.rpc_version_semver}"
+        )
+
+    def list_all_torrents(self) -> List[Dict[str, str]]:
+        return list(
+            map(self.__extract_necessary_keys, self.mission_client.get_torrents())
+        )
+
+    def list_torrents(self) -> List[Dict[str, str]]:
+        logging.debug(f"[Transmission] Listing torrents at {datetime.now()}")
+        return list(
+            map(
+                self.__extract_necessary_keys,
+                filter(self.__match_label, self.mission_client.get_torrents()),
+            )
+        )
+
+    def upload_torrent(
+        self,
+        torrent_path: str,
+        save_path: str,
+        use_auto_torrent_management: bool,
+        is_skip_checking: bool,
+        category: Optional[str] = None,
+    ) -> None:
+        uploaded_torrent: Torrent = self.mission_client.add_torrent(
+            torrent=Path(torrent_path),
+            download_dir=save_path,
+            labels=[category if category is not None else self.seed_label],
+            paused=False,
+        )
+        logging.info(
+            f"[Transmission] Uploaded torrent: {uploaded_torrent.fields['hashString']}"
+        )
+
+    def update_torrent_category(
+        self, info_hash: str, category_name: Optional[str] = None
+    ) -> None:
+        category_name = (
+            category_name if category_name is not None else self.source_label
+        )
+        self.mission_client.change_torrent(ids=info_hash, labels=[category_name])
+        logging.info(
+            f"[Transmission] Updated torrent: [{info_hash}] category to [{category_name}]"
         )
 
     def __match_label(self, torrent: Torrent):
@@ -125,44 +171,3 @@ class Transmission:
         key = match.group(1)
         index = int(match.group(2))
         return torrent.fields[key][index]
-
-    def list_all_torrents(self):
-        return list(
-            map(self.__extract_necessary_keys, self.mission_client.get_torrents())
-        )
-
-    def list_torrents(self):
-        logging.debug(f"[Transmission] Listing torrents at {datetime.now()}")
-        return list(
-            map(
-                self.__extract_necessary_keys,
-                filter(self.__match_label, self.mission_client.get_torrents()),
-            )
-        )
-
-    def upload_torrent(
-        self,
-        torrent_path,
-        save_path,
-        use_auto_torrent_management,
-        is_skip_checking,
-        category=None,
-    ):
-        uploaded_torrent: Torrent = self.mission_client.add_torrent(
-            torrent=Path(torrent_path),
-            download_dir=save_path,
-            labels=[category if category is not None else self.seed_label],
-            paused=False,
-        )
-        logging.info(
-            f"[Transmission] Uploaded torrent: {uploaded_torrent.fields['hashString']}"
-        )
-
-    def update_torrent_category(self, info_hash, category_name):
-        category_name = (
-            category_name if category_name is not None else self.source_label
-        )
-        self.mission_client.change_torrent(ids=info_hash, labels=[category_name])
-        logging.info(
-            f"[Transmission] Updated torrent: [{info_hash}] category to [{category_name}]"
-        )

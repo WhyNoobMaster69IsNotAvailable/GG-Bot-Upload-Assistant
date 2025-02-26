@@ -42,6 +42,7 @@ class Qbittorrent(GGBotTorrentClientTemplate):
     """
 
     def __init__(self):
+        super().__init__()
         logging.info("[Qbittorrent] Connecting to the qbittorrent instance...")
         self.client_config = ClientConfig()
         self.reuploader_config = ReUploaderConfig()
@@ -84,18 +85,6 @@ class Qbittorrent(GGBotTorrentClientTemplate):
         )
         print(f"qBittorrent: {self.qbt_client.app.version}")
         print(f"qBittorrent Web API: {self.qbt_client.app.web_api_version}")
-
-    def get_dynamic_trackers(self, torrent):
-        # a sanity check just to be sure
-        if self.dynamic_tracker_selection:
-            category = torrent["category"]
-            # removing any trailing ::
-            if category.endswith("::"):
-                category = category[:-2]
-            trackers = category.split("::")
-            return trackers[1:]  # first entry will always be GGBOT
-        else:
-            return []
 
     def __match_label(self, torrent):
         # we don't want to consider cross-seeded torrents uploaded by the bot
