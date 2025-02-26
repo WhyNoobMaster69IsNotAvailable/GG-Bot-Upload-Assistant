@@ -447,6 +447,7 @@ pip install -r requirements/requirements.txt
 ### Backlogs
 
 - [ ] EPIC: GG-BOT Metadata Aggregator
+- [ ] Add support to create sample from upload, host and add to description
 - [ ] EPIC: GG-BOT P2P Network Relay
 - [ ] EPIC: Migrate GG-BOT Runtime to work with GG-BOT Auto ReUploader
 - [ ] EPIC: Refactor GG-BOT Admin to handle GG-BOT Auto ReUploader
