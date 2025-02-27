@@ -32,6 +32,8 @@ Consider you want to add support for a new tracker named Seedpool. The contents 
 > SPL_API_KEY=# Fill Api Key
 > SPL_ANNOUNCE_URL=https://seedpool.org/announce/<TRACKER_PASS_KEY>
 
+Reference PR: https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/merge_requests/250/diffs
+
 ## 3. Use Templates Externally
 > :warning: **There will be no support provided for externally loaded templates** :warning:
 
