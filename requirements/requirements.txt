@@ -10,7 +10,6 @@ pyimgbox==1.0.7
 pymediainfo==7.0.1
 pymongo==4.11.1
 python-dotenv==1.0.1
-# python-Levenshtein==0.12.2
 qbittorrent-api==2024.12.71
 requests==2.32.3
 rich==13.9.4
