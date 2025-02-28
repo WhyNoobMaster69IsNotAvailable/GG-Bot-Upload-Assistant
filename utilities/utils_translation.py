@@ -528,15 +528,26 @@ def choose_right_tracker_keys(
                         tracker_settings[config["translation"][translation_key]] = live
 
                     # If the user supplied the "-anon" argument then we want to pass that along when uploading
-                    elif translation_key == "anon" and args.anon:
-                        logging.info("[Translation] Uploading anonymously")
-                        tracker_settings[config["translation"][translation_key]] = "1"
+                    elif translation_key == "anon":
+                        if args.anon:
+                            logging.info("[Translation] Uploading anonymously")
+                            tracker_settings[config["translation"][translation_key]] = (
+                                "1"
+                            )
+                        else:
+                            tracker_settings[config["translation"][translation_key]] = (
+                                "0"
+                            )
+
+                    elif translation_key == "freeleech":
+                        tracker_settings[config["translation"][translation_key]] = (
+                            "100" if getattr(args, "freeleech", False) is True else "0"
+                        )
 
                     # Adding support for internal args
                     elif translation_key in [
                         "doubleup",
                         "featured",
-                        "freeleech",
                         "personal",
                         "internal",
                         "sticky",
@@ -545,7 +556,7 @@ def choose_right_tracker_keys(
                         "3d",
                     ]:
                         tracker_settings[config["translation"][translation_key]] = (
-                            "100"
+                            "1"
                             if getattr(args, translation_key, False) is True
                             else "0"
                         )
