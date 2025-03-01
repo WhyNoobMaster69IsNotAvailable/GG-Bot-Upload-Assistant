@@ -40,7 +40,7 @@ def clean_up(pth):
     pth.rmdir()
 
 
-class TestAutoReuploaderTransmission:
+class TestAutoReuploaderDeluge:
     @pytest.fixture(autouse=True)
     def run_around_tests(self):
         folder = f"{working_folder}{temp_working_dir}"
@@ -60,8 +60,8 @@ class TestAutoReuploaderTransmission:
         clean_up(folder)
 
     @pytest.fixture
-    def setup_reuploader_env_with_dynamic_config_transmission(
-        self, mongo_container, transmission_credentials, run_around_tests
+    def setup_reuploader_env_with_dynamic_config_deluge(
+        self, mongo_container, deluge_credentials, run_around_tests
     ):
         mongo_ip = mongo_container.get_container_host_ip()
         mongo_port = mongo_container.get_exposed_port(27017)
@@ -75,33 +75,29 @@ class TestAutoReuploaderTransmission:
             config_data = config_data.replace("<<MONGO_PORT_PLACEHOLDER>>", mongo_port)
             config_data = config_data.replace(
                 "cache_database=gg-bot-reuploader",
-                "cache_database=gg-bot-reuploader-transmission",
+                "cache_database=gg-bot-reuploader-deluge",
             )
 
             config_data = config_data.replace(
                 "<<CLIENT_HOST_PLACEHOLDER>>",
-                f"{transmission_credentials['host']}",
+                f"{deluge_credentials['host']}",
             )
             config_data = config_data.replace(
-                "<<CLIENT_PORT_PLACEHOLDER>>", transmission_credentials["port"]
+                "<<CLIENT_PORT_PLACEHOLDER>>", deluge_credentials["port"]
             )
-            config_data = config_data.replace("client=Rutorrent", "client=Transmission")
+            config_data = config_data.replace("client=Rutorrent", "client=Deluge")
             config_data = config_data.replace(
                 "client_username=",
-                f'client_username={transmission_credentials["username"]}',
+                f'client_username={deluge_credentials["username"]}',
             )
             config_data = config_data.replace(
                 "client_password=",
-                f'client_password={transmission_credentials["password"]}',
-            )
-            config_data = config_data.replace(
-                "client_path=/",
-                "client_path=/transmission/rpc",
+                f'client_password={deluge_credentials["password"]}',
             )
 
             config_data = config_data.replace(
                 "VISOR_SERVER_PORT=30035",
-                "VISOR_SERVER_PORT=30037",
+                "VISOR_SERVER_PORT=30038",
             )
 
         with open(
@@ -117,10 +113,10 @@ class TestAutoReuploaderTransmission:
         "argv",
         ["test.py", "-t", "TSP", "PTP", "BLU", "GPW", "--debug"],
     )
-    def test_reuploader_with_torrents_transmission(
+    def test_reuploader_with_torrents_deluge(
         self,
         e2e_test_working_folder,
-        setup_reuploader_env_with_dynamic_config_transmission,
+        setup_reuploader_env_with_dynamic_config_deluge,
     ):
         reuploader: GGBotReUploader = GGBotReUploader(
             f"{working_folder}{temp_working_dir}{temp_config_dir}/reupload-test.config.env"
@@ -164,7 +160,7 @@ class TestAutoReuploaderTransmission:
         We also need to list all torrents from torrent client and ensure that the new torrent is seeding
             and the original torrent has been moved to a different category.
         """
-        gg_bot_database = "gg-bot-reuploader-transmission"
+        gg_bot_database = "gg-bot-reuploader-deluge"
         mongo_client: MongoClient = reuploader.cache.cache_client.mongo_client
         database = mongo_client.get_database(gg_bot_database)
 
@@ -222,13 +218,13 @@ class TestAutoReuploaderTransmission:
         all_torrents = reuploader.torrent_client.list_all_torrents()
         assert len(all_torrents) == 2
         for torrent in all_torrents:
-            if torrent["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80":
-                assert torrent["category"] == "GGBotCrossSeed_Source"
+            if torrent["hash"].lower() == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80":
+                assert torrent["category"] == "GGBotCrossSeed_Source".lower()
             if (
                 torrent["hash"].lower()
                 == "607AFF625031CD1F68A8B9C62B044112945F6C9A".lower()
             ):
-                assert torrent["category"] == "GGBotCrossSeed"
+                assert torrent["category"] == "GGBotCrossSeed".lower()
 
         assert all_torrents[0]["size"] == all_torrents[0]["size"]
         assert all_torrents[0]["completed"] == all_torrents[0]["completed"]

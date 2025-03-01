@@ -53,20 +53,7 @@ class Qbittorrent(GGBotTorrentClientTemplate):
             password=self.client_config.CLIENT_PASSWORD,
         )
 
-        self.dynamic_tracker_selection = (
-            self.reuploader_config.DYNAMIC_TRACKER_SELECTION
-        )
-        if self.dynamic_tracker_selection:
-            # reuploader running in dynamic tracker selection mode
-            self.target_label = "GGBOT"
-        else:
-            # `target_label` is the label of the torrents that we are interested in
-            self.target_label = self.reuploader_config.REUPLOAD_LABEL
-
-        # `seed_label` is the label which will be added to the cross-seeded torrents
-        self.seed_label = self.reuploader_config.CROSS_SEED_LABEL
-        # `source_label` is the label which will be added to the original torrent in the client
-        self.source_label = f"{self.seed_label}_Source"
+        self._initialize_reuploader_config(self.reuploader_config)
 
         try:
             logging.info(

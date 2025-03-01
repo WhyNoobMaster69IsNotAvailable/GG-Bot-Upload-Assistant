@@ -1,17 +1,34 @@
-## **3.1.8**
+## **3.1.9**
+    New Tracker
+        * Seedpool
+
     New Features
-      * Per tracker custom description templates
+        * Added support for Transmission torrent client
+        * Added support for Deluge torrent client
 
     Underhood Changes
-      * Updated MyAnimeList mappings
-      * Replace GitLab with BugSink for error tracking
+        * E2E Tests for reuploader
+        * Moved sys argument / cli args to yaml file
 
     Bug Fixes
-      * Issue#165: Pixhost screenshot upload error
-      * Issue#167: ACM upload fails due to URL change
-      * Issue#159: Memory failure when using torf
-      * Issue#198: UnicodeEncodeError: 'charmap' codec can't encode character '\u017b'
-      * Issue#199: KeyError: 'title' in guessit result
+        * Issue#202: FNP updated 1080i identifier
+
+<br>
+
+## **3.1.8**
+    New Features
+        * Per tracker custom description templates
+
+    Underhood Changes
+        * Updated MyAnimeList mappings
+        * Replace GitLab with BugSink for error tracking
+
+    Bug Fixes
+        * Issue#165: Pixhost screenshot upload error
+        * Issue#167: ACM upload fails due to URL change
+        * Issue#159: Memory failure when using torf
+        * Issue#198: UnicodeEncodeError: 'charmap' codec can't encode character '\u017b'
+        * Issue#199: KeyError: 'title' in guessit result
 
 <br>
 

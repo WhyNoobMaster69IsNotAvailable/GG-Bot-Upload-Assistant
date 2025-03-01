@@ -527,6 +527,7 @@ This project exists thanks to all the people who contribute.
 
     New Features
         * Added support for Transmission torrent client
+        * Added support for Deluge torrent client
 
     Underhood Changes
         * E2E Tests for reuploader

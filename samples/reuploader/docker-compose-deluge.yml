@@ -21,7 +21,7 @@
 # and provide values for the following variables (samples for all these files are available in the env-files-samples folder)
 #
 # .env file           -> variables for docker-compose
-# .transmission.env    -> transmission related environment variables
+# .deluge.env    -> deluge related environment variables
 # reupload.config.env -> gg-bot reuploader configurations
 #
 mongo:
@@ -31,19 +31,22 @@ mongo:
   volumes:
     - ${BASE_PATH}/apps/mongo:/data/db
 
-transmission:
-  image: lscr.io/linuxserver/transmission:${TRANSMISSION_VERSION}
-  hostname: transmission
+# When using deluge ensure that the Label plugin is installed and enabled.
+# Re-Uploader needs the label plugin to work with deluge.
+deluge:
+  image: lscr.io/linuxserver/deluge:${DELUGE_VERSION}
+  hostname: deluge
   restart: unless-stopped
   env_file:
-    - .transmission.env
+    - .deluge.env
   volumes:
-    - ${BASE_PATH}/apps/transmission/config:/config
+    - ${BASE_PATH}/apps/deluge/config:/config
     - ${BASE_PATH}/downloads:/downloads
   ports:
-    - ${TRANSMISSION_PORT_9091}:9091
-    - ${TRANSMISSION_PORT_51413}:51413
-    - ${TRANSMISSION_PORT_51413}:51413/udp
+    - ${DELUGE_PORT_8112}:8112
+    - ${DELUGE_PORT_58846}:58846
+    - ${DELUGE_PORT_6881}:6881
+    - ${DELUGE_PORT_6881}:6881/udp
 
 gg-bot-auto-uploader:
   image: noobmaster669/gg-bot-uploader:${GG_BOT_REUPLOADER_VERSION}
@@ -60,7 +63,7 @@ gg-bot-auto-uploader:
   # if using mongo comment out redis, and vice-versa
   depends_on:
     - mongo
-    - transmission
+    - deluge
   # provide the list of trackers to upload to here
   # TODO see how this can be taken from the .env file
   command: [ "-t", "<TRACKERS>", "<OPTIONAL_ARGUMENTS>" ]
