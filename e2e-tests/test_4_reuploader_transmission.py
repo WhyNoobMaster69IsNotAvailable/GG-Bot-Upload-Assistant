@@ -234,3 +234,61 @@ class TestAutoReuploaderTransmission:
         assert all_torrents[0]["completed"] == all_torrents[0]["completed"]
         assert all_torrents[0]["content_path"] == all_torrents[0]["content_path"]
         assert all_torrents[0]["save_path"] == all_torrents[0]["save_path"]
+
+        # torrent_info assertions
+        torrent_info = reuploader.torrent_info
+        assert torrent_info is not None
+        assert torrent_info["argument_tags"] is None
+        assert torrent_info["working_folder"] is not None
+        # assert torrent_info["working_folder"] == GenericUtils.get_hash("Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv")
+        assert torrent_info["cookies_dump"] == f"{working_folder}/cookies/"
+        assert torrent_info["base_working_folder"] == str(working_folder)
+        # assert torrent_info["absolute_working_folder"] == f"{working_folder}/temp_upload/{GenericUtils.get_hash('Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv')}"
+        assert torrent_info["title"] == "Deadpool & Wolverine"
+        assert torrent_info["year"] == "2024"
+        assert torrent_info["screen_size"] == "2160p"
+        assert torrent_info["source"] == "Web"
+        assert torrent_info["audio_channels"] == "5.1"
+        assert torrent_info["type"] == "movie"
+        assert torrent_info["hdr"] == "HDR10+"
+        assert torrent_info["pymediainfo_video_codec"] == "H.265"
+        assert torrent_info["video_codec"] == "H.264"  # TODO: Fix this
+        assert torrent_info["audio_codec"] == "DD+"
+        assert torrent_info["release_group"] == "ReleaseGroup"
+        assert (
+            torrent_info["raw_file_name"]
+            == "Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv"
+        )
+        assert torrent_info["mediainfo_summary"] is not None
+        assert torrent_info["mediainfo_summary_data"] is not None
+        assert torrent_info["subtitles"] is not None
+        assert len(torrent_info["subtitles"]) == 0
+        assert torrent_info["imdb"] == "6263850"
+        assert torrent_info["imdb_with_tt"] == "tt6263850"
+        assert torrent_info["tmdb"] == "533535"
+        assert torrent_info["tvdb"] == "0"
+        assert torrent_info["mal"] == "0"
+        assert torrent_info["tvmaze"] == "0"
+        assert torrent_info["tmdb_metadata"] is not None
+        assert torrent_info["imdb_metadata"] is not None
+        assert torrent_info["source_type"] == "webdl"
+        assert torrent_info["web_source"] == "AMZN"
+        assert torrent_info["web_source_name"] == "Amazon Prime"
+        assert torrent_info["repack"] is None
+        assert torrent_info["edition"] is None
+        assert (
+            torrent_info["scene"] == "true"
+        )  # TODO: check whether this needs to be patched
+        assert torrent_info["dualaudio"] == ""
+        assert torrent_info["multiaudio"] == ""
+        assert torrent_info["commentary"] is False
+        assert torrent_info["language_str"] == "English"
+        assert torrent_info["language_str_if_foreign"] is None
+        assert torrent_info["container"] == ".mkv"
+        assert torrent_info["bit_depth"] == "10"
+        assert torrent_info["web_type"] == "WEB-DL"
+        assert (
+            torrent_info["torrent_title"]
+            == "Deadpool & Wolverine 2024 2160p AMZN WEB-DL DD+ 5.1 HDR10+ H.264-ReleaseGroup"
+        )
+        assert torrent_info["duration"] == "50050"
