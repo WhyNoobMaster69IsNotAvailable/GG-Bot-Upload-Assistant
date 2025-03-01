@@ -33,6 +33,10 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 e2e_resources_dir = "/e2e-tests/resources"
+deluge_auth_file_path = "deluge/auth"
+deluge_conf_file_path = "deluge/core.conf"
+deluge_plugins_dir = "deluge/plugins/"
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -105,6 +109,49 @@ def qbittorrent_container(docker_testing_network, e2e_test_working_folder):
     container.stop()
     logging.info(
         f"[TestContainers] Removed the qbittorrent container used for e2e testing: {container_id}"
+    )
+
+
+@pytest.fixture(scope="module", autouse=True)
+def deluge_container(docker_testing_network, e2e_test_working_folder):
+    logging.info("[TestContainers]Creating Deluge docker container")
+    container = DockerContainer("lscr.io/linuxserver/deluge:latest")
+    container.with_bind_ports(58846, 58846)
+    container.with_bind_ports(8112, 8112)
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("deluge")
+
+    container.with_env("PUID", "1000")
+    container.with_env("PGID", "1000")
+    container.with_env("TZ", "UTC")
+
+    # the paths needs to be same to allow reuploader to access the media files
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+    )
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}/{deluge_auth_file_path}",
+        "/config/auth",
+    )
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}/{deluge_conf_file_path}",
+        "/config/core.conf",
+    )
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}/{deluge_plugins_dir}",
+        "/config/plugins/",
+    )
+
+    container.start()
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created Deluge container for e2e testing: {container_id}"
+    )
+    yield container
+    container.stop()
+    logging.info(
+        f"[TestContainers] Removed the Deluge container used for e2e testing: {container_id}"
     )
 
 
@@ -194,6 +241,41 @@ def rutorrent_credentials(rutorrent_container):
         # "hashed": base64.b64encode("admin:admin".encode("ascii")).decode("ascii"),
         "username": "",
         "password": "",
+    }
+
+
+@pytest.fixture(scope="module")
+def deluge_credentials(deluge_container):
+    time.sleep(5)  # allowing time for deluge container to start properly
+    deluge_logs = "".join(
+        [
+            log.decode("utf-8")
+            for log in deluge_container.get_logs()
+            if isinstance(log, bytes)
+        ]
+    )
+
+    webui_port = re.search(
+        r"Connection to 127\.0\.0\.1 8112 port \[tcp/.*] succeeded!",
+        deluge_logs,
+    )
+    daemon_rpc_port = re.search(
+        r"Connection to 127\.0\.0\.1 58846 port \[tcp/.*] succeeded!",
+        deluge_logs,
+    )
+    init_log = re.search(r"\[ls\.io-init] done\.", deluge_logs)
+    assert bool(init_log) is True, "Deluge container didn't start as expected"
+    assert bool(webui_port) is True, "Failed to connect to deluge webui port"
+    assert bool(daemon_rpc_port) is True, "Failed to connect to deluge daemon rpc port"
+
+    host = deluge_container.get_container_host_ip()
+    port = deluge_container.get_exposed_port(58846)
+
+    yield {
+        "host": host,
+        "port": port,
+        "username": "localclient",
+        "password": "46495af7aaba2b27a33002c596747e82bdf88450",
     }
 
 

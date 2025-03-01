@@ -60,19 +60,7 @@ class Transmission(GGBotTorrentClientTemplate):
             password=self.client_config.CLIENT_PASSWORD,
         )
         self.config = ReUploaderConfig()
-
-        self.dynamic_tracker_selection = self.config.DYNAMIC_TRACKER_SELECTION
-        if self.dynamic_tracker_selection:
-            # reuploader running in dynamic tracker selection mode
-            self.target_label = "GGBOT"
-        else:
-            # `target_label` is the label of the torrents that we are interested in
-            self.target_label = self.config.REUPLOAD_LABEL
-
-        # `seed_label` is the label which will be added to the cross-seeded torrents
-        self.seed_label = self.config.CROSS_SEED_LABEL
-        # `source_label` is the label which will be added to the original torrent in the client
-        self.source_label = f"{self.seed_label}_Source"
+        self._initialize_reuploader_config(self.config)
 
     def hello(self) -> None:
         session: Session = self.mission_client.get_session()

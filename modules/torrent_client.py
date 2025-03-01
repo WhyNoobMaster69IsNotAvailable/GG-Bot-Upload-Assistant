@@ -20,6 +20,7 @@ from typing import Union
 from modules.torrent_clients.client_rtorrent import Rutorrent
 from modules.torrent_clients.client_qbittorrent import Qbittorrent
 from modules.torrent_clients.client_transmission import Transmission
+from modules.torrent_clients.client_deluge import Deluge
 
 
 # Using enum class create enumerations
@@ -47,7 +48,7 @@ class TorrentClient:
         self.client = client
         logging.info(
             "[TorrentClient] Available Torrent clients: %s",
-            [Rutorrent, Qbittorrent, Transmission],
+            [Rutorrent, Qbittorrent, Transmission, Deluge],
         )
 
     def hello(self):

@@ -5,12 +5,11 @@ fuzzywuzzy==0.18.0
 guessit==3.8.0
 imgurpython==1.1.7
 ptpimg_uploader==0.6
-pyfiglet==1.0.2
+pyfiglet==1.0.0 # cannot bump to 1.0.2 due to missing package in full disk image
 pyimgbox==1.0.7
-pymediainfo==7.0.1
+pymediainfo==7.0.1 # has issues with 6.0.1
 pymongo==4.11.1
 python-dotenv==1.0.1
-# python-Levenshtein==0.12.2
 qbittorrent-api==2024.12.71
 requests==2.32.3
 rich==13.9.4
@@ -18,3 +17,4 @@ sentry-sdk==2.22.0
 torf==4.2.7
 Jinja2==3.1.5
 transmission-rpc==7.0.11
+deluge-client==1.10.2

@@ -50,104 +50,6 @@ class Rutorrent(GGBotTorrentClientTemplate):
     __upload_torrent_path = "/php/addtorrent.php"
     __get_plugins_path = "/php/getplugins.php"
 
-    def __call_server(self, url, method="POST", data=None, files=None, header=None):
-        response = requests.request(
-            method,
-            url,
-            data=data if data is not None else {},
-            files=files,
-            headers=header or self.header,
-        )
-        return (
-            (response.status_code, response.json())
-            if "application/json" in response.headers.get("Content-Type")
-            else (response.status_code, response.text)
-        )
-
-    @staticmethod
-    def __get_torrent_info(item):
-        key = item[0]
-        data = item[1]
-        return {
-            "hash": key,
-            "d.is_open": data[0],
-            "d.is_hash_checking": data[1],
-            "d.is_hash_checked": data[2],
-            "d.get_state": data[3],
-            "d.get_name": data[4],
-            "d.get_size_bytes": data[5],
-            "d.get_completed_chunks": data[6],
-            "d.get_size_chunks": data[7],
-            "d.get_bytes_done": data[8],
-            "d.get_up_total": data[9],
-            "d.get_ratio": data[10],
-            "d.get_up_rate": data[11],
-            "d.get_down_rate": data[12],
-            "d.get_chunk_size": data[13],
-            "d.get_custom1": data[14],
-            "d.get_peers_accounted": data[15],
-            "d.get_peers_not_connected": data[16],
-            "d.get_peers_connected": data[17],
-            "d.get_peers_complete": data[18],
-            "d.get_left_bytes": data[19],
-            "d.get_priority": data[20],
-            "d.get_state_changed": data[21],
-            "d.get_skip_total": data[22],
-            "d.get_hashing": data[23],
-            "d.get_chunks_hashed": data[24],
-            "d.get_base_path": data[25],
-            "d.get_creation_date": data[26],
-            "d.get_tracker_focus": data[27],
-            "d.is_active": data[28],
-            "d.get_message": data[29],
-            "d.get_custom2": data[30],
-            "d.get_free_diskspace": data[31],
-            "d.is_private": data[32],
-            "d.is_multi_file": data[33],
-        }
-
-    def __match_label(self, torrent):
-        # we don't want to consider cross-seeded torrents uploaded by the bot
-        if self.seed_label == torrent["d.get_custom1"]:
-            return False
-        # user wants to ignore labels, hence we'll consider all the torrents
-        if self.target_label == "IGNORE_LABEL":
-            return True
-        # if dynamic tracker selection is enabled, then labels will follow the pattern GGBOT::TR1::TR2::TR3
-        if self.dynamic_tracker_selection:
-            return torrent["d.get_custom1"].startswith(self.target_label)
-        else:
-            return torrent["d.get_custom1"] == self.target_label
-
-    @staticmethod
-    def __do_key_translation(key):
-        return (
-            rutorrent_keys_translation[key]
-            if key in rutorrent_keys_translation
-            else key
-        )
-
-    def __extract_necessary_keys(self, torrent):
-        torrent = {
-            self.__do_key_translation(key): value
-            for key, value in torrent.items()
-            if key in rutorrent_keys
-        }
-        torrent["save_path"] = torrent["content_path"].replace(torrent["name"], "")
-        torrent["category"] = torrent["category"].replace("%3A", ":")
-        return torrent
-
-    @staticmethod
-    def __format_bytes(size):
-        # 2**10 = 1024
-        power = 2**10
-        n = 0
-        power_labels = {0: "", 1: "K", 2: "M", 3: "G", 4: "T"}
-        while size > power:
-            size /= power
-            n += 1
-        return f"{int(size)} {power_labels[n]}B"
-
     def __init__(self):
         super().__init__()
         self.client_config = ClientConfig()
@@ -170,20 +72,7 @@ class Rutorrent(GGBotTorrentClientTemplate):
         else:
             self.header = {}
 
-        self.dynamic_tracker_selection = (
-            self.reuploader_config.DYNAMIC_TRACKER_SELECTION
-        )
-        if self.dynamic_tracker_selection:
-            # reuploader running in dynamic tracker selection mode
-            self.target_label = "GGBOT"
-        else:
-            # `target_label` is the label of the torrents that we are interested in
-            self.target_label = self.reuploader_config.REUPLOAD_LABEL
-
-        # `seed_label` is the label which will be added to the cross-seeded torrents
-        self.seed_label = self.reuploader_config.CROSS_SEED_LABEL
-        # `source_label` is the label which will be added to the original torrent in the client
-        self.source_label = f"{self.seed_label}_Source"
+        self._initialize_reuploader_config(self.reuploader_config)
 
         try:
             logging.info("[Rutorrent] Checking connection to Rutorrent")
@@ -302,3 +191,101 @@ class Rutorrent(GGBotTorrentClientTemplate):
             logging.error(
                 f"[RuTorrent] Failed to update category of torrent with hash {info_hash} to {category_name}"
             )
+
+    def __call_server(self, url, method="POST", data=None, files=None, header=None):
+        response = requests.request(
+            method,
+            url,
+            data=data if data is not None else {},
+            files=files,
+            headers=header or self.header,
+        )
+        return (
+            (response.status_code, response.json())
+            if "application/json" in response.headers.get("Content-Type")
+            else (response.status_code, response.text)
+        )
+
+    @staticmethod
+    def __get_torrent_info(item):
+        key = item[0]
+        data = item[1]
+        return {
+            "hash": key,
+            "d.is_open": data[0],
+            "d.is_hash_checking": data[1],
+            "d.is_hash_checked": data[2],
+            "d.get_state": data[3],
+            "d.get_name": data[4],
+            "d.get_size_bytes": data[5],
+            "d.get_completed_chunks": data[6],
+            "d.get_size_chunks": data[7],
+            "d.get_bytes_done": data[8],
+            "d.get_up_total": data[9],
+            "d.get_ratio": data[10],
+            "d.get_up_rate": data[11],
+            "d.get_down_rate": data[12],
+            "d.get_chunk_size": data[13],
+            "d.get_custom1": data[14],
+            "d.get_peers_accounted": data[15],
+            "d.get_peers_not_connected": data[16],
+            "d.get_peers_connected": data[17],
+            "d.get_peers_complete": data[18],
+            "d.get_left_bytes": data[19],
+            "d.get_priority": data[20],
+            "d.get_state_changed": data[21],
+            "d.get_skip_total": data[22],
+            "d.get_hashing": data[23],
+            "d.get_chunks_hashed": data[24],
+            "d.get_base_path": data[25],
+            "d.get_creation_date": data[26],
+            "d.get_tracker_focus": data[27],
+            "d.is_active": data[28],
+            "d.get_message": data[29],
+            "d.get_custom2": data[30],
+            "d.get_free_diskspace": data[31],
+            "d.is_private": data[32],
+            "d.is_multi_file": data[33],
+        }
+
+    def __match_label(self, torrent):
+        # we don't want to consider cross-seeded torrents uploaded by the bot
+        if self.seed_label == torrent["d.get_custom1"]:
+            return False
+        # user wants to ignore labels, hence we'll consider all the torrents
+        if self.target_label == "IGNORE_LABEL":
+            return True
+        # if dynamic tracker selection is enabled, then labels will follow the pattern GGBOT::TR1::TR2::TR3
+        if self.dynamic_tracker_selection:
+            return torrent["d.get_custom1"].startswith(self.target_label)
+        else:
+            return torrent["d.get_custom1"] == self.target_label
+
+    @staticmethod
+    def __do_key_translation(key):
+        return (
+            rutorrent_keys_translation[key]
+            if key in rutorrent_keys_translation
+            else key
+        )
+
+    def __extract_necessary_keys(self, torrent):
+        torrent = {
+            self.__do_key_translation(key): value
+            for key, value in torrent.items()
+            if key in rutorrent_keys
+        }
+        torrent["save_path"] = torrent["content_path"].replace(torrent["name"], "")
+        torrent["category"] = torrent["category"].replace("%3A", ":")
+        return torrent
+
+    @staticmethod
+    def __format_bytes(size):
+        # 2**10 = 1024
+        power = 2**10
+        n = 0
+        power_labels = {0: "", 1: "K", 2: "M", 3: "G", 4: "T"}
+        while size > power:
+            size /= power
+            n += 1
+        return f"{int(size)} {power_labels[n]}B"

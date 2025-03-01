@@ -13,8 +13,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-
+import deluge_client
 import qbittorrentapi
 import requests
 from transmission_rpc import Client
@@ -23,6 +22,16 @@ from transmission_rpc import Client
 class TestE2ESetup:
     def test_mongo_container_setup(self, e2e_mongo_client):
         e2e_mongo_client.admin.command("ping")
+
+    def test_deluge_container_setup(self, deluge_credentials):
+        client = deluge_client.DelugeRPCClient(
+            host=deluge_credentials["host"],
+            port=int(deluge_credentials["port"]),
+            username=deluge_credentials["username"],
+            password=deluge_credentials["password"],
+        )
+        client.connect()
+        assert client.connected is True, "Failed to connect to deluge rpc daemon"
 
     def test_transmission_container_setup(self, transmission_credentials):
         self.mission_client = Client(

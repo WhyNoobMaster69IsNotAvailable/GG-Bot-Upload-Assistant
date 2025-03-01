@@ -37,6 +37,14 @@ pylint:
       codequality: codeclimate.json
     when: always
 
+jinja-validate:
+  stage: lint
+  image: noobmaster669/gg-bot-base:test-latest
+  before_script:
+    - pip install jinjaninja==0.1.2
+  script:
+    - jinja-ninja description_templates/*.jinja2
+
 pylint_report:
   stage: lint
   image: alpine:latest

@@ -107,7 +107,7 @@ to catch any errors / exceptions that happen in the application and fix them pro
             <td><strong>Site Name</strong></td>
         </tr>
         <tr style="text-align: center">
-            <td rowspan="22"><strong>UNIT3D</strong></td>
+            <td rowspan="23"><strong>UNIT3D</strong></td>
             <td><strong>ACM</strong></td>
             <td><strong><a href="https://eiga.moi">AsianCinema</a></strong></td>
         </tr>
@@ -194,6 +194,10 @@ to catch any errors / exceptions that happen in the application and fix them pro
         <tr style="text-align: center">
             <td><strong>PSS</strong></td>
             <td><strong><a href="https://privatesilverscreen.cc">Private Silver Screen</a></strong></td>
+        </tr>
+        <tr style="text-align: center">
+            <td><strong>SPL</strong></td>
+            <td><strong><a href="https://seedpool.org/">Seed Pool</a></strong></td>
         </tr>
         <tr style="text-align: center">
             <td rowspan="2"><strong>XBTIT</strong></td>
@@ -420,21 +424,17 @@ pip install -r requirements/requirements.txt
 
 # Roadmap
 
-### v3.1.9
+### v3.2.0
 
 - [ ] New Tracker: UHDBits
 - [ ] Use IMDB GraphQL Api
 - [ ] Use Anilist GraphQL Api
-- [X] E2E Tests for reuploader
-- [X] Added support for Transmission
-- [X] Moved sys argument / cli args to yaml file
 - [ ] Support for encrypted values from config
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
-- [X] Issue#202: FNP updated 1080i identifier
 
-### v3.2.0
+### v3.2.1
 
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
@@ -447,6 +447,7 @@ pip install -r requirements/requirements.txt
 ### Backlogs
 
 - [ ] EPIC: GG-BOT Metadata Aggregator
+- [ ] Add support to create sample from upload, host and add to description
 - [ ] EPIC: GG-BOT P2P Network Relay
 - [ ] EPIC: Migrate GG-BOT Runtime to work with GG-BOT Auto ReUploader
 - [ ] EPIC: Refactor GG-BOT Admin to handle GG-BOT Auto ReUploader
@@ -519,21 +520,39 @@ This project exists thanks to all the people who contribute.
 
 # Change Log
 
+## **3.1.9**
+
+    New Tracker
+        * Seedpool
+
+    New Features
+        * Added support for Transmission torrent client
+        * Added support for Deluge torrent client
+
+    Underhood Changes
+        * E2E Tests for reuploader
+        * Moved sys argument / cli args to yaml file
+
+    Bug Fixes
+        * Issue#202: FNP updated 1080i identifier
+
+<br>
+
 ## **3.1.8**
 
     New Features
-      * Per tracker custom description templates
+        * Per tracker custom description templates
 
     Underhood Changes
-      * Updated MyAnimeList mappings
-      * Replace GitLab with BugSink for error tracking
+        * Updated MyAnimeList mappings
+        * Replace GitLab with BugSink for error tracking
 
     Bug Fixes
-      * Issue#165: Pixhost screenshot upload error
-      * Issue#167: ACM upload fails due to URL change
-      * Issue#159: Memory failure when using torf
-      * Issue#198: UnicodeEncodeError: 'charmap' codec can't encode character '\u017b'
-      * Issue#199: KeyError: 'title' in guessit result
+        * Issue#165: Pixhost screenshot upload error
+        * Issue#167: ACM upload fails due to URL change
+        * Issue#159: Memory failure when using torf
+        * Issue#198: UnicodeEncodeError: 'charmap' codec can't encode character '\u017b'
+        * Issue#199: KeyError: 'title' in guessit result
 
 <br>
 

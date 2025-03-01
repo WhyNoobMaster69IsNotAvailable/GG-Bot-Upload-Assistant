@@ -18,6 +18,8 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Dict, List
 
+from modules.config import ReUploaderConfig
+
 
 class GGBotTorrentClientTemplate(ABC):
     def __init__(self):
@@ -64,3 +66,17 @@ class GGBotTorrentClientTemplate(ABC):
             return trackers[1:]  # first entry will always be GGBOT
         else:
             return []
+
+    def _initialize_reuploader_config(self, config: ReUploaderConfig):
+        self.dynamic_tracker_selection = config.DYNAMIC_TRACKER_SELECTION
+        if self.dynamic_tracker_selection:
+            # reuploader running in dynamic tracker selection mode
+            self.target_label: str = "GGBOT"
+        else:
+            # `target_label` is the label of the torrents that we are interested in
+            self.target_label: str = config.REUPLOAD_LABEL
+
+        # `seed_label` is the label which will be added to the cross-seeded torrents
+        self.seed_label: str = config.CROSS_SEED_LABEL
+        # `source_label` is the label which will be added to the original torrent in the client
+        self.source_label: str = f"{self.seed_label}_Source"
