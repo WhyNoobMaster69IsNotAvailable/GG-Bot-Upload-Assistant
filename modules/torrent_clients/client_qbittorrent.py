@@ -16,10 +16,12 @@
 
 import logging
 from datetime import datetime
+from typing import Optional
 
 import qbittorrentapi
 
 from modules.config import ClientConfig, ReUploaderConfig
+from modules.torrent_clients.base import GGBotTorrentClientTemplate
 
 qbt_keys = [
     "category",
@@ -33,13 +35,14 @@ qbt_keys = [
 ]
 
 
-class Qbittorrent:
+class Qbittorrent(GGBotTorrentClientTemplate):
     """
     Client Specific Configurations
     Host, Port, Username, Password
     """
 
     def __init__(self):
+        super().__init__()
         logging.info("[Qbittorrent] Connecting to the qbittorrent instance...")
         self.client_config = ClientConfig()
         self.reuploader_config = ReUploaderConfig()
@@ -50,19 +53,7 @@ class Qbittorrent:
             password=self.client_config.CLIENT_PASSWORD,
         )
 
-        self.dynamic_tracker_selection = (
-            self.reuploader_config.DYNAMIC_TRACKER_SELECTION
-        )
-        if self.dynamic_tracker_selection:
-            # reuploader running in dynamic tracker selection mode
-            self.target_label = "GGBOT"
-        else:
-            # `target_label` is the label of the torrents that we are interested in
-            self.target_label = self.reuploader_config.REUPLOAD_LABEL
-        # `seed_label` is the label which will be added to the cross-seeded torrents
-        self.seed_label = self.reuploader_config.CROSS_SEED_LABEL
-        # `source_label` is the label which will be added to the original torrent in the client
-        self.source_label = f"{self.seed_label}_Source"
+        self._initialize_reuploader_config(self.reuploader_config)
 
         try:
             logging.info(
@@ -81,18 +72,6 @@ class Qbittorrent:
         )
         print(f"qBittorrent: {self.qbt_client.app.version}")
         print(f"qBittorrent Web API: {self.qbt_client.app.web_api_version}")
-
-    def get_dynamic_trackers(self, torrent):
-        # a sanity check just to be sure
-        if self.dynamic_tracker_selection:
-            category = torrent["category"]
-            # removing any trailing ::
-            if category.endswith("::"):
-                category = category[:-2]
-            trackers = category.split("::")
-            return trackers[1:]  # first entry will always be GGBOT
-        else:
-            return []
 
     def __match_label(self, torrent):
         # we don't want to consider cross-seeded torrents uploaded by the bot
@@ -119,9 +98,10 @@ class Qbittorrent:
         return self.qbt_client.torrent_categories
 
     def __create_category(self, name, save_path):
-        self.__get_torrent_categories().create_category(
-            name=name, save_path=save_path
-        )
+        self.__get_torrent_categories().create_category(name=name, save_path=save_path)
+
+    def list_all_torrents(self):
+        return list(map(self.__extract_necessary_keys, self.qbt_client.torrents_info()))
 
     def list_torrents(self):
         logging.debug(f"[Qbittorrent] Listing torrents at {datetime.now()}")
@@ -149,13 +129,15 @@ class Qbittorrent:
         )
         # self.qbt_client.torrents_resume(info_hash)
 
-    def update_torrent_category(self, info_hash, category_name):
-        category_name = (
-            category_name if category_name is not None else self.source_label
-        )
+    def update_torrent_category(
+        self, info_hash: str, category_name: Optional[str] = None
+    ) -> None:
+        category_name = self.source_label if category_name is None else category_name
+
         if category_name not in list(self.__list_categories()):
             # if the category  `category_name` doesn't exist we create it
             self.__create_category(category_name, None)
+
         self.qbt_client.torrents_set_category(
             category=category_name, torrent_hashes=info_hash
         )

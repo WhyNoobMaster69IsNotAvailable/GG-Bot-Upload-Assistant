@@ -14,15 +14,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import base64
 import logging
 import re
 import time
 from pathlib import Path
 from typing import Dict
+from unittest import mock
 
 import pytest
 import yaml
+from pymongo import MongoClient
 from testcontainers.core.container import DockerContainer
 from requests_mock import Mocker
 from testcontainers.core.network import Network
@@ -32,12 +33,16 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 e2e_resources_dir = "/e2e-tests/resources"
+deluge_auth_file_path = "deluge/auth"
+deluge_conf_file_path = "deluge/core.conf"
+deluge_plugins_dir = "deluge/plugins/"
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope="module", autouse=True)
-def working_folder():
+def e2e_test_working_folder():
     yield Path(__file__).resolve().parent.parent
 
 
@@ -58,18 +63,44 @@ def docker_testing_network():
 
 
 @pytest.fixture(scope="module", autouse=True)
-def qbittorrent_container():
-    logging.info("Creating Qbittorrent docker container")
+def mongo_container(docker_testing_network):
+    logging.info("[TestContainers]Creating MongoDB docker container")
+    container = DockerContainer("mongo:latest")
+    container.with_bind_ports(27017, 27017)
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("mongo")
+
+    container.start()
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created a MongoDB container for e2e testing: {container_id}"
+    )
+    yield container
+    container.stop()
+    logging.info(
+        f"[TestContainers] Removed the MongoDB container used for e2e testing: {container_id}"
+    )
+
+
+@pytest.fixture(scope="module", autouse=True)
+def qbittorrent_container(docker_testing_network, e2e_test_working_folder):
+    logging.info("[TestContainers]Creating Qbittorrent docker container")
     container = DockerContainer("linuxserver/qbittorrent:4.6.5")
     container.with_bind_ports(50001, 50001)
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("qbittorrent")
 
     container.with_env("WEBUI_PORT", "50001")
     container.with_env("PUID", "1000")
     container.with_env("PGID", "1000")
     container.with_env("TZ", "UTC")
+    # the paths needs to be same to allow reuploader to access the media files
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+    )
 
     container.start()
-    logging.info("Started Qbittorrent docker container")
     container_id = container._container.id
     logging.info(
         f"[TestContainers] Created a qbittorrent container for e2e testing: {container_id}"
@@ -78,6 +109,110 @@ def qbittorrent_container():
     container.stop()
     logging.info(
         f"[TestContainers] Removed the qbittorrent container used for e2e testing: {container_id}"
+    )
+
+
+@pytest.fixture(scope="module", autouse=True)
+def deluge_container(docker_testing_network, e2e_test_working_folder):
+    logging.info("[TestContainers]Creating Deluge docker container")
+    container = DockerContainer("lscr.io/linuxserver/deluge:latest")
+    container.with_bind_ports(58846, 58846)
+    container.with_bind_ports(8112, 8112)
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("deluge")
+
+    container.with_env("PUID", "1000")
+    container.with_env("PGID", "1000")
+    container.with_env("TZ", "UTC")
+
+    # the paths needs to be same to allow reuploader to access the media files
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+    )
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}/{deluge_auth_file_path}",
+        "/config/auth",
+    )
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}/{deluge_conf_file_path}",
+        "/config/core.conf",
+    )
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}/{deluge_plugins_dir}",
+        "/config/plugins/",
+    )
+
+    container.start()
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created Deluge container for e2e testing: {container_id}"
+    )
+    yield container
+    container.stop()
+    logging.info(
+        f"[TestContainers] Removed the Deluge container used for e2e testing: {container_id}"
+    )
+
+
+@pytest.fixture(scope="module", autouse=True)
+def transmission_container(docker_testing_network, e2e_test_working_folder):
+    logging.info("[TestContainers]Creating Transmission docker container")
+    container = DockerContainer("lscr.io/linuxserver/transmission:latest")
+    container.with_bind_ports(9091, 9091)
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("transmission")
+
+    container.with_env("PUID", "1000")
+    container.with_env("PGID", "1000")
+    container.with_env("TZ", "UTC")
+    container.with_env("USER", "TRANSMISSION_USER")
+    container.with_env("PASS", "TRANSMISSION_USER_PASSWORD")
+
+    # the paths needs to be same to allow reuploader to access the media files
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+    )
+
+    container.start()
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created Transmission container for e2e testing: {container_id}"
+    )
+    yield container
+    container.stop()
+    logging.info(
+        f"[TestContainers] Removed the Transmission container used for e2e testing: {container_id}"
+    )
+
+
+@pytest.fixture(scope="module", autouse=True)
+def rutorrent_container(docker_testing_network, e2e_test_working_folder):
+    logging.info("[TestContainers]Creating rutorrent docker container")
+    container = DockerContainer("crazymax/rtorrent-rutorrent:5.1.5-7.2")
+    container.with_bind_ports(8080, 50002)
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("rutorrent")
+    # the paths needs to be same to allow reuploader to access the media files
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+    )
+
+    container.with_env("PUID", "1001")
+    container.with_env("PGID", "1001")
+    container.with_env("TZ", "UTC")
+
+    container.start()
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created a rutorrent container for e2e testing: {container_id}"
+    )
+    yield container
+    container.stop()
+    logging.info(
+        f"[TestContainers] Removed the rutorrent container used for e2e testing: {container_id}"
     )
 
 
@@ -102,9 +237,76 @@ def rutorrent_credentials(rutorrent_container):
     yield {
         "host": rutorrent_container.get_container_host_ip(),
         "port": rutorrent_container.get_exposed_port(8080),
-        "hashed": base64.b64encode("admin:admin".encode("ascii")).decode("ascii"),
-        "username": "admin",
-        "password": "admin",
+        "hashed": "",
+        # "hashed": base64.b64encode("admin:admin".encode("ascii")).decode("ascii"),
+        "username": "",
+        "password": "",
+    }
+
+
+@pytest.fixture(scope="module")
+def deluge_credentials(deluge_container):
+    time.sleep(5)  # allowing time for deluge container to start properly
+    deluge_logs = "".join(
+        [
+            log.decode("utf-8")
+            for log in deluge_container.get_logs()
+            if isinstance(log, bytes)
+        ]
+    )
+
+    webui_port = re.search(
+        r"Connection to 127\.0\.0\.1 8112 port \[tcp/.*] succeeded!",
+        deluge_logs,
+    )
+    daemon_rpc_port = re.search(
+        r"Connection to 127\.0\.0\.1 58846 port \[tcp/.*] succeeded!",
+        deluge_logs,
+    )
+    init_log = re.search(r"\[ls\.io-init] done\.", deluge_logs)
+    assert bool(init_log) is True, "Deluge container didn't start as expected"
+    assert bool(webui_port) is True, "Failed to connect to deluge webui port"
+    assert bool(daemon_rpc_port) is True, "Failed to connect to deluge daemon rpc port"
+
+    host = deluge_container.get_container_host_ip()
+    port = deluge_container.get_exposed_port(58846)
+
+    yield {
+        "host": host,
+        "port": port,
+        "username": "localclient",
+        "password": "46495af7aaba2b27a33002c596747e82bdf88450",
+    }
+
+
+@pytest.fixture(scope="module")
+def transmission_credentials(transmission_container):
+    time.sleep(2)  # allowing time for transmission container to start properly
+
+    transmission_logs = "".join(
+        [
+            log.decode("utf-8")
+            for log in transmission_container.get_logs()
+            if isinstance(log, bytes)
+        ]
+    )
+    match1 = re.search(
+        r"Connection to localhost \(127\.0\.0\.1\) 9091 port \[tcp/.*] succeeded!",
+        transmission_logs,
+    )
+    match2 = re.search(r"\[ls\.io-init] done\.", transmission_logs)
+
+    assert bool(match1) is True, "Failed to connect to transmission host"
+    assert bool(match2) is True, "Transmission container didn't start as expected"
+
+    host = transmission_container.get_container_host_ip()
+    port = transmission_container.get_exposed_port(9091)
+
+    yield {
+        "host": host,
+        "port": port,
+        "username": "TRANSMISSION_USER",
+        "password": "TRANSMISSION_USER_PASSWORD",
     }
 
 
@@ -141,33 +343,10 @@ def qbittorrent_credentials(qbittorrent_container):
     }
 
 
-@pytest.fixture(scope="module", autouse=True)
-def rutorrent_container():
-    logging.info("Creating rutorrent docker container")
-    container = DockerContainer("crazymax/rtorrent-rutorrent:5.1.5-7.2")
-    container.with_bind_ports(8080, 50002)
-
-    container.with_env("PUID", "1001")
-    container.with_env("PGID", "1001")
-    container.with_env("TZ", "UTC")
-    container.start()
-
-    logging.info("Started rutorrent docker container")
-    container_id = container._container.id
-    logging.info(
-        f"[TestContainers] Created a rutorrent container for e2e testing: {container_id}"
-    )
-    yield container
-    container.stop()
-    logging.info(
-        f"[TestContainers] Removed the rutorrent container used for e2e testing: {container_id}"
-    )
-
-
 @pytest.fixture(scope="module")
-def mock_server_config(working_folder):
+def mock_server_config(e2e_test_working_folder):
     with open(
-        f"{working_folder}{e2e_resources_dir}/mock_server_config.yml", "r"
+        f"{e2e_test_working_folder}{e2e_resources_dir}/mock_server_config.yml", "r"
     ) as file:
         config = yaml.safe_load(file)
     return config
@@ -206,3 +385,24 @@ def mock_server(mock_server_config):
             server=mock, server_config=mock_server_config
         )
         yield mock
+
+
+@pytest.fixture(scope="module", autouse=True)
+def e2e_mongo_client(mongo_container):
+    MONGO_URL = f"mongodb://{mongo_container.get_container_host_ip()}:{mongo_container.get_exposed_port(27017)}/gg-bot-reuploader-e2e-tests"
+    yield MongoClient(MONGO_URL)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def patched_mediainfo_libraries():
+    lib_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "libs"))
+
+    with mock.patch("pymediainfo.MediaInfo._get_library_paths") as mock_get_paths:
+        if sys.platform == "darwin":
+            mock_get_paths.return_value = (
+                os.path.join(lib_dir, "libmediainfo.0.dylib"),
+                os.path.join(lib_dir, "libmediainfo.dylib"),
+            )
+        else:
+            mock_get_paths.return_value = ("libmediainfo.so.0",)
+        yield

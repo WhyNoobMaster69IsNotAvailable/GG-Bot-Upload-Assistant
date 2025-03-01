@@ -1,3 +1,10 @@
+{{ data.bbcode.code_start }}
+Release Name....: {{ data.torrent_info.torrent_title }}
+Video...........: {{ data.torrent_info.screen_size }} {{ data.torrent_info.mediainfo_summary_data.Video[0].Codec }} {{ data.torrent_info.mediainfo_summary_data.Video[0]['Bit Depth'] }} @ {{ data.torrent_info.mediainfo_summary_data.Video[0]['Bit Rate'] }}
+Audio...........: {{ data.torrent_info.mediainfo_summary_data.Audio[0].Format }} {{ data.torrent_info.audio_channels }} @ {{ data.torrent_info.mediainfo_summary_data.Audio[0]['Bit Rate'] }}
+Notes...........: Enjoy!
+{{ data.bbcode.code_end }}
+
 {{ data.custom_description_components }}
 
 {{ data.bbcode.center_start }} {{ data.internal.screenshot_header }}

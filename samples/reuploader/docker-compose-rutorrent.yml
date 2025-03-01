@@ -24,7 +24,6 @@
 # .rutorrent.env      -> rutorrent related environment variables
 # reupload.config.env -> gg-bot reuploader configurations
 #
-version: "3.5"
 services:
   mongo:
     image: mongo:${MONGO_VERSION}

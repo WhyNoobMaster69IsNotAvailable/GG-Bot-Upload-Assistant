@@ -1,9 +1,10 @@
 -r requirements.txt
 -r requirements_reuploader.txt
 -r requirements_test.txt
-codespell~=2.4.0
-pip-check~=2.9
-pipdeptree~=2.24.0
+codespell==2.4.1
+pip-check==2.9
+pipdeptree==2.25.0
 poetry==2.0.0 # poetry-plugin-export 1.9.0 needs poetry 2.0.0
 poetry-core==2.0.0 # poetry-plugin-export 1.9.0 needs poetry-core 2.0.0
-poetry-plugin-export~=1.9.0
+poetry-plugin-export==1.9.0
+jinjaninja==0.1.2

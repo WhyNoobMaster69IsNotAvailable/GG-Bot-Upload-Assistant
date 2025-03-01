@@ -17,7 +17,13 @@
 from enum import Enum
 
 
-class TorrentPieceSize(Enum):
+class GGBotEnum(Enum):
+    @classmethod
+    def values(cls):
+        return list(map(lambda c: c, cls))
+
+
+class TorrentPieceSize(GGBotEnum):
     KB_16 = 16 * 1024  # 16 KiB
     KB_32 = 32 * 1024  # 32 KiB
     KB_64 = 64 * 1024  # 64 KiB

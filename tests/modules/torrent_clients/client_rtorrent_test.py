@@ -42,7 +42,7 @@ def __reuploader_dynamic_mode(param, default=None):
 
 
 def test_init_rutorrent(mocker):
-    mocker.patch("requests.post")
+    mocker.patch("requests.request")
     mocker.patch("os.getenv", side_effect=__reuploader_default_mode)
     rutorrent = Rutorrent()
 
@@ -53,7 +53,7 @@ def test_init_rutorrent(mocker):
 
 
 def test_init_rutorrent_dynamic_reuploader(mocker):
-    mocker.patch("requests.post")
+    mocker.patch("requests.request")
     mocker.patch("os.getenv", side_effect=__reuploader_dynamic_mode)
     rutorrent = Rutorrent()
 
@@ -88,7 +88,7 @@ def test_init_rutorrent_dynamic_reuploader(mocker):
     ],
 )
 def test_get_dynamic_trackers(torrent, expected, mocker):
-    mocker.patch("requests.post")
+    mocker.patch("requests.request")
     mocker.patch("os.getenv", side_effect=__reuploader_dynamic_mode)
     rutorrent = Rutorrent()
     assert rutorrent.get_dynamic_trackers(torrent) == expected
@@ -107,7 +107,7 @@ def test_get_dynamic_trackers(torrent, expected, mocker):
     ],
 )
 def test_get_dynamic_trackers_when_disabled(torrent, expected, mocker):
-    mocker.patch("requests.post")
+    mocker.patch("requests.request")
     mocker.patch("os.getenv", side_effect=__reuploader_default_mode)
     rutorrent = Rutorrent()
     assert rutorrent.get_dynamic_trackers(torrent) == expected

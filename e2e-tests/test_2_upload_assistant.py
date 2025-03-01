@@ -14,29 +14,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
 import sys
 from unittest import mock
 
-import pytest
 from auto_upload import GGBotUploadAssistant
 
 
 class TestGGBotUploadAssistant:
-    @pytest.fixture(scope="class", autouse=True)
-    def test_with_patched_library_path(self):
-        lib_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "libs"))
-
-        with mock.patch("pymediainfo.MediaInfo._get_library_paths") as mock_get_paths:
-            if sys.platform == "darwin":
-                mock_get_paths.return_value = (
-                    os.path.join(lib_dir, "libmediainfo.0.dylib"),
-                    os.path.join(lib_dir, "libmediainfo.dylib"),
-                )
-            else:
-                mock_get_paths.return_value = ("libmediainfo.so.0",)
-            yield
-
     @mock.patch.object(
         sys,
         "argv",
@@ -50,13 +34,13 @@ class TestGGBotUploadAssistant:
             "--debug",
         ],
     )
-    def test_movie_4k_web_dl_hdr10plus(self, working_folder):
+    def test_movie_4k_web_dl_hdr10plus(self, e2e_test_working_folder):
         assistant = GGBotUploadAssistant(
-            f"{working_folder}/e2e-tests/resources/config-test.env"
+            f"{e2e_test_working_folder}/e2e-tests/resources/config-test.env"
         )
         assistant.start(
             [
-                f"{working_folder}/e2e-tests/resources/Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv"
+                f"{e2e_test_working_folder}/e2e-tests/resources/Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv"
             ]
         )
 
@@ -137,13 +121,13 @@ class TestGGBotUploadAssistant:
             "--debug",
         ],
     )
-    def test_tv_1080p_web_dl(self, working_folder):
+    def test_tv_1080p_web_dl(self, e2e_test_working_folder):
         assistant = GGBotUploadAssistant(
-            f"{working_folder}/e2e-tests/resources/config-test.env"
+            f"{e2e_test_working_folder}/e2e-tests/resources/config-test.env"
         )
         assistant.start(
             [
-                f"{working_folder}/e2e-tests/resources/How.I.Met.Your.Mother.S09.1080p.DSNP.WEB-DL.DDP7.1.H.264-ReleaseGroup"
+                f"{e2e_test_working_folder}/e2e-tests/resources/How.I.Met.Your.Mother.S09.1080p.DSNP.WEB-DL.DDP7.1.H.264-ReleaseGroup"
             ]
         )
 

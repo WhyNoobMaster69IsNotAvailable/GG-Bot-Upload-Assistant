@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import argparse
 import base64
 import glob
 import json
@@ -71,10 +70,17 @@ from modules.constants import (
     STREAMING_SERVICES_REVERSE_MAP,
     TAG_GROUPINGS,
     CUSTOM_TEXT_COMPONENTS,
+    UPLOAD_ASSISTANT_ARGUMENTS_CONFIG,
 )
 from modules.description.description_manager import GGBotDescriptionManager
-from modules.exceptions.exception import GGBotSentryCapturedException, GGBotException
+from modules.exceptions.exception import (
+    GGBotSentryCapturedException,
+    GGBotException,
+    GGBotFatalException,
+)
 from modules.sentry_config import SentryConfig
+from modules.sys_arguments.arg_parser import GGBotArgumentParser
+from modules.sys_arguments.arg_reader import GGBotArgReader
 
 # Method that will search for dupes in trackers.
 from modules.template_schema_validator import TemplateSchemaValidator
@@ -117,43 +123,16 @@ class GGBotUploadAssistant:
         self.config = {}
         self.tracker = None  # the current tracker to which we are uploading to
         self.bdinfo_parser = None  # Will be initialized depending on the environment
-        # Debug logs for the upload processing
-        # Logger running in "w" : write mode
-        # Create a custom log format with UTF-8 encoding
-        log_format = logging.Formatter(
-            "%(asctime)s | %(name)s | %(levelname)s | %(message)s", "%Y-%m-%d %H:%M:%S"
-        )
-
-        handler = logging.FileHandler(
-            ASSISTANT_LOG.format(base_path=self.working_folder),
-            mode="w",
-            encoding="utf-8",
-        )
-        handler.setFormatter(log_format)
-
-        # Add the FileHandler to the root logger
-        logging.root.addHandler(handler)
-        logging.root.setLevel(logging.INFO)
 
         # Load the .env file that stores info like the tracker/image host API Keys & other info needed to upload
         if env_file_path is None:
-            load_dotenv(ASSISTANT_CONFIG.format(base_path=self.working_folder))
-        else:
-            load_dotenv(env_file_path)
-
-        sentry_config = SentryErrorTrackingConfig()
-        if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is True:
-            sentry_sdk.init(
-                environment="production",
-                server_name="GG Bot Upload Assistant",
-                dsn="https://4093e406eb754b20a2a7f6d15e6b34c0@ggbot.bot.nu/1",
-                traces_sample_rate=1.0,
-                profiles_sample_rate=1.0,
-                attach_stacktrace=True,
-                shutdown_timeout=20,
-                ignore_errors=SentryConfig.sentry_ignored_errors(),
-                before_send=SentryConfig.before_send,
+            load_dotenv(
+                ASSISTANT_CONFIG.format(base_path=self.working_folder), override=True
             )
+        else:
+            load_dotenv(env_file_path, override=True)
+
+        self._initialize_sentry_sdk()
 
         # By default, we load the templates from site_templates/ path
         # If user has provided load_external_templates argument then we'll update this path to a different one
@@ -175,200 +154,12 @@ class GGBotUploadAssistant:
         )
 
         # Setup args
-        parser = argparse.ArgumentParser()
-
-        # Required Arguments [Mandatory]
-        required_args = parser.add_argument_group("Required Arguments")
-        required_args.add_argument(
-            "-p",
-            "--path",
-            nargs="*",
-            required=True,
-            help="Use this to provide path(s) to file/folder",
+        self.args = self._read_system_arguments_config(
+            UPLOAD_ASSISTANT_ARGUMENTS_CONFIG.format(base_path=self.working_folder)
         )
 
-        # Commonly used args:
-        common_args = parser.add_argument_group("Commonly Used Arguments")
-        common_args.add_argument(
-            "-t",
-            "--trackers",
-            nargs="*",
-            help="Tracker(s) to upload to. Space-separates if multiple (no commas)",
-        )
-        common_args.add_argument(
-            "-a",
-            "--all_trackers",
-            action="store_true",
-            help="Select all trackers that can be uploaded to",
-        )
-        common_args.add_argument(
-            "-tmdb", nargs=1, help="Use this to manually provide the TMDB ID"
-        )
-        common_args.add_argument(
-            "-imdb", nargs=1, help="Use this to manually provide the IMDB ID"
-        )
-        common_args.add_argument(
-            "-tvmaze", nargs=1, help="Use this to manually provide the TVmaze ID"
-        )
-        common_args.add_argument(
-            "-tvdb", nargs=1, help="Use this to manually provide the TVDB ID"
-        )
-        common_args.add_argument(
-            "-mal",
-            nargs=1,
-            help="Use this to manually provide the MAL ID. If uploader detects any MAL id during search, this will be ignored.",
-        )
-        common_args.add_argument(
-            "-anon",
-            action="store_true",
-            help="Tf you want your upload to be anonymous (no other info needed, just input '-anon'",
-        )
-
-        # Less commonly used args (Not essential for most)
-        uncommon_args = parser.add_argument_group("Less Common Arguments")
-        uncommon_args.add_argument(
-            "-title", nargs=1, help="Custom title provided by the user"
-        )
-        uncommon_args.add_argument(
-            "-rg",
-            "--release_group",
-            nargs=1,
-            help="Set the release group for an upload",
-        )
-        uncommon_args.add_argument(
-            "-type", nargs=1, help="Use to manually specify 'movie' or 'tv'"
-        )
-        uncommon_args.add_argument(
-            "-reupload",
-            nargs="*",
-            help="This is used in conjunction with autodl to automatically re-upload any filter matches",
-        )
-        uncommon_args.add_argument(
-            "-batch",
-            action="store_true",
-            help="Pass this arg if you want to upload all the files/folder within the folder you specify with the '-p' arg",
-        )
-        uncommon_args.add_argument(
-            "-disc",
-            action="store_true",
-            help="If you are uploading a raw dvd/bluray disc you need to pass this arg",
-        )
-        uncommon_args.add_argument(
-            "-e",
-            "--edition",
-            nargs="*",
-            help="Manually provide an 'edition' (e.g. Criterion Collection, Extended, Remastered, etc)",
-        )
-        uncommon_args.add_argument(
-            "-nfo",
-            nargs=1,
-            help="Use this to provide the path to an nfo file you want to upload",
-        )
-        uncommon_args.add_argument(
-            "-d",
-            "--debug",
-            action="store_true",
-            help="Used for debugging. Writes debug lines to log file",
-        )
-        uncommon_args.add_argument(
-            "-dry",
-            "--dry_run",
-            action="store_true",
-            help="Used for debugging. Writes debug lines to log and will also skip the upload",
-        )
-        uncommon_args.add_argument(
-            "-mkt",
-            "--use_mktorrent",
-            action="store_true",
-            help="Use mktorrent instead of torf (Latest git version only)",
-        )
-        uncommon_args.add_argument(
-            "-fpm",
-            "--force_pymediainfo",
-            action="store_true",
-            help="Force use PyMediaInfo to extract video codec over regex extraction from file name",
-        )
-        uncommon_args.add_argument(
-            "-ss",
-            "--skip_screenshots",
-            action="store_true",
-            help="Skip screenshot generation and upload for a run (overrides config.env)",
-        )
-        uncommon_args.add_argument(
-            "-r",
-            "--resume",
-            action="store_true",
-            help="Resume previously unfinished upload.",
-        )
-        uncommon_args.add_argument(
-            "-3d", action="store_true", help="Mark the upload as 3D content"
-        )
-        uncommon_args.add_argument(
-            "-foreign",
-            action="store_true",
-            help="Mark the upload as foreign content [Non-English]",
-        )
-        uncommon_args.add_argument(
-            "-amf",
-            "--allow_multiple_files",
-            action="store_true",
-            help="Override the default behavior and allow multiple files to be added in one torrent",
-        )
-        uncommon_args.add_argument(
-            "-let",
-            "--load_external_templates",
-            action="store_true",
-            help="When enabled uploader will load external site templates from ./external/site_templates location",
-        )
-        uncommon_args.add_argument(
-            "-ato",
-            "--auto",
-            action="store_true",
-            help="Enabled auto mode for this particular upload",
-        )
-        uncommon_args.add_argument(
-            "-tag", "--tags", nargs="*", help="Send custom tags to all trackers"
-        )
-
-        # args for Internal uploads
-        internal_args = parser.add_argument_group("Internal Upload Arguments")
-        internal_args.add_argument(
-            "-internal",
-            action="store_true",
-            help="(Internal) Used to mark an upload as 'Internal'",
-        )
-        internal_args.add_argument(
-            "-freeleech",
-            action="store_true",
-            help="(Internal) Used to give a new upload freeleech",
-        )
-        internal_args.add_argument(
-            "-featured", action="store_true", help="(Internal) feature a new upload"
-        )
-        internal_args.add_argument(
-            "-personal", action="store_true", help="Mark an upload as personal release"
-        )
-        internal_args.add_argument(
-            "-doubleup",
-            action="store_true",
-            help="(Internal) Give a new upload 'double up' status",
-        )
-        internal_args.add_argument(
-            "-tripleup",
-            action="store_true",
-            help="(Internal) Give a new upload 'triple up' status [XBTIT Exclusive]",
-        )
-        internal_args.add_argument(
-            "-sticky", action="store_true", help="(Internal) Pin the new upload"
-        )
-        internal_args.add_argument(
-            "-exclusive",
-            nargs=1,
-            choices=["0", "1", "2", "3"],
-            help="(Internal) Set an upload as exclusive for n days",
-        )
-
-        self.args = parser.parse_args()
+        # Setup Loggers
+        self._setup_loggers(args=self.args, working_folder=self.working_folder)
 
         # Import 'auto_mode' status
         self.upload_assistant_config = UploadAssistantConfig()
@@ -402,16 +193,17 @@ class GGBotUploadAssistant:
             )
             return False
 
-        # If the user provides this arg with the title right after in double quotes then we automatically use that
-        # If the user does not manually provide the title (Most common) then we pull the renaming template from *.json & use all the info we gathered earlier to generate a title
-        # -------- format the torrent title --------
+        # If the user provides this arg with the title right after in double quotes then we automatically use that If
+        # the user does not manually provide the title (Most common) then we pull the renaming template from *.json &
+        # use all the info we gathered earlier to generate a title -------- format the torrent title --------
         self.torrent_info["torrent_title"] = (
             str(self.args.title[0])
             if self.args.title
             else translation_utilities.format_title(config, self.torrent_info)
         )
 
-        # Call the function that will search each site for dupes and return a similarity percentage, if it exceeds what the user sets in config.env we skip the upload
+        # Call the function that will search each site for dupes and return a similarity percentage, if it exceeds
+        # what the user sets in config.env we skip the upload
         try:
             return DupeUtils().search_for_dupes_api(
                 tracker=tracker,
@@ -635,23 +427,26 @@ class GGBotUploadAssistant:
             keys_we_need_but_missing_torrent_info_list.append("mediainfo")
 
         # ------------ GuessIt doesn't return a video/audio codec that we should use ------------ #
-        # For 'x264', 'AVC', and 'H.264' GuessIt will return 'H.264' which might be a little misleading since things like 'x264' is used for encodes while AVC for Remuxs (usually) etc
+        # For 'x264', 'AVC', and 'H.264' GuessIt will return 'H.264' which might be a little misleading
+        # since things like 'x264' is used for encodes while AVC for Remuxs (usually) etc
         # For audio it will insert "Dolby Digital Plus" into the dict when what we want is "DD+"
         # ------------ If we are missing any other "basic info" we try to identify it here ------------ #
         if len(keys_we_need_but_missing_torrent_info) != 0:
-            logging.error(
-                "Unable to automatically extract all the required info from the FILENAME"
+            logging.warning(
+                "[Main] Unable to automatically extract all the required info from the FILENAME"
             )
-            logging.error(
-                f"We are missing this info: {keys_we_need_but_missing_torrent_info}"
+            logging.warning(
+                f"[Main] We are missing this info: {keys_we_need_but_missing_torrent_info}"
             )
             # Show the user what is missing & the next steps
             console.print(
-                f"[bold red underline]Unable to automatically detect the following info from the FILENAME:[/bold red underline] [green]{keys_we_need_but_missing_torrent_info}[/green]"
+                f"[bold red underline]Unable to automatically detect the following info from the FILENAME:[/bold red "
+                f"underline] [green]{keys_we_need_but_missing_torrent_info}[/green]"
             )
 
-        # We do some extra processing for the audio & video codecs since they are pretty important for the upload process & accuracy so they get appended each time
-        # ['mediainfo', 'video_codec', 'audio_codec'] or ['video_codec', 'audio_codec'] for disks
+        # We do some extra processing for the audio & video codecs since they are pretty important for the upload
+        # process & accuracy so they get appended each time ['mediainfo', 'video_codec', 'audio_codec'] or [
+        # 'video_codec', 'audio_codec'] for disks
         for identify_me in keys_we_need_but_missing_torrent_info_list:
             if identify_me not in keys_we_need_but_missing_torrent_info:
                 keys_we_need_but_missing_torrent_info.append(identify_me)
@@ -767,7 +562,8 @@ class GGBotUploadAssistant:
                     else None
                 )
                 logging.debug(
-                    f"Getting value for {column_query_key} with display {column_display_value} as {torrent_info_key_failsafe} for the torrent details result table"
+                    f"Getting value for {column_query_key} with display {column_display_value} as "
+                    f"{torrent_info_key_failsafe} for the torrent details result table"
                 )
                 basic_info.append(torrent_info_key_failsafe)
 
@@ -889,10 +685,12 @@ class GGBotUploadAssistant:
 
             if video_codec != pymediainfo_video_codec:
                 logging.error(
-                    f"[BasicUtils] Regex extracted video_codec [{video_codec}] and pymediainfo extracted video_codec [{pymediainfo_video_codec}] doesn't match!!"
+                    f"[BasicUtils] Regex extracted video_codec [{video_codec}] and pymediainfo extracted "
+                    f"video_codec [{pymediainfo_video_codec}] doesn't match!!"
                 )
                 logging.info(
-                    "[BasicUtils] If `--force_pymediainfo` or `-fpm` is provided as argument, PyMediaInfo video_codec will be used, else regex extracted video_codec will be used"
+                    "[BasicUtils] If `--force_pymediainfo` or `-fpm` is provided as argument, PyMediaInfo video_codec "
+                    "will be used, else regex extracted video_codec will be used"
                 )
             return (
                 pymediainfo_video_codec if self.args.force_pymediainfo else video_codec
@@ -1016,15 +814,17 @@ class GGBotUploadAssistant:
                     "Adding Do-Vi from file name. Marking existing of Dolby Vision"
                 )
 
-        # use regex (sourced and slightly modified from official radarr repo) to find torrent editions (Extended, Criterion, Theatrical, etc)
+        # use regex (sourced and slightly modified from official radarr repo) to find torrent editions
+        # (Extended, Criterion, Theatrical, etc)
         # https://github.com/Radarr/Radarr/blob/5799b3dc4724dcc6f5f016e8ce4f57cc1939682b/src/NzbDrone.Core/Parser/Parser.cs#L21
         self.torrent_info["edition"] = MiscellaneousUtils.identify_bluray_edition(
             self.torrent_info["upload_media"]
         )
 
-        # --------- Fix scene group tags --------- #
-        # Whilst most scene group names are just capitalized but occasionally as you can see ^^ some are not (e.g. KOGi)
-        # either way we don't want to be capitalizing everything (e.g. we want 'NTb' not 'NTB') so we still need a dict of scene groups and their proper capitalization
+        # --------- Fix scene group tags --------- # Whilst most scene group names are just capitalized but
+        # occasionally as you can see ^^ some are not (e.g. KOGi) either way we don't want to be capitalizing
+        # everything (e.g. we want 'NTb' not 'NTB') so we still need a dict of scene groups and their proper
+        # capitalization
         if "release_group" in self.torrent_info:
             # this is one place where we can identify scene groups
             (
@@ -1088,7 +888,8 @@ class GGBotUploadAssistant:
 
     # -------------- END of identify_miscellaneous_details --------------
 
-    def display_upload_report(self, upload_report: Dict) -> None:
+    @staticmethod
+    def display_upload_report(upload_report: Dict) -> None:
         console.line(count=2)
         console.rule("Upload Report", style="red", align="center")
         console.line(count=1)
@@ -1128,7 +929,7 @@ class GGBotUploadAssistant:
         payload = {}
         files = []
         display_files = {}
-        requests_orchestator = requests
+        requests_orchestrator = requests
 
         logging.debug(
             "::::::::::::::::::::::::::::: Tracker settings that will be used for creating payload :::::::::::::::::::::::::::::"
@@ -1185,7 +986,7 @@ class GGBotUploadAssistant:
                 )
 
                 logging.info("[TrackerUpload] Loading custom action to get cookie")
-                requests_orchestator = requests_orchestator.Session()
+                requests_orchestrator = requests_orchestrator.Session()
                 custom_action = GenericUtils.load_custom_actions(
                     "action"
                 )  # FIXME: THis is broken. Figure out how to get the actual action key here.
@@ -1194,8 +995,10 @@ class GGBotUploadAssistant:
                 )
 
                 logging.info("[TrackerUpload] Setting cookie to session")
-                # here we are storing the session on the requests_orchestator object
-                requests_orchestator.cookies.update(pickle.load(open(cookiefile, "rb")))
+                # here we are storing the session on the requests_orchestrator object
+                requests_orchestrator.cookies.update(
+                    pickle.load(open(cookiefile, "rb"))
+                )
             else:
                 # TODO add support for cookie based authentication
                 logging.fatal(
@@ -1379,17 +1182,17 @@ class GGBotUploadAssistant:
                 )
                 return False
 
-        logging.fatal(
+        logging.info(
             f"[TrackerUpload] URL: {url_masked} \n Data: {payload} \n Files: {files}"
         )
 
         if not self.args.dry_run:  # skipping tracker upload during dry runs
             if self.config["technical_jargons"]["payload_type"] == "JSON":
-                response = requests_orchestator.request(
+                response = requests_orchestrator.request(
                     "POST", url, json=payload, files=files, headers=headers
                 )
             else:
-                response = requests_orchestator.request(
+                response = requests_orchestrator.request(
                     "POST", url, data=payload, files=files, headers=headers
                 )
 
@@ -1533,10 +1336,12 @@ class GGBotUploadAssistant:
                 )
                 # This is to deal with the 500 internal server error responses BLU has been recently returning
                 logging.error(
-                    f"[TrackerUpload] HTTP response status code '{response.status_code}' was returned (500=Internal Server Error)"
+                    f"[TrackerUpload] HTTP response status code '{response.status_code}' was returned (500=Internal "
+                    f"Server Error)"
                 )
                 logging.info(
-                    "[TrackerUpload] This doesn't mean the upload failed, instead the site simply isn't returning the upload status"
+                    "[TrackerUpload] This doesn't mean the upload failed, instead the site simply isn't returning the "
+                    "upload status"
                 )
 
             elif response.status_code == 400:
@@ -1546,11 +1351,13 @@ class GGBotUploadAssistant:
                 console.print("Upload failed.", style="bold red")
                 try:
                     logging.critical(
-                        f'[TrackerUpload] 400 was returned on that upload, this is a problem with the site ({self.tracker}). Error: Error {response.json()["error"] if "error" in response.json() else response.json()}'
+                        f'[TrackerUpload] 400 was returned on that upload, this is a problem with the '
+                        f'site ({self.tracker}). Error: Error '
+                        f'{response.json()["error"] if "error" in response.json() else response.json()}'
                     )
                 except Exception:
                     logging.critical(
-                        f"[TrackerUpload] 400 was returned on that upload, this is a problem with the site ({self.tracker})."
+                        f"[TrackerUpload] 400 was returned for upload, this is a problem with site ({self.tracker})."
                     )
                 logging.error("[TrackerUpload] Upload failed")
 
@@ -1588,7 +1395,7 @@ class GGBotUploadAssistant:
         logging.info(f" {'-' * 24} Starting new upload {'-' * 24} ")
 
         if self.args.tripleup and self.args.doubleup:
-            logging.error(
+            logging.warning(
                 "[Main] User tried to pass tripleup and doubleup together. Stopping torrent upload process"
             )
             console.print(
@@ -1596,28 +1403,12 @@ class GGBotUploadAssistant:
                 style="bright_red",
             )
             console.print("Exiting...\n", style="bright_red bold")
-            sys.exit()
+            raise GGBotFatalException(
+                "tripleup and doubleup flags cannot be used together."
+            )
 
         # Dry run mode, mainly intended to be used during development
-        self.args.debug = (
-            self.args.dry_run if self.args.dry_run is True else self.args.debug
-        )
-
-        if self.args.debug:
-            logging.getLogger().setLevel(logging.DEBUG)
-            logging.getLogger("torf").setLevel(logging.INFO)
-            logging.getLogger("rebulk.rules").setLevel(logging.INFO)
-            logging.getLogger("rebulk.rebulk").setLevel(logging.INFO)
-            logging.getLogger("rebulk.processors").setLevel(logging.INFO)
-            logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
-            logging.debug(f"Arguments provided by user: {self.args}")
-
-        # Disabling the logs from cinemagoer
-        logging.getLogger("imdbpy").disabled = True
-        logging.getLogger("imdbpy.parser").disabled = True
-        logging.getLogger("imdbpy.parser.http").disabled = True
-        logging.getLogger("imdbpy.parser.http.piculet").disabled = True
-        logging.getLogger("imdbpy.parser.http.build_person").disabled = True
+        self.args.debug = True if self.args.dry_run is True else self.args.debug
 
         """
         ----------------------- Full Disk & BDInfo CLI Related Notes -----------------------
@@ -1677,12 +1468,13 @@ class GGBotUploadAssistant:
             console.print(
                 "[bold red on white] ---------------------------- :warning: Unsupported Operation :warning: ---------------------------- [/bold red on white]"
             )
-            sys.exit(
-                console.print(
-                    "\nQuiting upload process since Full Disk uploads are not allowed in this image.\n",
-                    style="bold red",
-                    highlight=False,
-                )
+            console.print(
+                "\nQuiting upload process since Full Disk uploads are not allowed in this image.\n",
+                style="bold red",
+                highlight=False,
+            )
+            raise GGBotFatalException(
+                "Full Disk uploads are not allowed in this image."
             )
 
         # Set the value of args.path to a variable that we can overwrite with a path translation later (if needed)
@@ -2008,7 +1800,7 @@ class GGBotUploadAssistant:
                 # True == dupe_found
                 # False == no_dupes/continue upload
                 if dupe_check_response:
-                    logging.error(
+                    logging.warning(
                         f"[Main] Could not upload to: {tracker} because we found a dupe on site"
                     )
                     upload_report[tracker]["upload"] = "Skipped"
@@ -2195,22 +1987,24 @@ class GGBotUploadAssistant:
                     logging.debug(
                         f"[Main] Dumping torrent_info contents to log before dupe check: \n{pformat(self.torrent_info)}"
                     )
-                    # Call the function that will search each site for dupes and return a similarity percentage, if it exceeds what the user sets in config.env we skip the upload
+                    # Call the function that will search each site for dupes and return a similarity percentage,
+                    # if it exceeds what the user sets in config.env we skip the upload
                     dupe_check_response = self.check_for_dupes_in_tracker(
                         tracker, temp_tracker_api_key
                     )
                     # True == dupe_found
                     # False == no_dupes/continue upload
                     if dupe_check_response:
-                        logging.error(
+                        logging.warning(
                             f"[Main] Could not upload to: {tracker} because we found a dupe on site"
                         )
                         upload_report[tracker]["upload"] = "Skipped"
                         upload_report[tracker]["message"] = "Duplicate Upload"
                         upload_report[tracker]["post_process"] = "Skipped"
                         upload_report[tracker]["post_message"] = "Upload Was Skipped"
-                        # If dupe was found & the script is auto_mode OR if the user responds with 'n' for the 'dupe found, continue?' prompt
-                        #  we will essentially stop the current 'for loops' iteration & jump back to the beginning to start next cycle (if exists else quits)
+                        # If dupe was found & the script is auto_mode OR if the user responds with 'n' for the 'dupe
+                        # found, continue?' prompt we will essentially stop the current 'for loops' iteration & jump
+                        # back to the beginning to start next cycle (if exists else quits)
                         continue
 
                 # -------- Generate .torrent file --------
@@ -2437,6 +2231,67 @@ class GGBotUploadAssistant:
             script_end_time = time.perf_counter()
             total_run_time = f"{script_end_time - script_start_time:0.4f}"
             logging.info(f"[Main] Total runtime is {total_run_time} seconds")
+
+    @staticmethod
+    def _read_system_arguments_config(config_file: str):
+        arg_config_reader = GGBotArgReader(config_file)
+        parser = GGBotArgumentParser(arg_config_reader.read_and_get_config())
+        return parser.parse_args()
+
+    @staticmethod
+    def _setup_loggers(*, args, working_folder):
+        # Debug logs for the upload processing
+        # Logger running in "w" : write mode
+        # Create a custom log format with UTF-8 encoding
+        log_format = logging.Formatter(
+            "%(asctime)s | %(name)s | %(levelname)s | %(message)s", "%Y-%m-%d %H:%M:%S"
+        )
+        handler = logging.FileHandler(
+            ASSISTANT_LOG.format(base_path=working_folder),
+            mode="w",
+            encoding="utf-8",
+        )
+        handler.setFormatter(log_format)
+
+        # Add the FileHandler to the root logger
+        logging.root.addHandler(handler)
+        logging.root.setLevel(logging.INFO)
+
+        # Disabling the logs from cinemagoer
+        logging.getLogger("imdbpy").disabled = True
+        logging.getLogger("imdbpy.parser").disabled = True
+        logging.getLogger("imdbpy.parser.http").disabled = True
+        logging.getLogger("imdbpy.parser.http.piculet").disabled = True
+        logging.getLogger("imdbpy.parser.http.build_person").disabled = True
+
+        if not args.debug:
+            return
+
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.getLogger("torf").setLevel(logging.INFO)
+        logging.getLogger("rebulk.rules").setLevel(logging.INFO)
+        logging.getLogger("rebulk.rebulk").setLevel(logging.INFO)
+        logging.getLogger("rebulk.processors").setLevel(logging.INFO)
+        logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
+        logging.debug(f"[UploadAssistant] Arguments provided by user: {args}")
+
+    @staticmethod
+    def _initialize_sentry_sdk():
+        sentry_config = SentryErrorTrackingConfig()
+        if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is False:
+            return
+
+        sentry_sdk.init(
+            environment="production",
+            server_name="GG Bot Upload Assistant",
+            dsn="https://4093e406eb754b20a2a7f6d15e6b34c0@ggbot.bot.nu/1",
+            traces_sample_rate=1.0,
+            profiles_sample_rate=1.0,
+            attach_stacktrace=True,
+            shutdown_timeout=20,
+            ignore_errors=SentryConfig.sentry_ignored_errors(),
+            before_send=SentryConfig.before_send,
+        )
 
 
 if __name__ == "__main__":
