@@ -171,6 +171,9 @@ class Deluge(GGBotTorrentClientTemplate):
         # user wants to ignore labels, hence we'll consider all the torrents
         if self.target_label.lower() == "IGNORE_LABEL":
             return True
+        # if dynamic tracker selection is enabled, then labels will follow the pattern GGBOT::TR1::TR2::TR3
+        if self.dynamic_tracker_selection:
+            return label.startswith(self.target_label.lower())
         return label == self.target_label.lower()
 
     @staticmethod
@@ -196,3 +199,16 @@ class Deluge(GGBotTorrentClientTemplate):
         if key.lower() == "label":
             return data.decode("utf-8").lower()
         return data.decode("utf-8")
+
+    def get_dynamic_trackers(self, torrent: Dict[str, str]) -> List[str]:
+        # a sanity check just to be sure
+        if self.dynamic_tracker_selection:
+            # this torrent is the translated data hence category instead of d.custom1
+            category = torrent["category"]
+            # removing any trailing ::
+            if category.endswith("--"):
+                category = category[:-2]
+            trackers = category.split("--")
+            return trackers[1:]  # first entry will always be GGBOT
+        else:
+            return []
