@@ -82,7 +82,7 @@ def mongo_container(docker_testing_network):
     )
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(autouse=True)
 def qbittorrent_container(docker_testing_network, e2e_test_working_folder):
     logging.info("[TestContainers]Creating Qbittorrent docker container")
     container = DockerContainer("linuxserver/qbittorrent:4.6.5")
@@ -112,7 +112,7 @@ def qbittorrent_container(docker_testing_network, e2e_test_working_folder):
     )
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(autouse=True)
 def deluge_container(docker_testing_network, e2e_test_working_folder):
     logging.info("[TestContainers]Creating Deluge docker container")
     container = DockerContainer("lscr.io/linuxserver/deluge:latest")
@@ -155,7 +155,7 @@ def deluge_container(docker_testing_network, e2e_test_working_folder):
     )
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(autouse=True)
 def transmission_container(docker_testing_network, e2e_test_working_folder):
     logging.info("[TestContainers]Creating Transmission docker container")
     container = DockerContainer("lscr.io/linuxserver/transmission:latest")
@@ -187,7 +187,7 @@ def transmission_container(docker_testing_network, e2e_test_working_folder):
     )
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(autouse=True)
 def rutorrent_container(docker_testing_network, e2e_test_working_folder):
     logging.info("[TestContainers]Creating rutorrent docker container")
     container = DockerContainer("crazymax/rtorrent-rutorrent:5.1.5-7.2")
@@ -216,7 +216,7 @@ def rutorrent_container(docker_testing_network, e2e_test_working_folder):
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def rutorrent_credentials(rutorrent_container):
     # This needs more time when running in kubernetes cluster to start properly
     time.sleep(30)  # allowing time for rutorrent container to start and be ready
@@ -244,7 +244,7 @@ def rutorrent_credentials(rutorrent_container):
     }
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def deluge_credentials(deluge_container):
     time.sleep(5)  # allowing time for deluge container to start properly
     deluge_logs = "".join(
@@ -279,7 +279,7 @@ def deluge_credentials(deluge_container):
     }
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def transmission_credentials(transmission_container):
     time.sleep(2)  # allowing time for transmission container to start properly
 
@@ -310,7 +310,7 @@ def transmission_credentials(transmission_container):
     }
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def qbittorrent_credentials(qbittorrent_container):
     time.sleep(2)  # allowing time for qbittorrent container to start properly
 
