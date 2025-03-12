@@ -424,7 +424,6 @@ pip install -r requirements/requirements.txt
 # Roadmap
 
 ### v3.2.0
-
 - [ ] New Tracker: UHDBits
 - [ ] Use IMDB GraphQL Api
 - [ ] Use Anilist GraphQL Api
