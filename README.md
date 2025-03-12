@@ -432,6 +432,15 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
+- [X] Added E2E tests for dynamic tracker selection
+- [X] Added more assertions to E2E tests
+- [X] Fixed pyyaml dependency
+- [X] Fixed deluge torrent client Unit tests
+- [X] Added VC-1 codec support from blu-ray disks
+- [X] Added Dolby Digital Ex codec support from blu-ray disks
+- [X] Dynamic tracker selection: Deluge, Transmission
+- [X] Fixed a bug in rutorrent dynamic tracker selection
+- [X] Issue#203: Uploads fails when tmdb doesn't have any poster
 
 ### v3.2.1
 
