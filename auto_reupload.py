@@ -638,7 +638,26 @@ class GGBotReUploader:
                 "[GGBotReUploader] This doesn't mean the upload failed, instead the site simply isn't returning the upload status"
             )
             return False, response.status_code
-
+        elif response.status_code == 401:
+            console.print(
+                f"[bold]HTTP response status code: [red]{response.status_code}[/red][/bold]"
+            )
+            console.print("Upload failed.", style="bold red")
+            try:
+                logging.critical(
+                    f'[GGBotReUploader] 401 was returned on that upload, this is a problem with the site ({upload_to}).'
+                    f' Error: Error {response.json()["message"] if "message" in response.json() else response.json()}'
+                )
+            except Exception:
+                logging.error(
+                    f"[GGBotReUploader] 400 was returned on that upload, this is a problem with the site ({upload_to}).",
+                    extra={"error": response.text},
+                )
+            logging.error(
+                f"[TrackerUpload] Upload failed to tracker {upload_to}",
+                extra={"error": response.text},
+            )
+            return False, response.status_code
         elif response.status_code == 400:
             console.print(
                 f"[bold]HTTP response status code: [red]{response.status_code}[/red][/bold]"

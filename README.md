@@ -18,7 +18,6 @@
 <div align="center">
     <a href="https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/commits/master"><img alt="pipeline status" src="https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/badges/master/pipeline.svg" /></a>
     <a href="https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/releases"><img alt="Latest Release" src="https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/badges/release.svg" /></a>
-    <a href="https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/commits/master"><img alt="coverage report" src="https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/badges/master/coverage.svg" /></a>
     <a href="https://hub.docker.com/r/noobmaster669/gg-bot-uploader/"><img alt="coverage report" src="https://img.shields.io/docker/pulls/noobmaster669/gg-bot-uploader" /></a>
     <a href="https://gitlab.com/NoobMaster669/gg-bot-upload-assistant"><img src="https://img.shields.io/badge/dynamic/json?color=green&logo=gitlab&label=stars&query=%24.star_count&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F32631784"></a>
     <a href="https://codecov.io/gl/NoobMaster669/gg-bot-upload-assistant" >
@@ -433,6 +432,15 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
+- [X] Added E2E tests for dynamic tracker selection
+- [X] Added more assertions to E2E tests
+- [X] Fixed pyyaml dependency
+- [X] Fixed deluge torrent client Unit tests
+- [X] Added VC-1 codec support from blu-ray disks
+- [X] Added Dolby Digital Ex codec support from blu-ray disks
+- [X] Dynamic tracker selection: Deluge, Transmission
+- [X] Fixed a bug in rutorrent dynamic tracker selection
+- [X] Issue#203: Uploads fails when tmdb doesn't have any poster
 
 ### v3.2.1
 
