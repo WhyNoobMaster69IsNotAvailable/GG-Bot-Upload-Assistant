@@ -473,7 +473,8 @@ class GGBotUploadAssistant:
                     sub_folder=self.torrent_info["working_folder"],
                 ),
             ) as summary:
-                self.torrent_info["mediainfo_summary"] = summary.read()
+                bdInfo_summary = summary.read()
+                self.torrent_info["mediainfo_summary"] = bdInfo_summary
         else:
             # certain release groups will add IMDB, TMDB and TVDB id in the general section of mediainfo. If one such id is present then we can use it and
             # consider it the same as being provided by the user (no need to search)

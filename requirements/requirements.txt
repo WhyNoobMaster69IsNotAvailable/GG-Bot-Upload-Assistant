@@ -18,4 +18,3 @@ torf==4.2.7
 Jinja2==3.1.5
 transmission-rpc==7.0.11
 deluge-client==1.10.2
-PyYaml==5.3.1 # PyYaml cannot be upgraded in alpine.

@@ -258,7 +258,8 @@ class Rutorrent(GGBotTorrentClientTemplate):
         # if dynamic tracker selection is enabled, then labels will follow the pattern GGBOT::TR1::TR2::TR3
         if self.dynamic_tracker_selection:
             return torrent["d.get_custom1"].startswith(self.target_label)
-        return torrent["d.get_custom1"] == self.target_label
+        else:
+            return torrent["d.get_custom1"] == self.target_label
 
     @staticmethod
     def __do_key_translation(key):
