@@ -113,7 +113,7 @@ class BDInfoParser:
                 continue
 
             playlist_details = {
-                "no": bdinfo_output_split[index - 2].replace("\\n", ""),
+                "no": bdinfo_output_split[index - 2].strip("\\n\\r"),
                 "group": bdinfo_output_split[index - 1],
                 "file": bdinfo_output_split[index],
                 "length": bdinfo_output_split[index + 1],
@@ -334,6 +334,8 @@ class BDInfoParser:
                         video_metadata["codec"] = "HEVC"
                     elif "AVC" in video_metadata["codec"]:
                         video_metadata["codec"] = "AVC"
+                    elif "VC-1" in video_metadata["codec"]:
+                        video_metadata["codec"] = "VC-1"
 
                     bdinfo["video"].append(video_metadata)
                 elif line.startswith("Audio:"):
@@ -367,6 +369,9 @@ class BDInfoParser:
                             component = codec_split[0].strip()
 
                         audio_metadata[audio_components_dict[index]] = component.strip()
+                    audio_metadata["channels"] = audio_metadata["channels"].rstrip(
+                        "-EX"
+                    )
 
                     bdinfo["audio"].append(audio_metadata)
                 # Disc Title: Venom: Let There Be Carnage - 4K Ultra HD

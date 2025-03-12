@@ -424,7 +424,6 @@ pip install -r requirements/requirements.txt
 # Roadmap
 
 ### v3.2.0
-
 - [ ] New Tracker: UHDBits
 - [ ] Use IMDB GraphQL Api
 - [ ] Use Anilist GraphQL Api
@@ -432,6 +431,10 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
+- [X] Fixed pyyaml dependency
+- [X] Added VC-1 codec support from blu-ray disks
+- [X] Added Dolby Digital Ex codec support from blu-ray disks
+- [X] Issue#203: Uploads fails when tmdb doesn't have any poster
 
 ### v3.2.1
 
