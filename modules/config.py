@@ -21,8 +21,15 @@ from abc import ABC, abstractmethod, ABCMeta
 from functools import cached_property
 from typing import Optional
 
+from modules.cryptography.encrypt_decrypt_processor import DecryptProcessor
 from modules.enums import TorrentPieceSize
-from modules.exceptions.exception import GGBotUploaderException
+from modules.exceptions.exception import GGBotUploaderException, GGBotConfigException
+
+# --- Re-add Decryption Helper ---
+# This instance should be initialized at application startup
+# based on PRIVATE_KEY_PATH environment variable.
+global_decryptor_instance: Optional[DecryptProcessor] = None
+# --- End Decryption Helper ---
 
 
 def _strtobool(val):
@@ -42,14 +49,70 @@ def _strtobool(val):
 
 
 class GGBotConfig(ABC):
+    # Make it static again
     @staticmethod
     def _get_property(key, default=None):
-        return os.getenv(key, default)
+        """Gets property from env, attempting decryption if marked and global decryptor available."""
+        # Removed decryptor_instance parameter
+        raw_value = os.getenv(key)
 
+        # If env var is not set at all, return default
+        if raw_value is None:
+            return default
+
+        # --- Decryption Logic ---
+        # Use global_decryptor_instance directly
+        if global_decryptor_instance and raw_value.startswith("ENC::"):
+            logging.debug(f"[GGBotConfig] Attempting decryption for key: {key}")
+            ciphertext = raw_value[len("ENC::") :]
+            # Handle case where ciphertext might be empty after stripping prefix
+            if not ciphertext:
+                logging.warning(
+                    f"[GGBotConfig] Found encryption prefix 'ENC::' but no ciphertext for key {key}. Returning default."
+                )
+                return default
+
+            decrypted_value = global_decryptor_instance.decrypt(ciphertext)
+
+            if decrypted_value is None:
+                # Decryption failed (error already logged by DecryptProcessor)
+                logging.critical(
+                    f"[GGBotConfig] !!! DECRYPTION FAILED for key '{key}'! Check private key and config value. Using default value."
+                )
+                return default
+            else:
+                logging.debug(f"[GGBotConfig] Decryption successful for key: {key}")
+                return decrypted_value  # Return decrypted value
+        else:
+            # No prefix or no decryptor, return raw value as is
+            return raw_value
+        # --- End Decryption Logic ---
+
+    # Make it static again
     @staticmethod
     def _get_property_as_boolean(key: str, default: bool = False) -> bool:
-        return bool(_strtobool(str(os.getenv(key, default))))
+        """Gets property (potentially decrypting it) and converts to boolean."""
+        # Removed decryptor_instance parameter
+        # Get potentially decrypted value first using the static method
+        val_str = GGBotConfig._get_property(key, str(default))
 
+        # Handle None return from _get_property (e.g., decryption failed and default was None)
+        if val_str is None:
+            logging.warning(
+                f"[GGBotConfig] Got None value for boolean key {key} after potential decryption. Using default: {default}"
+            )
+            return default
+
+        try:
+            # Use helper for robust boolean conversion
+            return bool(_strtobool(str(val_str)))
+        except GGBotConfigException:  # _strtobool raises this on invalid value
+            logging.error(
+                f"[GGBotConfig] Invalid boolean value for key {key} after potential decryption: '{val_str}'. Using default: {default}"
+            )
+            return default  # Fallback on conversion error
+
+    # Instance methods still call the static helpers
     def get_config(self, key, default=None):
         return self._get_property(key, default)
 
