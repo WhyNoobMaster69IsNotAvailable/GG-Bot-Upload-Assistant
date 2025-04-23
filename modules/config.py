@@ -54,7 +54,7 @@ class GGBotConfig(ABC):
     def _get_property(key, default=None):
         """Gets property from env, attempting decryption if marked and global decryptor available."""
         # Removed decryptor_instance parameter
-        raw_value = os.getenv(key)
+        raw_value = os.getenv(key, default=default)
 
         # If env var is not set at all, return default
         if raw_value is None:
