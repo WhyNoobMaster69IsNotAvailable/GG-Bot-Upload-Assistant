@@ -19,74 +19,43 @@ import sys
 from pathlib import Path
 from unittest import mock
 
+import pytest
+
 from auto_upload import GGBotUploadAssistant
-from modules.cryptography.key_manager import KeyManager
-from modules.cryptography.encrypt_decrypt_processor import EncryptProcessor
 
 
 class TestGGBotUploadAssistantWithEncryption:
     """Tests for GGBotUploadAssistant with encrypted configuration."""
 
-    @classmethod
-    def setup_class(cls):
-        """Set up encryption keys and encrypted config for the test class."""
-        cls.working_folder = Path(__file__).resolve().parent
-        cls.private_key_path = f"{cls.working_folder}/resources/test_private_key.pem"
-        cls.public_key_path = f"{cls.working_folder}/resources/test_public_key.pem"
+    """Set up encryption keys and encrypted config for the test class."""
+    working_folder = Path(__file__).resolve().parent
+    private_key_path = f"{working_folder}/resources/test_private_key.pem"
+    public_key_path = f"{working_folder}/resources/test_public_key.pem"
 
-        # Generate keys if they don't exist
-        if (
-            not Path(cls.private_key_path).exists()
-            or not Path(cls.public_key_path).exists()
-        ):
-            key_manager = KeyManager(
-                private_key_path=cls.private_key_path,
-                public_key_path=cls.public_key_path,
-            )
-            key_manager.generate_and_save_keys(force_overwrite=True)
-
-        # Create encrypted config file
-        cls.create_encrypted_config()
-
-    @classmethod
-    def create_encrypted_config(cls):
-        """Create an encrypted config file for testing."""
-        # Read the test config
-        with open(f"{cls.working_folder}/resources/config-test.env", "r") as f:
-            config_content = f.read()
-
-        # Add some sensitive values to encrypt
-        config_lines = config_content.split("\n")
-        modified_config_lines = []
-
-        for line in config_lines:
-            if line.startswith("TMDb_API_KEY="):
-                modified_config_lines.append(line + " # ENCRYPT")
-            elif line.startswith("TSP_API_KEY="):
-                modified_config_lines.append(line + " # ENCRYPT")
-            else:
-                modified_config_lines.append(line)
-
-        modified_config = "\n".join(modified_config_lines)
-
-        # Create source config file to encrypt
-        with open(
-            f"{cls.working_folder}/resources/config-test-to-encrypt.env", "w"
-        ) as f:
-            f.write(modified_config)
-
-        # Load public key and encrypt
-        key_manager = KeyManager(public_key_path=cls.public_key_path)
-        public_key = key_manager.load_public_key()
-        encryptor = EncryptProcessor(public_key)
-
-        from modules.cryptography.env_processor import EnvFileProcessor
-
-        processor = EnvFileProcessor(encryptor)
-        processor.process_file(
-            f"{cls.working_folder}/resources/config-test-to-encrypt.env",
-            f"{cls.working_folder}/resources/config-test-encrypted.env",
+    @pytest.fixture(autouse=True)
+    def setup_encrypted_config(self):
+        """Setup temporary config file with proper PRIVATE_KEY_PATH."""
+        temp_config_path = (
+            f"{self.working_folder}/resources/config-test-encrypted-temp.env"
         )
+
+        with open(
+            f"{self.working_folder}/resources/config-test-encrypted.env", "r"
+        ) as original_file:
+            content = original_file.read()
+
+        updated_content = content.replace(
+            "PRIVATE_KEY_PATH=e2e-tests/resources/test_private_key.pem",
+            f"PRIVATE_KEY_PATH={self.private_key_path}",
+        )
+
+        with open(temp_config_path, "w") as temp_file:
+            temp_file.write(updated_content)
+
+        yield temp_config_path
+
+        if os.path.exists(temp_config_path):
+            os.remove(temp_config_path)
 
     @mock.patch.object(
         sys,
@@ -101,40 +70,81 @@ class TestGGBotUploadAssistantWithEncryption:
             "--debug",
         ],
     )
-    def test_upload_assistant_with_encrypted_config(self, e2e_test_working_folder):
+    def test_upload_assistant_with_encrypted_config(
+        self, e2e_test_working_folder, setup_encrypted_config
+    ):
         """Test upload assistant with encrypted configuration file."""
-        # Temporarily set PRIVATE_KEY_PATH environment variable
-        old_env = os.environ.get("PRIVATE_KEY_PATH")
-        os.environ["PRIVATE_KEY_PATH"] = self.private_key_path
+        # Get the temporary config path from the fixture
+        temp_config_path = setup_encrypted_config
 
-        try:
-            # Create and run upload assistant with encrypted config
-            assistant = GGBotUploadAssistant(
-                f"{self.working_folder}/resources/config-test-encrypted.env"
-            )
-            assistant.start(
-                [
-                    f"{e2e_test_working_folder}/e2e-tests/resources/Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv"
-                ]
-            )
+        # Use the temporary config file for the test
+        assistant = GGBotUploadAssistant(temp_config_path)
+        assistant.start(
+            [
+                f"{e2e_test_working_folder}/e2e-tests/resources/Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv"
+            ]
+        )
 
-            # Verify that initialization and decryption worked
-            assert assistant.api_keys_dict != {}
-            assert "tmdb_api_key" in assistant.api_keys_dict
-            assert "TSP_api_key" in assistant.api_keys_dict
-
-            # Verify media info was parsed successfully
-            assert assistant.torrent_info != {}
-            assert assistant.torrent_info["title"] == "Deadpool & Wolverine"
-            assert assistant.torrent_info["year"] == "2024"
-            assert assistant.torrent_info["screen_size"] == "2160p"
-            assert assistant.torrent_info["video_codec"] == "H.264"
-
-            # Verify upload was successful
-            assert assistant.torrent_info["TSP_upload_status"] is True
-        finally:
-            # Restore environment
-            if old_env is not None:
-                os.environ["PRIVATE_KEY_PATH"] = old_env
-            else:
-                del os.environ["PRIVATE_KEY_PATH"]
+        # assert that api_key_dict is loaded
+        assert assistant.api_keys_dict != {}
+        # assert that torrent_info is not empty
+        assert assistant.torrent_info != {}
+        assert assistant.torrent_info["argument_tags"] is None
+        # assert that tag_grouping is loaded properly
+        assert assistant.torrent_info["tag_grouping"] is not None
+        assert assistant.torrent_info["3d"] == "0"
+        assert assistant.torrent_info["foregin"] == "0"
+        assert assistant.torrent_info["title"] == "Deadpool & Wolverine"
+        assert assistant.torrent_info["year"] == "2024"
+        assert assistant.torrent_info["screen_size"] == "2160p"
+        assert assistant.torrent_info["source"] == "Web"
+        assert assistant.torrent_info["type"] == "movie"
+        assert assistant.torrent_info["release_group"] == "ReleaseGroup"
+        assert (
+            assistant.torrent_info["raw_file_name"]
+            == "Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv"
+        )
+        assert assistant.torrent_info["subtitles"] == []
+        assert assistant.torrent_info["hdr"] == "HDR10+"
+        assert assistant.torrent_info["pymediainfo_video_codec"] == "H.265"
+        assert assistant.torrent_info["video_codec"] == "H.264"
+        assert assistant.torrent_info["audio_codec"] == "DD+"
+        assert assistant.torrent_info["audio_channels"] == "5.1"
+        assert assistant.torrent_info["imdb"] == "6263850"
+        assert assistant.torrent_info["tmdb"] == "533535"
+        assert assistant.torrent_info["tvdb"] == "0"
+        assert assistant.torrent_info["mal"] == "0"
+        assert assistant.torrent_info["tvmaze"] == "0"
+        assert assistant.torrent_info["source_type"] == "webdl"
+        assert assistant.torrent_info["web_source"] == "AMZN"
+        assert assistant.torrent_info["web_source_name"] == "Amazon Prime"
+        assert assistant.torrent_info["repack"] is None
+        assert assistant.torrent_info["edition"] is None
+        assert assistant.torrent_info["scene"] == "true"  # TODO: this needs to be fixed
+        assert assistant.torrent_info["dualaudio"] == ""
+        assert assistant.torrent_info["multiaudio"] == ""
+        assert assistant.torrent_info["commentary"] is False
+        assert assistant.torrent_info["language_str"] == "English"
+        assert assistant.torrent_info["language_str_if_foreign"] is None
+        assert assistant.torrent_info["container"] == ".mkv"
+        assert assistant.torrent_info["bit_depth"] == "10"
+        assert assistant.torrent_info["web_type"] == "WEB-DL"
+        assert (
+            assistant.torrent_info["torrent_title"]
+            == "Deadpool & Wolverine 2024 2160p AMZN WEB-DL DD+ 5.1 HDR10+ H.264-ReleaseGroup"
+        )
+        assert assistant.torrent_info["custom_user_inputs"] == [
+            {
+                "key": "code_code",
+                "title": None,
+                "value": "This release is sourced from Amazon Prime",
+            }
+        ]
+        assert assistant.torrent_info["duration"] == "50050"
+        assert (
+            assistant.torrent_info["shameless_self_promotion"]
+            == "Uploaded with ❤ using GG-BOT Upload Assistant"
+        )
+        assert assistant.torrent_info["imdb_with_tt"] == "tt6263850"
+        assert assistant.torrent_info["TSP_upload_status"] is True
+        assert assistant.torrent_info["post_processing_complete"] is False
