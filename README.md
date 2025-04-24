@@ -434,7 +434,7 @@ pip install -r requirements/requirements.txt
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
-- [X] Support for encrypted config.env [_Vibe Coding_]
+- [X] Support for encrypted config.env files
 - [X] Fixed pyyaml dependency
 - [X] Added VC-1 codec support from blu-ray disks
 - [X] Added Dolby Digital Ex codec support from blu-ray disks
