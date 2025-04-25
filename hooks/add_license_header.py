@@ -26,7 +26,9 @@ import importlib.util
 # Import check_license_header module from the same directory
 script_dir = os.path.dirname(os.path.abspath(__file__))
 check_license_header_path = os.path.join(script_dir, "check_license_header.py")
-spec = importlib.util.spec_from_file_location("check_license_header", check_license_header_path)
+spec = importlib.util.spec_from_file_location(
+    "check_license_header", check_license_header_path
+)
 check_license_header_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(check_license_header_module)
 
@@ -122,8 +124,10 @@ def main():
                             print(f"Added license header to {file_path}")
 
     if files_modified > 0:
-        print(f"Added license headers to {files_modified} out of {files_processed} files processed")
-    
+        print(
+            f"Added license headers to {files_modified} out of {files_processed} files processed"
+        )
+
     # Always exit with 0 to satisfy pre-commit "fixing" behavior
     sys.exit(0)
 
