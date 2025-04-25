@@ -1,51 +1,78 @@
-Starting from GG Bot v3.1.3 onwards, the mongo db backend supports authentication. This allows users to expose mongoDB port publically and see the metadata from the local machine using tools such as MongoDB Compass. Also having authentication is a better practice.
+# MongoDB Authentication Setup for GG Bot Upload Assistant
 
-## Configure MongoDB with authentication.
+Starting from GG Bot v3.1.3 onwards, the mongo db backend supports authentication. This allows users to expose mongoDB
+port publicly and see the metadata from the local machine using tools such as MongoDB Compass. Also having
+authentication is a better practice. This document explains how to use MongoDB with authentication in the GG Bot Upload
+Assistant Docker Compose setup.
 
-To configure mongo with authentication, first you'll need to copy the mongo folder within the `samples/reuploader` folder to the location of your reuploader config location.
-> The reuplaoder config location is the folder containing your `docker-compose.yml` file
+## Overview
 
-The mongo db config folder contains the following files
-- `.mongo.env`
-- `init-mongo.js`
-> Do not edit the `init-mongo.js` file unless you know what you are dealing with.
+The Docker Compose configuration now includes:
 
+1. A MongoDB container with authentication enabled
+2. A mongo-express container for web-based MongoDB management
+3. Automated user creation with predefined credentials
 
-The username and password for your database is configured in the `.mongo.env` file.
+## Default Credentials
 
-### Properties
-- `MONGO_INITDB_ROOT_USERNAME`: Root user name. Set this to any value you like. This is not the user that gg bot will be using.
-- `MONGO_INITDB_ROOT_PASSWORD`: The password for the root user. Set this to something secure.
-- `MONGO_INITDB_DATABASE`: The init database. Default value is admin. <strong>Do not change this.</strong>
-- `MONGO_DB_NAME`: The database that gg-bot will be using. Default value is set
-- `MONGO_DB_USERNAME`: The username for ggbot user. This user needs to be configured in the uploader.
-- `MONGO_DB_PASSWORD`: The password for ggbot mongo user.
+The setup creates the following users by default:
 
+| User        | Password        | Role                           | Purpose                                            |
+|-------------|-----------------|--------------------------------|----------------------------------------------------|
+| root        | root_password   | root                           | MongoDB root user created by Docker                |
+| admin       | admin_password  | userAdminAnyDatabase           | Admin user for mongo-express and DB administration |
+| gg_bot_user | gg_bot_password | readWrite on gg-bot-reuploader | Application user for GG Bot                        |
 
-Once the `.mongo.env` file has been configured, the values of `MONGO_DB_USERNAME` and `MONGO_DB_PASSWORD` should be set to the properties `cache_username` and `cache_password` in reupload.config.env
+## Configuration Files
 
-## Sample proper config
-```
-# .mongo.env
-MONGO_INITDB_ROOT_USERNAME=admin
-MONGO_INITDB_ROOT_PASSWORD=admin123
-MONGO_INITDB_DATABASE=admin
-MONGO_DB_NAME=gg-bot-reuploader
-MONGO_DB_USERNAME=ggbot_user
-MONGO_DB_PASSWORD=ggbot_password
-```
+The following files have been modified or created:
 
-```
-# reupload.config.env
-cache_type=Mongo
-cache_host=mongo
-cache_port=27017
-cache_database=gg-bot-reuploader
-cache_username=ggbot_user
-cache_password=ggbot_password
-```
+1. `docker-compose-*.yml` - Updated MongoDB service to use authentication
+2. `mongo-init.js` - JavaScript file to initialize MongoDB users and collections
+3. `.mongo_express.env` - Configuration for mongo-express with authentication
+4. `reupload.config.env` - Updated to use MongoDB authentication
 
-Should you wish you use mongo-express to connect to the mongoDb then set the `.mongp_express.env` file to the following values.
+## Customizing Credentials
+
+You should change the default passwords in:
+
+1. The MongoDB service environment variables in `docker-compose-*.yml` (MONGO_INITDB_ROOT_USERNAME,
+   MONGO_INITDB_ROOT_PASSWORD)
+2. The `mongo-init.js` file (admin and gg_bot_user passwords)
+3. The `.mongo_express.env` file (ME_CONFIG_MONGODB_AUTH_PASSWORD)
+4. The `reupload.config.env` file (cache_password)
+
+Make sure to use the same values in all related places.
+
+## Encrypting MongoDB Credentials
+
+For enhanced security, you can encrypt sensitive MongoDB credentials in your configuration files:
+
+1. Mark the MongoDB password in `reupload.config.env` for encryption:
+   ```
+   cache_username=gg_bot_user
+   cache_password=gg_bot_password # ENCRYPT
+   ```
+
+2. Use the encryption CLI to encrypt the password:
+   ```bash
+   python encrypt_cli.py encrypt -i reupload.config.env
+   ```
+
+3. Ensure your `PRIVATE_KEY_PATH` is set correctly in your configuration.
+
+For detailed instructions on using encrypted configuration, see the `docs/config_encryption.md` file.
+
+## Accessing mongo-express
+
+mongo-express is available at http://localhost:8081 (or the host/port you've configured).
+Use the admin credentials to log in:
+
+- Username: admin
+- Password: admin
+
+Should you wish you use mongo-express to connect to the mongoDb then set the `.mongp_express.env` file to the following
+values.
 
 ```
 # .mongo_express.env
@@ -61,3 +88,12 @@ ME_CONFIG_MONGODB_AUTH_PASSWORD=admin123
 ME_CONFIG_BASICAUTH_USERNAME=mongo_express_user
 ME_CONFIG_BASICAUTH_PASSWORD=mongo_express_password
 ```
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Check that the credentials in `reupload.config.env` match those in `mongo-init.js`
+2. Verify that MongoDB started properly with authentication enabled
+3. Check logs with `docker-compose logs mongo`
+4. For a fresh start, remove the MongoDB volumes: `docker-compose down -v` then restart
