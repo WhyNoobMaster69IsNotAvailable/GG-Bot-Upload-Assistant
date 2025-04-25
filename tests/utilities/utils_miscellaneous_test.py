@@ -1,4 +1,20 @@
 # GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# GG Bot Upload Assistant
 # Copyright (C) 2022  Noob Master669
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
@@ -51,35 +67,34 @@ def _get_media_info_audio_tracks(raw_file_name):
 
 
 class TestMiscellaneousUtils:
-
     @pytest.mark.parametrize(
         ("torrent_info", "expected"),
         (
-                pytest.param(
-                    {"release_group": "0mnidvd"},
-                    ("true", "0MNiDVD"),
-                    id="scene_group_from_json",
-                ),
-                pytest.param(
-                    {"release_group": "kogi"},
-                    ("true", "KOGi"),
-                    id="scene_group_from_json",
-                ),
-                pytest.param(
-                    {"release_group": "ocular"},
-                    ("true", "OCULAR"),
-                    id="scene_group_from_json",
-                ),
+            pytest.param(
+                {"release_group": "0mnidvd"},
+                ("true", "0MNiDVD"),
+                id="scene_group_from_json",
+            ),
+            pytest.param(
+                {"release_group": "kogi"},
+                ("true", "KOGi"),
+                id="scene_group_from_json",
+            ),
+            pytest.param(
+                {"release_group": "ocular"},
+                ("true", "OCULAR"),
+                id="scene_group_from_json",
+            ),
         ),
     )
     def test_miscellaneous_perform_scene_group_capitalization(
-            self, torrent_info, expected
+        self, torrent_info, expected
     ):
         assert (
-                MiscellaneousUtils.perform_scene_group_capitalization(
-                    f"{working_folder}/parameters/scene_groups.json", torrent_info
-                )
-                == expected
+            MiscellaneousUtils.perform_scene_group_capitalization(
+                f"{working_folder}/parameters/scene_groups.json", torrent_info
+            )
+            == expected
         )
 
     def test_scene_group_capitalization_for_p2p_group_folder(self, monkeypatch):
@@ -104,16 +119,14 @@ class TestMiscellaneousUtils:
         scene_api_responses = iter([pre_corrupt_db, srr_db])
         monkeypatch.setattr(
             "requests.get",
-            lambda url, headers=None, verify=True, timeout=5: next(
-                scene_api_responses
-            ),
+            lambda url, headers=None, verify=True, timeout=5: next(scene_api_responses),
         )
 
         assert (
-                MiscellaneousUtils.perform_scene_group_capitalization(
-                    f"{working_folder}/parameters/scene_groups.json", torrent_info
-                )
-                == expected
+            MiscellaneousUtils.perform_scene_group_capitalization(
+                f"{working_folder}/parameters/scene_groups.json", torrent_info
+            )
+            == expected
         )
 
     def test_scene_group_capitalization_for_p2p_group_file(self, monkeypatch):
@@ -137,16 +150,14 @@ class TestMiscellaneousUtils:
         scene_api_responses = iter([pre_corrupt_db, srr_db])
         monkeypatch.setattr(
             "requests.get",
-            lambda url, headers=None, verify=True, timeout=5: next(
-                scene_api_responses
-            ),
+            lambda url, headers=None, verify=True, timeout=5: next(scene_api_responses),
         )
 
         assert (
-                MiscellaneousUtils.perform_scene_group_capitalization(
-                    f"{working_folder}/parameters/scene_groups.json", torrent_info
-                )
-                == expected
+            MiscellaneousUtils.perform_scene_group_capitalization(
+                f"{working_folder}/parameters/scene_groups.json", torrent_info
+            )
+            == expected
         )
 
     def test_scene_group_capitalization_pre_corrupt_db_match(self, monkeypatch):
@@ -165,17 +176,15 @@ class TestMiscellaneousUtils:
         scene_api_responses = iter([pre_corrupt_db])
         monkeypatch.setattr(
             "requests.get",
-            lambda url, headers=None, verify=True, timeout=5: next(
-                scene_api_responses
-            ),
+            lambda url, headers=None, verify=True, timeout=5: next(scene_api_responses),
         )
 
         assert (
-                MiscellaneousUtils.perform_scene_group_capitalization(
-                    f"{working_folder}/tests/resources/scene_db/empty.json",
-                    torrent_info,
-                )
-                == expected
+            MiscellaneousUtils.perform_scene_group_capitalization(
+                f"{working_folder}/tests/resources/scene_db/empty.json",
+                torrent_info,
+            )
+            == expected
         )
 
     def test_scene_group_capitalization_srr_db_match(self, monkeypatch):
@@ -201,17 +210,15 @@ class TestMiscellaneousUtils:
         scene_api_responses = iter([pre_corrupt_db, srr_db])
         monkeypatch.setattr(
             "requests.get",
-            lambda url, headers=None, verify=True, timeout=5: next(
-                scene_api_responses
-            ),
+            lambda url, headers=None, verify=True, timeout=5: next(scene_api_responses),
         )
 
         assert (
-                MiscellaneousUtils.perform_scene_group_capitalization(
-                    f"{working_folder}/tests/resources/scene_db/empty.json",
-                    torrent_info,
-                )
-                == expected
+            MiscellaneousUtils.perform_scene_group_capitalization(
+                f"{working_folder}/tests/resources/scene_db/empty.json",
+                torrent_info,
+            )
+            == expected
         )
 
     @pytest.mark.parametrize(
@@ -310,67 +317,65 @@ class TestMiscellaneousUtils:
         ],
     )
     def test_miscellaneous_identify_bluray_disc_type(
-            self, screen_size, test_size, expected
+        self, screen_size, test_size, expected
     ):
         assert (
-                MiscellaneousUtils.identify_bluray_disc_type(screen_size, "", test_size)
-                == expected
+            MiscellaneousUtils.identify_bluray_disc_type(screen_size, "", test_size)
+            == expected
         )
 
     @pytest.mark.parametrize(
         ("input", "expected"),
         (
-                pytest.param(
-                    "The.Man.Who.Killed.Don.Quixote.2018.RERIP.720p.BluRay.x264.AC3-DEEP.mkv",
-                    "RERIP",
-                    id="rerip_1",
-                ),
-                pytest.param(
-                    "What.1972.RERiP.1080p.BluRay.x264-RRH.mkv", "RERiP", id="rerip_2"
-                ),
-                pytest.param(
-                    "What.1972.1080p.BluRay.x264-RRH.mkv", None, id="no_repack"
-                ),
-                pytest.param(
-                    "The.Northman.2022.REPACK.2160p.MA.WEB-DL.DDP5.1.Atmos.DV.HEVC-MZABI.mk",
-                    "REPACK",
-                    id="repack",
-                ),
-                pytest.param(
-                    "TC.2000.1993.REPACK2.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mkv",
-                    "REPACK2",
-                    id="repack2",
-                ),
-                pytest.param(
-                    "TC.2000.1993.REPACK3.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mkv",
-                    "REPACK3",
-                    id="repack3",
-                ),
-                pytest.param(
-                    "TC.2000.1993.REPACK4.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mkv",
-                    "REPACK4",
-                    id="repack4",
-                ),
-                pytest.param(
-                    "TC.2000.1993.PROPER.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mk",
-                    "PROPER",
-                    id="proper",
-                ),
-                pytest.param(
-                    "TC.2000.1993.PROPER2.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mk",
-                    "PROPER2",
-                    id="proper2",
-                ),
-                pytest.param(
-                    "TC.2000.1993.PROPER3.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mk",
-                    "PROPER3",
-                    id="proper3",
-                ),
-                pytest.param(
-                    "TC.2000.1993.PROPER4.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mk",
-                    "PROPER4",
-                    id="proper4",
-                ),
+            pytest.param(
+                "The.Man.Who.Killed.Don.Quixote.2018.RERIP.720p.BluRay.x264.AC3-DEEP.mkv",
+                "RERIP",
+                id="rerip_1",
+            ),
+            pytest.param(
+                "What.1972.RERiP.1080p.BluRay.x264-RRH.mkv", "RERiP", id="rerip_2"
+            ),
+            pytest.param("What.1972.1080p.BluRay.x264-RRH.mkv", None, id="no_repack"),
+            pytest.param(
+                "The.Northman.2022.REPACK.2160p.MA.WEB-DL.DDP5.1.Atmos.DV.HEVC-MZABI.mk",
+                "REPACK",
+                id="repack",
+            ),
+            pytest.param(
+                "TC.2000.1993.REPACK2.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mkv",
+                "REPACK2",
+                id="repack2",
+            ),
+            pytest.param(
+                "TC.2000.1993.REPACK3.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mkv",
+                "REPACK3",
+                id="repack3",
+            ),
+            pytest.param(
+                "TC.2000.1993.REPACK4.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mkv",
+                "REPACK4",
+                id="repack4",
+            ),
+            pytest.param(
+                "TC.2000.1993.PROPER.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mk",
+                "PROPER",
+                id="proper",
+            ),
+            pytest.param(
+                "TC.2000.1993.PROPER2.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mk",
+                "PROPER2",
+                id="proper2",
+            ),
+            pytest.param(
+                "TC.2000.1993.PROPER3.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mk",
+                "PROPER3",
+                id="proper3",
+            ),
+            pytest.param(
+                "TC.2000.1993.PROPER4.1080p.BluRay.REMUX.AVC.FLAC.2.0-ATELiER.mk",
+                "PROPER4",
+                id="proper4",
+            ),
         ),
     )
     def test_miscellaneous_identify_repacks(self, input, expected):
@@ -383,9 +388,7 @@ class TestMiscellaneousUtils:
             pytest.param(
                 "", {"streaming_service": "Amazon Prime"}, ("AMZN", "Amazon Prime")
             ),
-            pytest.param(
-                "", {"streaming_service": "AMZN"}, ("AMZN", "Amazon Prime")
-            ),
+            pytest.param("", {"streaming_service": "AMZN"}, ("AMZN", "Amazon Prime")),
             pytest.param(
                 "", {"streaming_service": ["Disney", "CTV"]}, ("DSNP", "Disney+")
             ),
@@ -430,16 +433,16 @@ class TestMiscellaneousUtils:
         ],
     )
     def test_miscellaneous_identify_web_streaming_source(
-            self, raw_file_name, guess_it_result, expected
+        self, raw_file_name, guess_it_result, expected
     ):
         assert (
-                MiscellaneousUtils.identify_web_streaming_source(
-                    f"{working_folder}/parameters/streaming_services.json",
-                    f"{working_folder}/parameters/streaming_services_reverse.json",
-                    raw_file_name,
-                    guess_it_result,
-                )
-                == expected
+            MiscellaneousUtils.identify_web_streaming_source(
+                f"{working_folder}/parameters/streaming_services.json",
+                f"{working_folder}/parameters/streaming_services_reverse.json",
+                raw_file_name,
+                guess_it_result,
+            )
+            == expected
         )
 
     @pytest.mark.parametrize(
@@ -484,9 +487,7 @@ class TestMiscellaneousUtils:
             pytest.param(
                 "Ozark.S04E01.2160p.NF.WEBRip.HDR.x265.DDP.5.1-N0TTZ.mkv", "webrip"
             ),
-            pytest.param(
-                "Ozark S04 2160p NF WEBRip DD+ 5.1 HDR x265-N0TTZ", "webrip"
-            ),
+            pytest.param("Ozark S04 2160p NF WEBRip DD+ 5.1 HDR x265-N0TTZ", "webrip"),
             pytest.param(
                 "Velvet.Coleccion.S01E01.1080p.WEBRiP.X264-FiNESSE.mkv", "webrip"
             ),
@@ -577,8 +578,8 @@ class TestMiscellaneousUtils:
     )
     def test_miscellaneous_identify_source_type(self, raw_file_name, expected):
         assert (
-                MiscellaneousUtils.identify_source_type(raw_file_name, True, None)
-                == expected
+            MiscellaneousUtils.identify_source_type(raw_file_name, True, None)
+            == expected
         )
 
     @pytest.mark.parametrize(
@@ -619,7 +620,7 @@ class TestMiscellaneousUtils:
         ],
     )
     def test_fill_dual_multi_and_commentary(
-            self, original_language, audio_tracks, expected
+        self, original_language, audio_tracks, expected
     ):
         dual, multi, commentary = MiscellaneousUtils.fill_dual_multi_and_commentary(
             original_language, audio_tracks
@@ -631,9 +632,9 @@ class TestMiscellaneousUtils:
 
     @pytest.mark.parametrize(
         (
-                "tmdb_metadata",
-                "expected_language_str",
-                "expected_language_str_if_foreign",
+            "tmdb_metadata",
+            "expected_language_str",
+            "expected_language_str_if_foreign",
         ),
         [
             pytest.param(
@@ -731,10 +732,10 @@ class TestMiscellaneousUtils:
         ],
     )
     def test_get_upload_original_language_title(
-            self, tmdb_metadata, expected_language_str, expected_language_str_if_foreign
+        self, tmdb_metadata, expected_language_str, expected_language_str_if_foreign
     ):
-        language_str, language_str_if_foreign = MiscellaneousUtils.get_upload_original_language_title(
-            tmdb_metadata
+        language_str, language_str_if_foreign = (
+            MiscellaneousUtils.get_upload_original_language_title(tmdb_metadata)
         )
 
         assert language_str == expected_language_str
