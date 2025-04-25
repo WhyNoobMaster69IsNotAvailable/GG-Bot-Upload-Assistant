@@ -25,7 +25,9 @@ from fastjsonschema import JsonSchemaException
 # the schemas can also be validated at https://www.jsonschemavalidator.net/
 # Note: ignore the uri validation error for `upload_form` and `torrents_search` key injsonschemavalidator
 working_folder = Path(__file__).resolve().parent.parent
-validate = fastjsonschema.compile(json.load(open(f"{working_folder}/schema/site_template_schema.json", "r")))
+validate = fastjsonschema.compile(
+    json.load(open(f"{working_folder}/schema/site_template_schema.json", "r"))
+)
 
 try:
     path = f"{working_folder}/site_templates/"

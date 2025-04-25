@@ -1,4 +1,20 @@
 # GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# GG Bot Upload Assistant
 # Copyright (C) 2022  Noob Master669
 #
 # This program is free software: you can redistribute it and/or modify
@@ -89,9 +105,7 @@ class Server:
     def __init__(self, cache):
         self.app = Flask("GG-BOT Auto-ReUploader")
         self.visor_config = VisorConfig()
-        self.visor_server_manager: VisorServerManager = VisorServerManager(
-            cache
-        )
+        self.visor_server_manager: VisorServerManager = VisorServerManager(cache)
         # healthcheck / status endpoint
         self.add_endpoint(
             endpoint="/status",
@@ -150,9 +164,7 @@ class Server:
         )
 
     def run(self, host, port, threaded=False, use_reloader=False, debug=False):
-        print(
-            f" * Visor server started and listening for connection on {host}:{port}"
-        )
+        print(f" * Visor server started and listening for connection on {host}:{port}")
         self.app.run(
             port=port,
             host=host,
@@ -233,7 +245,8 @@ class Server:
         return self.visor_server_manager.update_torrent(
             torrent_id=torrent_id, update_data=torrent_data
         )
-        # db_metadata = {"tmdb": None, "imdb": None, "tvdb": None, "tvmaze": None, "mal": None, "title": None, "year": None, "type": None}
+        # db_metadata = {"tmdb": None, "imdb": None, "tvdb": None, "tvmaze": None, "mal": None, "title": None,
+        # "year": None, "type": None}
 
     @api_required
     @gg_bot_response

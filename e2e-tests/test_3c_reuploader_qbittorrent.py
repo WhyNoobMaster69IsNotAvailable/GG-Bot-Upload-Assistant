@@ -1,5 +1,21 @@
 # GG Bot Upload Assistant
 # Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
@@ -40,7 +56,7 @@ def clean_up(pth):
     pth.rmdir()
 
 
-class TestAutoReuploaderDeluge:
+class TestAutoReuploaderQBittorrent:
     @pytest.fixture(autouse=True)
     def run_around_tests(self):
         folder = f"{working_folder}{temp_working_dir}"
@@ -60,8 +76,8 @@ class TestAutoReuploaderDeluge:
         clean_up(folder)
 
     @pytest.fixture
-    def setup_reuploader_env_with_dynamic_config_deluge(
-        self, mongo_container, deluge_credentials, run_around_tests
+    def setup_reuploader_env_with_dynamic_config_qbittorrent(
+        self, mongo_container, qbittorrent_credentials, run_around_tests
     ):
         mongo_ip = mongo_container.get_container_host_ip()
         mongo_port = mongo_container.get_exposed_port(27017)
@@ -75,29 +91,29 @@ class TestAutoReuploaderDeluge:
             config_data = config_data.replace("<<MONGO_PORT_PLACEHOLDER>>", mongo_port)
             config_data = config_data.replace(
                 "cache_database=gg-bot-reuploader",
-                "cache_database=gg-bot-reuploader-deluge",
+                "cache_database=gg-bot-reuploader-qbittorrent",
             )
 
             config_data = config_data.replace(
                 "<<CLIENT_HOST_PLACEHOLDER>>",
-                f"{deluge_credentials['host']}",
+                f"{qbittorrent_credentials['host']}",
             )
             config_data = config_data.replace(
-                "<<CLIENT_PORT_PLACEHOLDER>>", deluge_credentials["port"]
+                "<<CLIENT_PORT_PLACEHOLDER>>", qbittorrent_credentials["port"]
             )
-            config_data = config_data.replace("client=Rutorrent", "client=Deluge")
+            config_data = config_data.replace("client=Rutorrent", "client=Qbittorrent")
             config_data = config_data.replace(
                 "client_username=",
-                f'client_username={deluge_credentials["username"]}',
+                f'client_username={qbittorrent_credentials["username"]}',
             )
             config_data = config_data.replace(
                 "client_password=",
-                f'client_password={deluge_credentials["password"]}',
+                f'client_password={qbittorrent_credentials["password"]}',
             )
 
             config_data = config_data.replace(
                 "VISOR_SERVER_PORT=30035",
-                "VISOR_SERVER_PORT=30038",
+                "VISOR_SERVER_PORT=30036",
             )
 
         with open(
@@ -109,8 +125,8 @@ class TestAutoReuploaderDeluge:
         yield
 
     @pytest.fixture
-    def setup_reuploader_env_with_dynamic_config_deluge_dynamic_trackers(
-        self, mongo_container, deluge_credentials, run_around_tests
+    def setup_reuploader_env_with_dynamic_config_qbittorrent_dynamic(
+        self, mongo_container, qbittorrent_credentials, run_around_tests
     ):
         mongo_ip = mongo_container.get_container_host_ip()
         mongo_port = mongo_container.get_exposed_port(27017)
@@ -124,24 +140,24 @@ class TestAutoReuploaderDeluge:
             config_data = config_data.replace("<<MONGO_PORT_PLACEHOLDER>>", mongo_port)
             config_data = config_data.replace(
                 "cache_database=gg-bot-reuploader",
-                "cache_database=gg-bot-reuploader-deluge-dynamic",
+                "cache_database=gg-bot-reuploader-qbittorrent-dynamic",
             )
 
             config_data = config_data.replace(
                 "<<CLIENT_HOST_PLACEHOLDER>>",
-                f"{deluge_credentials['host']}",
+                f"{qbittorrent_credentials['host']}",
             )
             config_data = config_data.replace(
-                "<<CLIENT_PORT_PLACEHOLDER>>", deluge_credentials["port"]
+                "<<CLIENT_PORT_PLACEHOLDER>>", qbittorrent_credentials["port"]
             )
-            config_data = config_data.replace("client=Rutorrent", "client=Deluge")
+            config_data = config_data.replace("client=Rutorrent", "client=Qbittorrent")
             config_data = config_data.replace(
                 "client_username=",
-                f'client_username={deluge_credentials["username"]}',
+                f'client_username={qbittorrent_credentials["username"]}',
             )
             config_data = config_data.replace(
                 "client_password=",
-                f'client_password={deluge_credentials["password"]}',
+                f'client_password={qbittorrent_credentials["password"]}',
             )
             config_data = config_data.replace(
                 "dynamic_tracker_selection=False",
@@ -150,7 +166,7 @@ class TestAutoReuploaderDeluge:
 
             config_data = config_data.replace(
                 "VISOR_SERVER_PORT=30035",
-                "VISOR_SERVER_PORT=30038",
+                "VISOR_SERVER_PORT=30036",
             )
 
         with open(
@@ -166,10 +182,10 @@ class TestAutoReuploaderDeluge:
         "argv",
         ["test.py", "-t", "TSP", "PTP", "BLU", "GPW", "--debug"],
     )
-    def test_reuploader_with_torrents_deluge(
+    def test_reuploader_with_torrents_qbittorrent(
         self,
         e2e_test_working_folder,
-        setup_reuploader_env_with_dynamic_config_deluge,
+        setup_reuploader_env_with_dynamic_config_qbittorrent,
     ):
         reuploader: GGBotReUploader = GGBotReUploader(
             f"{working_folder}{temp_working_dir}{temp_config_dir}/reupload-test.config.env"
@@ -213,7 +229,7 @@ class TestAutoReuploaderDeluge:
         We also need to list all torrents from torrent client and ensure that the new torrent is seeding
             and the original torrent has been moved to a different category.
         """
-        gg_bot_database = "gg-bot-reuploader-deluge"
+        gg_bot_database = "gg-bot-reuploader-qbittorrent"
         mongo_client: MongoClient = reuploader.cache.cache_client.mongo_client
         database = mongo_client.get_database(gg_bot_database)
 
@@ -271,13 +287,13 @@ class TestAutoReuploaderDeluge:
         all_torrents = reuploader.torrent_client.list_all_torrents()
         assert len(all_torrents) == 2
         for torrent in all_torrents:
-            if torrent["hash"].lower() == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80":
-                assert torrent["category"] == "GGBotCrossSeed_Source".lower()
+            if torrent["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80":
+                assert torrent["category"] == "GGBotCrossSeed_Source"
             if (
                 torrent["hash"].lower()
                 == "607AFF625031CD1F68A8B9C62B044112945F6C9A".lower()
             ):
-                assert torrent["category"] == "GGBotCrossSeed".lower()
+                assert torrent["category"] == "GGBotCrossSeed"
 
         assert all_torrents[0]["size"] == all_torrents[0]["size"]
         assert all_torrents[0]["completed"] == all_torrents[0]["completed"]
@@ -347,10 +363,10 @@ class TestAutoReuploaderDeluge:
         "argv",
         ["test.py", "-t", "BHD", "ACM", "--debug"],
     )
-    def test_reuploader_with_torrents_deluge_dynamic_tracker_selection(
+    def test_reuploader_with_torrents_qbittorrent_dynamic_tracker_selection(
         self,
         e2e_test_working_folder,
-        setup_reuploader_env_with_dynamic_config_deluge_dynamic_trackers,
+        setup_reuploader_env_with_dynamic_config_qbittorrent_dynamic,
     ):
         reuploader: GGBotReUploader = GGBotReUploader(
             f"{working_folder}{temp_working_dir}{temp_config_dir}/reupload-test.config.env"
@@ -381,7 +397,7 @@ class TestAutoReuploaderDeluge:
             save_path=f"{working_folder}/e2e-tests/resources/",
             use_auto_torrent_management=False,
             is_skip_checking=False,
-            category="GGBOT--BHD--ATH--DT--SPD--GPW--BHDTV--ANT--TSP",
+            category="GGBOT::BHD::ATH::DT::SPD::GPW::BHDTV::ANT::TSP",
         )
         time.sleep(5)
         reuploader._run()
@@ -394,7 +410,7 @@ class TestAutoReuploaderDeluge:
         We also need to list all torrents from torrent client and ensure that the new torrent is seeding
             and the original torrent has been moved to a different category.
         """
-        gg_bot_database = "gg-bot-reuploader-deluge-dynamic"
+        gg_bot_database = "gg-bot-reuploader-qbittorrent-dynamic"
         mongo_client: MongoClient = reuploader.cache.cache_client.mongo_client
         database = mongo_client.get_database(gg_bot_database)
 
@@ -423,7 +439,7 @@ class TestAutoReuploaderDeluge:
         torrent_collection = database.get_collection("ReUpload_Torrent")
         torrents = list(torrent_collection.find({}))
         assert len(torrents) == 1
-        assert torrents[0]["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80"
+        assert torrents[0]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert (
             torrents[0]["name"]
             == "Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv"
@@ -432,7 +448,9 @@ class TestAutoReuploaderDeluge:
         assert torrents[0]["upload_attempt"] == 1
         assert torrents[0]["possible_matches"] == "None"
         assert torrents[0]["torrent"] is not None
-        assert "f97062f80387bbbd8c1d2f04dbd3830d0706ff80" in torrents[0]["torrent"]
+        assert (
+            "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower() in torrents[0]["torrent"]
+        )
         assert torrents[0]["movie_db"] is not None
         assert torrents[0]["movie_db"] == json.dumps(expected_movie_db_data)
         assert torrents[0]["id"] is not None
@@ -440,31 +458,31 @@ class TestAutoReuploaderDeluge:
         job_collection = database.get_collection("ReUpload_JobRepository")
         jobs = list(job_collection.find({}))
         assert len(jobs) == 7
-        assert jobs[0]["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80"
+        assert jobs[0]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert jobs[0]["tracker"] == "BHD"
         assert jobs[0]["status"] == "SUCCESS"
         assert jobs[0]["job_id"] is not None
         assert jobs[0]["tracker_response"] == '{"success": true}'
 
-        assert jobs[1]["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80"
+        assert jobs[1]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert jobs[1]["tracker"] == "DT"
         assert jobs[1]["status"] == "SUCCESS"
         assert jobs[1]["job_id"] is not None
         assert jobs[1]["tracker_response"] == '{"success": true}'
 
-        assert jobs[2]["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80"
+        assert jobs[2]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert jobs[2]["tracker"] == "SPD"
         assert jobs[2]["status"] == "SUCCESS"
         assert jobs[2]["job_id"] is not None
         assert jobs[2]["tracker_response"] == '{"success": true}'
 
-        assert jobs[3]["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80"
+        assert jobs[3]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert jobs[3]["tracker"] == "GPW"
         assert jobs[3]["status"] == "SUCCESS"
         assert jobs[3]["job_id"] is not None
         assert jobs[3]["tracker_response"] == '{"success": true}'
 
-        assert jobs[4]["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80"
+        assert jobs[4]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert jobs[4]["tracker"] == "BHDTV"
         assert jobs[4]["status"] == "FAILED"
         assert jobs[4]["job_id"] is not None
@@ -473,13 +491,13 @@ class TestAutoReuploaderDeluge:
             == '{"data": "No user found!", "message": "Unauthorized", "status": "Error"}'
         )
 
-        assert jobs[5]["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80"
+        assert jobs[5]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert jobs[5]["tracker"] == "ANT"
         assert jobs[5]["status"] == "SUCCESS"
         assert jobs[5]["job_id"] is not None
         assert jobs[5]["tracker_response"] == '{"success": true}'
 
-        assert jobs[6]["hash"] == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80"
+        assert jobs[6]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert jobs[6]["tracker"] == "TSP"
         assert jobs[6]["status"] == "SUCCESS"
         assert jobs[6]["job_id"] is not None
@@ -493,16 +511,22 @@ class TestAutoReuploaderDeluge:
 
         original_torrent = None
         for torrent in all_torrents:
-            if torrent["hash"].lower() != "f97062f80387bbbd8c1d2f04dbd3830d0706ff80":
+            if (
+                torrent["hash"].lower()
+                != "f97062f80387bbbd8c1d2f04dbd3830d0706ff80".lower()
+            ):
                 continue
             original_torrent = torrent
             break
 
         for torrent in all_torrents:
-            if torrent["hash"].lower() == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80":
-                assert torrent["category"] == "PARTIALLY_SUCCESSFUL".lower()
+            if (
+                torrent["hash"].lower()
+                == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80".lower()
+            ):
+                assert torrent["category"] == "PARTIALLY_SUCCESSFUL"
             else:
-                assert torrent["category"] == "GGBotCrossSeed".lower()
+                assert torrent["category"] == "GGBotCrossSeed"
 
             assert torrent["size"] == original_torrent["size"]
             assert torrent["completed"] == original_torrent["completed"]

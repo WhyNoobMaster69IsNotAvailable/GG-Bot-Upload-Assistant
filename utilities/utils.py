@@ -53,11 +53,58 @@ from modules.exceptions.exception import (
     GGBotFatalException,
 )
 from modules.torrent_client import Clients, TorrentClientFactory
+from modules.cryptography.key_manager import KeyManager
+from modules.cryptography.encrypt_decrypt_processor import DecryptProcessor
+import modules.config
 
 console = Console()
 
 
 class GenericUtils:
+    @staticmethod
+    def initialize_decryptor():
+        """
+        Initializes the global decryptor instance based on the PRIVATE_KEY_PATH environment variable.
+        This should be called *after* load_dotenv.
+        """
+        private_key_path_str = os.getenv("PRIVATE_KEY_PATH")
+
+        if not private_key_path_str:
+            logging.info(
+                "[Utils] PRIVATE_KEY_PATH not set. Configuration decryption disabled."
+            )
+            return
+
+        logging.info(
+            f"[Utils] PRIVATE_KEY_PATH specified: {private_key_path_str}. Attempting decryption setup."
+        )
+        try:
+            # Assuming KeyManager doesn't need other instance variables from BasicUtils
+            key_manager: KeyManager = KeyManager(private_key_path=private_key_path_str)
+            private_key = key_manager.load_private_key()
+            decryptor: DecryptProcessor = DecryptProcessor(private_key)
+            # Set the global instance in the config module
+            modules.config.global_decryptor_instance = decryptor
+            logging.info(
+                "[Utils] Private key loaded successfully. Config decryption enabled."
+            )
+        except GGBotFatalException as e:
+            logging.critical(
+                f"[Utils] !!! FAILED TO LOAD PRIVATE KEY from {private_key_path_str}: {e}"
+            )
+            logging.critical(
+                "[Utils] !!! Encrypted configuration values will NOT be decrypted."
+            )
+            raise e
+        except Exception as e:
+            logging.critical(
+                f"[Utils] !!! UNEXPECTED ERROR loading private key from {private_key_path_str}: {e}"
+            )
+            logging.critical(
+                "[Utils] !!! Encrypted configuration values will NOT be decrypted."
+            )
+            raise e
+
     @staticmethod
     def get_hash(string):
         hashed = hashlib.new("sha256")

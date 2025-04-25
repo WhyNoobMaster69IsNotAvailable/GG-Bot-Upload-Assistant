@@ -21,46 +21,63 @@
 # and provide values for the following variables (samples for all these files are available in the env-files-samples folder)
 #
 # .env file           -> variables for docker-compose
-# .transmission.env    -> transmission related environment variables
+# .transmission.env   -> transmission related environment variables
 # reupload.config.env -> gg-bot reuploader configurations
 #
-mongo:
-  image: mongo:${MONGO_VERSION}
-  hostname: mongo
-  restart: unless-stopped
-  volumes:
-    - ${BASE_PATH}/apps/mongo:/data/db
+services:
+  mongo:
+    image: mongo:${MONGO_VERSION}
+    hostname: mongo
+    restart: unless-stopped
+    command: ["--auth"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root_password
+    volumes:
+      - ${BASE_PATH}/apps/mongo:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
-transmission:
-  image: lscr.io/linuxserver/transmission:${TRANSMISSION_VERSION}
-  hostname: transmission
-  restart: unless-stopped
-  env_file:
-    - .transmission.env
-  volumes:
-    - ${BASE_PATH}/apps/transmission/config:/config
-    - ${BASE_PATH}/downloads:/downloads
-  ports:
-    - ${TRANSMISSION_PORT_9091}:9091
-    - ${TRANSMISSION_PORT_51413}:51413
-    - ${TRANSMISSION_PORT_51413}:51413/udp
+  mongo-express:
+    image: mongo-express:latest
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    env_file:
+      - .mongo_express.env
+    depends_on:
+      - mongo
 
-gg-bot-auto-uploader:
-  image: noobmaster669/gg-bot-uploader:${GG_BOT_REUPLOADER_VERSION}
-  restart: unless-stopped
-  hostname: gg-bot-reuploader
-  # change the below volume mapping according to your torrent client
-  volumes:
-    - ${BASE_PATH}/data/downloads:/downloads
-  ports:
-    - ${VISOR_SERVER_PORT}:30035
-  env_file:
-    - reupload.config.env
-  # based on your configuration the gg-bot-auto-uploader will depend on either mongo or redis
-  # if using mongo comment out redis, and vice-versa
-  depends_on:
-    - mongo
-    - transmission
-  # provide the list of trackers to upload to here
-  # TODO see how this can be taken from the .env file
-  command: [ "-t", "<TRACKERS>", "<OPTIONAL_ARGUMENTS>" ]
+  transmission:
+    image: lscr.io/linuxserver/transmission:${TRANSMISSION_VERSION}
+    hostname: transmission
+    restart: unless-stopped
+    env_file:
+      - .transmission.env
+    volumes:
+      - ${BASE_PATH}/apps/transmission/config:/config
+      - ${BASE_PATH}/data/downloads:/downloads
+      - ${BASE_PATH}/data/watch:/watch
+    ports:
+      - ${TRANSMISSION_WEBUI_PORT}:9091
+      - ${TRANSMISSION_PORT_51413}:51413
+      - ${TRANSMISSION_PORT_51413}:51413/udp
+  gg-bot-auto-uploader:
+    image: noobmaster669/gg-bot-uploader:${GG_BOT_REUPLOADER_VERSION}
+    restart: unless-stopped
+    hostname: gg-bot-reuploader
+    tty: true
+    # change the below volume mapping according to your torrent client
+    volumes:
+      - ${BASE_PATH}/data/downloads:/downloads
+    ports:
+      - ${VISOR_SERVER_PORT}:30035
+    env_file:
+      - reupload.config.env
+    # based on your configuration the gg-bot-auto-uploader will depend on either mongo or redis
+    # if using mongo comment out redis, and vice-versa
+    depends_on:
+      - mongo
+      - transmission
+    # provide the list of trackers to upload to here
+    # TODO see how this can be taken from the .env file
+    command: [ "-t", "<TRACKERS>", "<OPTIONAL_ARGUMENTS>" ]

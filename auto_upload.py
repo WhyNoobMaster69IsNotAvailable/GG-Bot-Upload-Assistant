@@ -132,6 +132,9 @@ class GGBotUploadAssistant:
         else:
             load_dotenv(env_file_path, override=True)
 
+        # Initialize decryptor (if key is provided) after loading environment variables
+        GenericUtils.initialize_decryptor()
+
         self._initialize_sentry_sdk()
 
         # By default, we load the templates from site_templates/ path

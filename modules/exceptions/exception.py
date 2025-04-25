@@ -43,3 +43,7 @@ class GGBotCacheNotInitializedException(GGBotCacheClientException):
 
 class GGBotRetryException(GGBotException):
     pass
+
+
+class GGBotConfigException(GGBotException):
+    pass

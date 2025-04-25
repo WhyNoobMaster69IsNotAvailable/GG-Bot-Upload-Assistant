@@ -1,4 +1,20 @@
 # GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# GG Bot Upload Assistant
 # Copyright (C) 2022  Noob Master669
 #
 # This program is free software: you can redistribute it and/or modify
@@ -41,36 +57,76 @@ class Mongo:
     database = None
 
     def __init__(self):
-        """Method to initialize the connection to a redis database."""
+        """Initialize connection to MongoDB with authentication support."""
         self.config: CacheConfig = CacheConfig()
         if not self.is_mongo_initialized:
             try:
                 self.mongo_client = self._get_mongo_client()
                 self.mongo_client.admin.command("ping")
                 self.database = self.mongo_client[self.config.CACHE_DATABASE]
+                # Create required collections
                 self._create_collections()
                 self.is_mongo_initialized = True
+                logging.info(
+                    "[Cache] Successfully connected to MongoDB and initialized collections"
+                )
             except Exception as ex:
-                logging.fatal(f"[Cache] Failed to connect to Mongo DB. Error: {ex}")
+                if "Authentication failed" in str(ex):
+                    logging.fatal(
+                        "[Cache] MongoDB authentication failed. Please check your username and password."
+                    )
+                elif "Connection refused" in str(ex):
+                    logging.fatal(
+                        "[Cache] MongoDB connection refused. Is the server running?"
+                    )
+                else:
+                    logging.fatal(f"[Cache] Failed to connect to MongoDB. Error: {ex}")
+
                 raise GGBotCacheClientException(
-                    f"Failed to connect to Mongo DB. Error: {ex}"
+                    f"Failed to connect to MongoDB. Error: {ex}"
                 )
 
     def _get_mongo_client(self):
-        # Provide the mongodb atlas url to connect python to mongodb using pymongo
-        if (
-            self.config.CACHE_USERNAME is not None
-            and len(self.config.CACHE_USERNAME) > 0
-        ):
-            MONGO_URL = (
-                f"mongodb://{self.config.CACHE_USERNAME}:{self.config.CACHE_PASSWORD}"
-                f"@{self.config.CACHE_HOST}:{self.config.CACHE_PORT}/{self.config.CACHE_DATABASE}"
+        """Get a MongoDB client with authentication support if credentials are provided."""
+        try:
+            # Build connection string based on whether authentication is needed
+            if (
+                self.config.CACHE_USERNAME is not None
+                and len(self.config.CACHE_USERNAME) > 0
+            ):
+                # With authentication
+                MONGO_URL = (
+                    f"mongodb://{self.config.CACHE_USERNAME}:{self.config.CACHE_PASSWORD}"
+                    f"@{self.config.CACHE_HOST}:{self.config.CACHE_PORT}/{self.config.CACHE_DATABASE}"
+                    f"?authSource={self.config.CACHE_AUTH_DB}"
+                )
+                logging.info(
+                    f"[Cache] Connecting to MongoDB with authentication (user: {self.config.CACHE_USERNAME}, "
+                    f"host: {self.config.CACHE_HOST}:{self.config.CACHE_PORT}, "
+                    f"db: {self.config.CACHE_DATABASE}, authSource: {self.config.CACHE_AUTH_DB})"
+                )
+            else:
+                # Without authentication
+                MONGO_URL = f"mongodb://{self.config.CACHE_HOST}:{self.config.CACHE_PORT}/{self.config.CACHE_DATABASE}"
+                logging.info(
+                    f"[Cache] Connecting to MongoDB without authentication "
+                    f"(host: {self.config.CACHE_HOST}:{self.config.CACHE_PORT}, "
+                    f"db: {self.config.CACHE_DATABASE})"
+                )
+
+            # Create MongoDB client with connection options
+            client = MongoClient(
+                MONGO_URL,
+                serverSelectionTimeoutMS=5000,  # 5 second timeout for server selection
+                connectTimeoutMS=5000,  # 5 second timeout for connection
             )
-        else:
-            MONGO_URL = f"mongodb://{self.config.CACHE_HOST}:{self.config.CACHE_PORT}/{self.config.CACHE_DATABASE}"
-        # MONGO_URL = "mongodb://100.119.76.65:27017/gg-bot-auto-uploader"
-        # MONGO_URL = "mongodb://192.168.0.127:27017/gg-bot-auto-uploader"
-        return MongoClient(MONGO_URL)
+
+            return client
+        except Exception as e:
+            logging.error(f"[Cache] Error creating MongoDB client: {e}")
+            raise GGBotCacheClientException(
+                f"Failed to create MongoDB client. Error: {e}"
+            )
 
     def hello(self):
         if self.is_mongo_initialized:
