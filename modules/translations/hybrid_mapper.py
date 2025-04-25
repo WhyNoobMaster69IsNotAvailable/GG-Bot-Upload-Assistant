@@ -1,4 +1,20 @@
 # GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# GG Bot Upload Assistant
 # Copyright (C) 2022  Noob Master669
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,20 +49,14 @@ class GGBotHybridMapper:
         logging.info(
             "[GGBotHybridMapper::perform_hybrid_mapping] Performing hybrid mapping now..."
         )
-        logging.debug(
-            "------------------ Hybrid mapping started ------------------"
-        )
-        for prerequisite in self.hybrid_mappings[translation_value][
-            "prerequisite"
-        ]:
+        logging.debug("------------------ Hybrid mapping started ------------------")
+        for prerequisite in self.hybrid_mappings[translation_value]["prerequisite"]:
             logging.info(
                 f"[GGBotHybridMapper::perform_hybrid_mapping] Prerequisite :: '{prerequisite}' "
                 f"Value :: '{tracker_settings[prerequisite]}' "
             )
 
-    def perform_hybrid_mapping(
-        self, *, translation_value, tracker_settings
-    ) -> str:
+    def perform_hybrid_mapping(self, *, translation_value, tracker_settings) -> str:
         # logging all the Prerequisite data
         # if any of the Prerequisite data is not available, then this method will not be invoked
         self.__log_all_prerequisites(
@@ -79,9 +89,9 @@ class GGBotHybridMapper:
                 f"[GGBotHybridMapper::perform_hybrid_mapping] Matching '{translation_value}' to hybrid key '{key}'..."
             )
             is_valid = None
-            for sub_key, sub_val in self.hybrid_mappings[translation_value][
-                "mapping"
-            ][key].items():
+            for sub_key, sub_val in self.hybrid_mappings[translation_value]["mapping"][
+                key
+            ].items():
                 is_valid = self._is_valid_match(
                     key=key,
                     sub_key=sub_key,
@@ -96,9 +106,7 @@ class GGBotHybridMapper:
                 return key
         return None
 
-    def _is_valid_match(
-        self, *, key, sub_key, sub_val, tracker_settings, is_valid
-    ):
+    def _is_valid_match(self, *, key, sub_key, sub_val, tracker_settings, is_valid):
         # skipping comments provided in the mapping data
         if sub_key == "_comment":
             return is_valid
@@ -129,11 +137,9 @@ class GGBotHybridMapper:
         ):
             return True if is_valid is None else is_valid
 
-        selected_value_is_present = self._is_selected_val_present(
-            selected_value
-        )
-        sub_val_is_not_none_or_is_present = (
-            self._is_sub_val_is_not_none_or_is_present(sub_val)
+        selected_value_is_present = self._is_selected_val_present(selected_value)
+        sub_val_is_not_none_or_is_present = self._is_sub_val_is_not_none_or_is_present(
+            sub_val
         )
         if sub_val_is_not_none_or_is_present and selected_value_is_present:
             logging.debug(
@@ -153,9 +159,7 @@ class GGBotHybridMapper:
         return sub_val["values"][0] == "IS_NOT_NONE_OR_IS_PRESENT"
 
     @staticmethod
-    def _is_selected_val_present(
-        selected_value: Union[str, int, float]
-    ) -> bool:
+    def _is_selected_val_present(selected_value: Union[str, int, float]) -> bool:
         return selected_value is not None and len(str(selected_value)) > 0
 
     def _get_evaluator(self, sub_key: str, sub_val: Dict) -> Callable:
@@ -207,9 +211,7 @@ class GGBotHybridMapper:
         )
         return True if is_valid is None else is_valid
 
-    def __select_value_from_proper_source(
-        self, *, sub_key, sub_val, tracker_settings
-    ):
+    def __select_value_from_proper_source(self, *, sub_key, sub_val, tracker_settings):
         datasource = self.__get_datasource(sub_val, tracker_settings)
         if sub_key.startswith("$."):
             logging.info(
@@ -255,22 +257,14 @@ class GGBotHybridMapper:
 
     @staticmethod
     def __log_mapping_completed_messages(key):
-        logging.info(
-            f"[HybridMapping] The hybrid key was identified to be '{key}'"
-        )
-        logging.debug(
-            "------------------ Hybrid mapping Completed ------------------"
-        )
+        logging.info(f"[HybridMapping] The hybrid key was identified to be '{key}'")
+        logging.debug("------------------ Hybrid mapping Completed ------------------")
 
     @staticmethod
     def __log_optional_mapping_completed_messages():
         # this hybrid mapping is optional. we can log this and return ""
-        logging.info(
-            "[HybridMapping] Returning '' since this is an optional mapping."
-        )
-        logging.debug(
-            "------------------ Hybrid mapping Completed ------------------"
-        )
+        logging.info("[HybridMapping] Returning '' since this is an optional mapping.")
+        logging.debug("------------------ Hybrid mapping Completed ------------------")
 
     def __is_optional_mapping(self, translation_value):
         return self.hybrid_mappings[translation_value]["required"] is False
@@ -296,9 +290,7 @@ class GGBotHybridMapper:
         )
 
     @staticmethod
-    def should_delay_mapping(
-        *, translation_value, prerequisites, tracker_settings
-    ):
+    def should_delay_mapping(*, translation_value, prerequisites, tracker_settings):
         # TODO: check whether this method can be instance method
         logging.info(
             f"[GGBotHybridMapper::should_delay_mapping] Performing 'prerequisite' validation for '{translation_value}'"
@@ -333,13 +325,8 @@ class GGBotHybridMapper:
                     ],
                     tracker_settings=tracker_settings,
                 )
-                if (
-                    translation_value not in tracker_settings
-                    and not delay_mapping
-                ):
-                    tracker_settings[
-                        translation_value
-                    ] = self.perform_hybrid_mapping(
+                if translation_value not in tracker_settings and not delay_mapping:
+                    tracker_settings[translation_value] = self.perform_hybrid_mapping(
                         translation_value=translation_value,
                         tracker_settings=tracker_settings,
                     )
