@@ -427,12 +427,6 @@ pip install -r requirements/requirements.txt
 
 ### v3.2.0
 
-- [ ] New Tracker: UHDBits
-- [ ] Use IMDB GraphQL Api
-- [ ] Use Anilist GraphQL Api
-- [ ] Support for encrypted values from config
-- [ ] Issue#79: Not able to cross-seed rared releases
-- [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
 - [ ] Issue#151: Re-uploader MongoDB with authentication
 - [X] Support for encrypted config.env files
 - [X] Fixed pyyaml dependency
@@ -441,6 +435,16 @@ pip install -r requirements/requirements.txt
 - [X] Issue#203: Uploads fails when tmdb doesn't have any poster
 
 ### v3.2.1
+
+- [ ] New Tracker: UHDBits
+- [ ] New Tracker: DigitalCoreClub
+- [ ] Use IMDB GraphQL Api
+- [ ] Use Anilist GraphQL Api
+- [ ] Support for encrypted values from config
+- [ ] Issue#79: Not able to cross-seed rared releases
+- [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
+
+### v3.2.2
 
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
