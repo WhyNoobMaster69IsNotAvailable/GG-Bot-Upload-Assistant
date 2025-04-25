@@ -51,6 +51,7 @@ automated torrent uploading.
 # Main Features
 
 * Generate, parse and attach `Mediainfo` or `BDInfo` to torrent uploads
+* Support for encrypted secrets in config files. [Demo](https://asciinema.org/a/716946)
 * Support for Full Disk uploads
 * Support for per
   tracker [Custom Description Templates](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Custom-Description-Templates)
@@ -427,7 +428,7 @@ pip install -r requirements/requirements.txt
 
 ### v3.2.0
 
-- [ ] Issue#151: Re-uploader MongoDB with authentication
+- [X] Issue#151: Re-uploader MongoDB with authentication
 - [X] Support for encrypted config.env files
 - [X] Fixed pyyaml dependency
 - [X] Added VC-1 codec support from blu-ray disks

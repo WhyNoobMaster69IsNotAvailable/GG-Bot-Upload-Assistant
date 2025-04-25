@@ -1,5 +1,5 @@
 # GG Bot Upload Assistant
-# Copyright (C) 2022  Noob Master669
+# Copyright (C) 2025  Noob Master669
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
@@ -14,11 +14,4 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-ME_CONFIG_MONGODB_SERVER=mongo
-ME_CONFIG_MONGODB_PORT=27017
-ME_CONFIG_MONGODB_ENABLE_ADMIN=true
-ME_CONFIG_MONGODB_AUTH_DATABASE=admin
-ME_CONFIG_MONGODB_AUTH_USERNAME=admin
-ME_CONFIG_MONGODB_AUTH_PASSWORD=admin_password
-ME_CONFIG_BASICAUTH_USERNAME=admin
-ME_CONFIG_BASICAUTH_PASSWORD=admin
+# Tests for cache vendors

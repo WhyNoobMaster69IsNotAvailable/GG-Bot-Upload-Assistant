@@ -1,4 +1,20 @@
 # GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# GG Bot Upload Assistant
 # Copyright (C) 2022  Noob Master669
 #
 # This program is free software: you can redistribute it and/or modify
@@ -348,7 +364,11 @@ class CacheConfig(GGBotConfig):
 
     @property
     def CACHE_PASSWORD(self):
-        return self._get_property("cache_username")
+        return self._get_property("cache_password")
+
+    @property
+    def CACHE_AUTH_DB(self):
+        return self._get_property("cache_auth_db", "admin")
 
 
 class APIKeyConfig(GGBotConfig, ABC):

@@ -1,5 +1,21 @@
 # GG Bot Upload Assistant
 # Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
@@ -40,7 +56,7 @@ def clean_up(pth):
     pth.rmdir()
 
 
-class TestAutoReuploaderQBittorrent:
+class TestAutoReuploaderTransmission:
     @pytest.fixture(autouse=True)
     def run_around_tests(self):
         folder = f"{working_folder}{temp_working_dir}"
@@ -60,8 +76,8 @@ class TestAutoReuploaderQBittorrent:
         clean_up(folder)
 
     @pytest.fixture
-    def setup_reuploader_env_with_dynamic_config_qbittorrent(
-        self, mongo_container, qbittorrent_credentials, run_around_tests
+    def setup_reuploader_env_with_dynamic_config_transmission(
+        self, mongo_container, transmission_credentials, run_around_tests
     ):
         mongo_ip = mongo_container.get_container_host_ip()
         mongo_port = mongo_container.get_exposed_port(27017)
@@ -75,29 +91,33 @@ class TestAutoReuploaderQBittorrent:
             config_data = config_data.replace("<<MONGO_PORT_PLACEHOLDER>>", mongo_port)
             config_data = config_data.replace(
                 "cache_database=gg-bot-reuploader",
-                "cache_database=gg-bot-reuploader-qbittorrent",
+                "cache_database=gg-bot-reuploader-transmission",
             )
 
             config_data = config_data.replace(
                 "<<CLIENT_HOST_PLACEHOLDER>>",
-                f"{qbittorrent_credentials['host']}",
+                f"{transmission_credentials['host']}",
             )
             config_data = config_data.replace(
-                "<<CLIENT_PORT_PLACEHOLDER>>", qbittorrent_credentials["port"]
+                "<<CLIENT_PORT_PLACEHOLDER>>", transmission_credentials["port"]
             )
-            config_data = config_data.replace("client=Rutorrent", "client=Qbittorrent")
+            config_data = config_data.replace("client=Rutorrent", "client=Transmission")
             config_data = config_data.replace(
                 "client_username=",
-                f'client_username={qbittorrent_credentials["username"]}',
+                f'client_username={transmission_credentials["username"]}',
             )
             config_data = config_data.replace(
                 "client_password=",
-                f'client_password={qbittorrent_credentials["password"]}',
+                f'client_password={transmission_credentials["password"]}',
+            )
+            config_data = config_data.replace(
+                "client_path=/",
+                "client_path=/transmission/rpc",
             )
 
             config_data = config_data.replace(
                 "VISOR_SERVER_PORT=30035",
-                "VISOR_SERVER_PORT=30036",
+                "VISOR_SERVER_PORT=30037",
             )
 
         with open(
@@ -106,11 +126,9 @@ class TestAutoReuploaderQBittorrent:
         ) as config_file:
             config_file.write(config_data)
 
-        yield
-
     @pytest.fixture
-    def setup_reuploader_env_with_dynamic_config_qbittorrent_dynamic(
-        self, mongo_container, qbittorrent_credentials, run_around_tests
+    def setup_reuploader_env_with_dynamic_config_transmission_dynamic_tracker(
+        self, mongo_container, transmission_credentials, run_around_tests
     ):
         mongo_ip = mongo_container.get_container_host_ip()
         mongo_port = mongo_container.get_exposed_port(27017)
@@ -124,52 +142,54 @@ class TestAutoReuploaderQBittorrent:
             config_data = config_data.replace("<<MONGO_PORT_PLACEHOLDER>>", mongo_port)
             config_data = config_data.replace(
                 "cache_database=gg-bot-reuploader",
-                "cache_database=gg-bot-reuploader-qbittorrent-dynamic",
+                "cache_database=gg-bot-reuploader-transmission-dynamic",
             )
 
             config_data = config_data.replace(
                 "<<CLIENT_HOST_PLACEHOLDER>>",
-                f"{qbittorrent_credentials['host']}",
+                f"{transmission_credentials['host']}",
             )
             config_data = config_data.replace(
-                "<<CLIENT_PORT_PLACEHOLDER>>", qbittorrent_credentials["port"]
+                "<<CLIENT_PORT_PLACEHOLDER>>", transmission_credentials["port"]
             )
-            config_data = config_data.replace("client=Rutorrent", "client=Qbittorrent")
+            config_data = config_data.replace("client=Rutorrent", "client=Transmission")
             config_data = config_data.replace(
                 "client_username=",
-                f'client_username={qbittorrent_credentials["username"]}',
+                f'client_username={transmission_credentials["username"]}',
             )
             config_data = config_data.replace(
                 "client_password=",
-                f'client_password={qbittorrent_credentials["password"]}',
+                f'client_password={transmission_credentials["password"]}',
+            )
+            config_data = config_data.replace(
+                "client_path=/",
+                "client_path=/transmission/rpc",
+            )
+
+            config_data = config_data.replace(
+                "VISOR_SERVER_PORT=30035",
+                "VISOR_SERVER_PORT=30037",
             )
             config_data = config_data.replace(
                 "dynamic_tracker_selection=False",
                 "dynamic_tracker_selection=True",
             )
 
-            config_data = config_data.replace(
-                "VISOR_SERVER_PORT=30035",
-                "VISOR_SERVER_PORT=30036",
-            )
-
         with open(
             f"{working_folder}{temp_working_dir}{temp_config_dir}/reupload-test.config.env",
             "w",
         ) as config_file:
             config_file.write(config_data)
 
-        yield
-
     @mock.patch.object(
         sys,
         "argv",
         ["test.py", "-t", "TSP", "PTP", "BLU", "GPW", "--debug"],
     )
-    def test_reuploader_with_torrents_qbittorrent(
+    def test_reuploader_with_torrents_transmission(
         self,
         e2e_test_working_folder,
-        setup_reuploader_env_with_dynamic_config_qbittorrent,
+        setup_reuploader_env_with_dynamic_config_transmission,
     ):
         reuploader: GGBotReUploader = GGBotReUploader(
             f"{working_folder}{temp_working_dir}{temp_config_dir}/reupload-test.config.env"
@@ -213,7 +233,7 @@ class TestAutoReuploaderQBittorrent:
         We also need to list all torrents from torrent client and ensure that the new torrent is seeding
             and the original torrent has been moved to a different category.
         """
-        gg_bot_database = "gg-bot-reuploader-qbittorrent"
+        gg_bot_database = "gg-bot-reuploader-transmission"
         mongo_client: MongoClient = reuploader.cache.cache_client.mongo_client
         database = mongo_client.get_database(gg_bot_database)
 
@@ -350,7 +370,7 @@ class TestAutoReuploaderQBittorrent:
     def test_reuploader_with_torrents_qbittorrent_dynamic_tracker_selection(
         self,
         e2e_test_working_folder,
-        setup_reuploader_env_with_dynamic_config_qbittorrent_dynamic,
+        setup_reuploader_env_with_dynamic_config_transmission_dynamic_tracker,
     ):
         reuploader: GGBotReUploader = GGBotReUploader(
             f"{working_folder}{temp_working_dir}{temp_config_dir}/reupload-test.config.env"
@@ -394,7 +414,7 @@ class TestAutoReuploaderQBittorrent:
         We also need to list all torrents from torrent client and ensure that the new torrent is seeding
             and the original torrent has been moved to a different category.
         """
-        gg_bot_database = "gg-bot-reuploader-qbittorrent-dynamic"
+        gg_bot_database = "gg-bot-reuploader-transmission-dynamic"
         mongo_client: MongoClient = reuploader.cache.cache_client.mongo_client
         database = mongo_client.get_database(gg_bot_database)
 

@@ -82,6 +82,33 @@ def mongo_container(docker_testing_network):
     )
 
 
+@pytest.fixture(scope="module", autouse=True)
+def mongo_container_with_auth(docker_testing_network, e2e_test_working_folder):
+    logging.info(
+        "[TestContainers]Creating MongoDB docker container with authentication"
+    )
+    container = DockerContainer("mongo:latest")
+    container.with_bind_ports(27017, 27018)
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("mongo_auth")
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}/mongo/mongo-init.js",
+        "/docker-entrypoint-initdb.d/mongo-init.js",
+        "ro",
+    )
+
+    container.start()
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created a MongoDB container with auth for e2e testing: {container_id}"
+    )
+    yield container
+    container.stop()
+    logging.info(
+        f"[TestContainers] Removed the MongoDB container with auth used for e2e testing: {container_id}"
+    )
+
+
 @pytest.fixture(autouse=True)
 def qbittorrent_container(docker_testing_network, e2e_test_working_folder):
     logging.info("[TestContainers]Creating Qbittorrent docker container")
@@ -214,6 +241,15 @@ def rutorrent_container(docker_testing_network, e2e_test_working_folder):
     logging.info(
         f"[TestContainers] Removed the rutorrent container used for e2e testing: {container_id}"
     )
+
+
+@pytest.fixture
+def mongo_credentials(mongo_container_with_auth):
+    yield {
+        "username": "gg_bot_user",
+        "password": "gg_bot_password",
+        "auth_db": "admin",
+    }
 
 
 @pytest.fixture
@@ -385,6 +421,12 @@ def mock_server(mock_server_config):
             server=mock, server_config=mock_server_config
         )
         yield mock
+
+
+@pytest.fixture(scope="module", autouse=True)
+def e2e_mongo_client_with_auth(mongo_container_with_auth):
+    MONGO_URL = f"mongodb://{mongo_container_with_auth.get_container_host_ip()}:{mongo_container_with_auth.get_exposed_port(27017)}/gg-bot-reuploader-e2e-tests"
+    yield MongoClient(MONGO_URL)
 
 
 @pytest.fixture(scope="module", autouse=True)
