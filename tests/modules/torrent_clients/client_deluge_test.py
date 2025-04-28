@@ -63,21 +63,21 @@ def test_init_qbit_dynamic_reuploader(mocker):
     ("torrent", "expected"),
     [
         pytest.param({"category": "GGBOT"}, [], id="no_trackers_provided"),
-        pytest.param({"category": "GGBOT--"}, [], id="no_trackers_provided"),
+        pytest.param({"category": "GGBOT::"}, [], id="no_trackers_provided"),
         pytest.param({"category": "SomeOtherLabel"}, [], id="wrong_label"),
         pytest.param({"category": ""}, [], id="no_label"),
         pytest.param(
-            {"category": "GGBOT--TSP--ATH"},
+            {"category": "GGBOT::TSP::ATH"},
             ["TSP", "ATH"],
             id="two_trackers_provided",
         ),
         pytest.param(
-            {"category": "GGBOT--TSP--ATH--"},
+            {"category": "GGBOT::TSP::ATH::"},
             ["TSP", "ATH"],
             id="two_trackers_provided",
         ),
         pytest.param(
-            {"category": "GGBOT--spd--ath--"},
+            {"category": "GGBOT::spd::ath::"},
             ["spd", "ath"],
             id="two_trackers_provided",
         ),
@@ -94,12 +94,12 @@ def test_get_dynamic_trackers(torrent, expected, mocker):
     ("torrent", "expected"),
     [
         pytest.param({"category": "GGBOT"}, [], id="no_trackers_provided"),
-        pytest.param({"category": "GGBOT--"}, [], id="no_trackers_provided"),
+        pytest.param({"category": "GGBOT::"}, [], id="no_trackers_provided"),
         pytest.param({"category": "SomeOtherLabel"}, [], id="wrong_label"),
         pytest.param({"category": ""}, [], id="no_label"),
-        pytest.param({"category": "GGBOT--TSP--ATH"}, [], id="two_trackers_provided"),
-        pytest.param({"category": "GGBOT--TSP--ATH--"}, [], id="two_trackers_provided"),
-        pytest.param({"category": "GGBOT--spd--ath--"}, [], id="two_trackers_provided"),
+        pytest.param({"category": "GGBOT::TSP::ATH"}, [], id="two_trackers_provided"),
+        pytest.param({"category": "GGBOT::TSP::ATH::"}, [], id="two_trackers_provided"),
+        pytest.param({"category": "GGBOT::spd::ath::"}, [], id="two_trackers_provided"),
     ],
 )
 def test_get_dynamic_trackers_when_disabled(torrent, expected, mocker):

@@ -139,7 +139,6 @@ class BasicUtils:
             f"[BasicUtils] Dumping torrent_info before video_codec identification. {pformat(torrent_info)}"
         )
         if is_disc and torrent_info["bdinfo"] is not None:
-            # Returns dv, hdr, video_codec, video_codec_again
             return BDInfoParser.get_video_codec_from_bdinfo(torrent_info["bdinfo"])
 
         dv, hdr = self._get_dv_hdr(media_info_video_track)

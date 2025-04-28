@@ -41,7 +41,7 @@
         {
             "language": "French",
             "codec": "Dolby Digital EX Audio",
-            "channels": "5.1",
+            "channels": "5.1-EX",
             "sample_rate": "48 kHz",
             "bitrate": "640 kbps",
             "bit_depth": "DN -27dB"

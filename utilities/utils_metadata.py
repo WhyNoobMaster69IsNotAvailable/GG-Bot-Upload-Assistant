@@ -604,8 +604,8 @@ def _fill_tmdb_metadata_to_torrent_info(torrent_info, tmdb_response):
     )
     tmdb_metadata["poster"] = (
         f"https://image.tmdb.org/t/p/original{tmdb_response['poster_path']}"
-        if tmdb_response.get("poster_path")
-        and len(tmdb_response.get("poster_path")) > 0
+        if "poster_path" in tmdb_response
+        and len(tmdb_response.get("poster_path", "")) > 0
         else ""
     )
     tmdb_metadata["tags"] = list(

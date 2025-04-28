@@ -130,9 +130,6 @@ class Transmission(GGBotTorrentClientTemplate):
         # user wants to ignore labels, hence we'll consider all the torrents
         if self.target_label == "IGNORE_LABEL":
             return True
-        # if dynamic tracker selection is enabled, then labels will follow the pattern GGBOT::TR1::TR2::TR3
-        if self.dynamic_tracker_selection:
-            return label.startswith(self.target_label)
         return label == self.target_label
 
     @staticmethod
