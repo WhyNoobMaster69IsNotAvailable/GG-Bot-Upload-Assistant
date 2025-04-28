@@ -120,7 +120,6 @@ class GGBotUploadAssistant:
         self.media_info = {}
         self.movie_db_info = {}
         self.tracker_settings = {}
-        self.config = {}
         self.tracker = None  # the current tracker to which we are uploading to
         self.bdinfo_parser = None  # Will be initialized depending on the environment
 
@@ -925,10 +924,10 @@ class GGBotUploadAssistant:
     # ---------------------------------------------------------------------- #
     #                             Upload that shit!                          #
     # ---------------------------------------------------------------------- #
-    def upload_to_site(self, upload_to, tracker_api_key):
+    def upload_to_site(self, upload_to, tracker_api_key, config):
         logging.info(f"[TrackerUpload] Attempting to upload to: {upload_to}")
-        url = str(self.config["upload_form"]).format(api_key=tracker_api_key)
-        url_masked = str(self.config["upload_form"]).format(api_key="REDACTED")
+        url = str(config["upload_form"]).format(api_key=tracker_api_key)
+        url_masked = str(config["upload_form"]).format(api_key="REDACTED")
         payload = {}
         files = []
         display_files = {}
@@ -941,27 +940,23 @@ class GGBotUploadAssistant:
 
         # multiple authentication modes
         headers = None
-        if self.config["technical_jargons"]["authentication_mode"] == "API_KEY":
+        if config["technical_jargons"]["authentication_mode"] == "API_KEY":
             pass  # headers = None
-        elif (
-            self.config["technical_jargons"]["authentication_mode"] == "API_KEY_PAYLOAD"
-        ):
+        elif config["technical_jargons"]["authentication_mode"] == "API_KEY_PAYLOAD":
             # api key needs to be added in payload. the key in payload for api key can be obtained from `auth_payload_key`
-            payload[self.config["technical_jargons"]["auth_payload_key"]] = (
-                tracker_api_key
-            )
-        elif self.config["technical_jargons"]["authentication_mode"] == "BEARER":
+            payload[config["technical_jargons"]["auth_payload_key"]] = tracker_api_key
+        elif config["technical_jargons"]["authentication_mode"] == "BEARER":
             headers = {"Authorization": f"Bearer {tracker_api_key}"}
             logging.info(
                 f"[TrackerUpload] Using Bearer Token authentication method for tracker {upload_to}"
             )
-        elif self.config["technical_jargons"]["authentication_mode"] == "HEADER":
-            if len(self.config["technical_jargons"]["headers"]) > 0:
+        elif config["technical_jargons"]["authentication_mode"] == "HEADER":
+            if len(config["technical_jargons"]["headers"]) > 0:
                 headers = {}
                 logging.info(
                     f"[TrackerUpload] Using Header based authentication method for tracker {upload_to}"
                 )
-                for header in self.config["technical_jargons"]["headers"]:
+                for header in config["technical_jargons"]["headers"]:
                     logging.info(
                         f"[TrackerUpload] Adding header '{header['key']}' to request"
                     )
@@ -976,16 +971,13 @@ class GGBotUploadAssistant:
                 logging.fatal(
                     f"[TrackerUpload] Header based authentication cannot be done without `header_key` for tracker {upload_to}."
                 )
-        elif self.config["technical_jargons"]["authentication_mode"] == "COOKIE":
+        elif config["technical_jargons"]["authentication_mode"] == "COOKIE":
             logging.info(
                 "[TrackerUpload] User wants to use cookie based auth for tracker."
             )
-            if (
-                self.config["technical_jargons"]["cookie"]["provider"]
-                == "custom_action"
-            ):
+            if config["technical_jargons"]["cookie"]["provider"] == "custom_action":
                 logging.info(
-                    f'[TrackerUpload] Cookie Provider: [{self.config["technical_jargons"]["cookie"]["provider"]}] => [{self.config["technical_jargons"]["cookie"]["data"]}]'
+                    f'[TrackerUpload] Cookie Provider: [{config["technical_jargons"]["cookie"]["provider"]}] => [{config["technical_jargons"]["cookie"]["data"]}]'
                 )
 
                 logging.info("[TrackerUpload] Loading custom action to get cookie")
@@ -993,14 +985,14 @@ class GGBotUploadAssistant:
                 custom_action = GenericUtils.load_custom_actions(
                     "action"
                 )  # FIXME: THis is broken. Figure out how to get the actual action key here.
-                cookiefile = custom_action(
-                    self.torrent_info, self.tracker_settings, self.config
+                cookie_file = custom_action(
+                    self.torrent_info, self.tracker_settings, config
                 )
 
                 logging.info("[TrackerUpload] Setting cookie to session")
                 # here we are storing the session on the requests_orchestrator object
                 requests_orchestrator.cookies.update(
-                    pickle.load(open(cookiefile, "rb"))
+                    pickle.load(open(cookie_file, "rb"))
                 )
             else:
                 # TODO add support for cookie based authentication
@@ -1009,21 +1001,21 @@ class GGBotUploadAssistant:
                 )
 
         for key, val in self.tracker_settings.items():
-            # First check to see if its a required or optional key
+            # First check to see if it's a required or optional key
             req_opt = (
                 "Required"
-                if key in self.config["Required"]
+                if key in config["Required"]
                 else "Optional"
-                if key in self.config["Optional"]
+                if key in config["Optional"]
                 else "Default"
             )
 
-            if key not in self.config[req_opt]:
+            if key not in config[req_opt]:
                 # if there are any keys in tracker settings that doesn't belong to tracker template, then we ignore them.
                 continue
 
             # Now that we know if we are looking for a required or optional key we can try to add it into the payload
-            if str(self.config[req_opt][key]) == "file":
+            if str(config[req_opt][key]) == "file":
                 if os.path.isfile(self.tracker_settings[key]):
                     post_file = f"{key}", open(self.tracker_settings[key], "rb")
                     files.append(post_file)
@@ -1033,7 +1025,7 @@ class GGBotUploadAssistant:
                         f"[TrackerUpload] The file/path `{self.tracker_settings[key]}` for key {req_opt} does not exist!"
                     )
                     continue
-            elif str(self.config[req_opt][key]) == "file|array":
+            elif str(config[req_opt][key]) == "file|array":
                 if os.path.isfile(self.tracker_settings[key]):
                     with open(self.tracker_settings[key]) as images_data:
                         for line in images_data.readlines():
@@ -1045,7 +1037,7 @@ class GGBotUploadAssistant:
                         f"[TrackerUpload] The file/path `{self.tracker_settings[key]}` for key {req_opt} does not exist!"
                     )
                     continue
-            elif str(self.config[req_opt][key]) == "file|string|array":
+            elif str(config[req_opt][key]) == "file|string|array":
                 """
                 for file|array we read the contents of the file line by line, where each line becomes and element of the array or list
                 """
@@ -1059,7 +1051,7 @@ class GGBotUploadAssistant:
                             screenshot_array.append(line.strip())
                         payload[
                             f"{key}[]"
-                            if self.config["technical_jargons"]["payload_type"]
+                            if config["technical_jargons"]["payload_type"]
                             == "MULTI-PART"
                             else key
                         ] = screenshot_array
@@ -1071,7 +1063,7 @@ class GGBotUploadAssistant:
                         f"[TrackerUpload] The file/path `{self.tracker_settings[key]}` for key '{req_opt}' does not exist!"
                     )
                     continue
-            elif str(self.config[req_opt][key]) == "string|array":
+            elif str(config[req_opt][key]) == "string|array":
                 """
                 for string|array we split the data with by new line, where each line becomes and element of the array or list
                 """
@@ -1084,14 +1076,14 @@ class GGBotUploadAssistant:
                         screenshot_array.append(line.strip())
                 payload[
                     f"{key}[]"
-                    if self.config["technical_jargons"]["payload_type"] == "MULTI-PART"
+                    if config["technical_jargons"]["payload_type"] == "MULTI-PART"
                     else key
                 ] = screenshot_array
                 logging.debug(
                     f"[TrackerUpload] String array data for key '{key}' :: {screenshot_array}"
                 )
 
-            elif str(self.config[req_opt][key]) == "file|base64":
+            elif str(config[req_opt][key]) == "file|base64":
                 # file encoded as base64 string
                 if os.path.isfile(self.tracker_settings[key]):
                     logging.debug(f"[TrackerUpload] Setting file|base64 for key {key}")
@@ -1190,7 +1182,7 @@ class GGBotUploadAssistant:
         )
 
         if not self.args.dry_run:  # skipping tracker upload during dry runs
-            if self.config["technical_jargons"]["payload_type"] == "JSON":
+            if config["technical_jargons"]["payload_type"] == "JSON":
                 response = requests_orchestrator.request(
                     "POST", url, json=payload, files=files, headers=headers
                 )
@@ -1209,7 +1201,7 @@ class GGBotUploadAssistant:
                 logging.info(
                     f"[TrackerUpload] Upload response for {upload_to}:::::::::::::::::::::::::\n {response.text}"
                 )
-                if self.config["technical_jargons"]["response_type"] == "TEXT":
+                if config["technical_jargons"]["response_type"] == "TEXT":
                     # trackers that send text as upload response instead of json.
                     # since parsing this could be different, we just use a custom action
                     logging.info(
@@ -1217,7 +1209,7 @@ class GGBotUploadAssistant:
                     )
                     try:
                         custom_action = GenericUtils.load_custom_actions(
-                            self.config["technical_jargons"]["response_action"]
+                            config["technical_jargons"]["response_action"]
                         )
                         upload_status, error_message = custom_action(response)
                         if not upload_status:
@@ -1547,7 +1539,7 @@ class GGBotUploadAssistant:
             )
 
         for tracker in upload_to_trackers:
-            self.config = json.load(
+            config = json.load(
                 open(
                     f"{site_templates_path}{str(self.acronym_to_tracker.get(str(tracker).lower()))}.json",
                     encoding="utf-8",
@@ -1556,9 +1548,9 @@ class GGBotUploadAssistant:
             # Add tracker data to each row & show the user an overview
             upload_to_trackers_overview.add_row(
                 tracker,
-                self.config["name"],
-                self.config["url"],
-                self.config["platform"],
+                config["name"],
+                config["url"],
+                config["platform"],
             )
 
         console.print(upload_to_trackers_overview)
@@ -2120,7 +2112,9 @@ class GGBotUploadAssistant:
                 # you upload to 2.0 we take all the info we generated outside of this loop (mediainfo, description,
                 # etc) and combine it with tracker specific info and upload it all now
                 self.torrent_info[f"{tracker}_upload_status"] = self.upload_to_site(
-                    upload_to=tracker, tracker_api_key=temp_tracker_api_key
+                    upload_to=tracker,
+                    tracker_api_key=temp_tracker_api_key,
+                    config=config,
                 )
 
                 if self.torrent_info[f"{tracker}_upload_status"]:
@@ -2243,12 +2237,14 @@ class GGBotUploadAssistant:
 
     @staticmethod
     def _setup_loggers(*, args, working_folder):
-        # Debug logs for the upload processing
-        # Logger running in "w" : write mode
-        # Create a custom log format with UTF-8 encoding
         log_format = logging.Formatter(
             "%(asctime)s | %(name)s | %(levelname)s | %(message)s", "%Y-%m-%d %H:%M:%S"
         )
+
+        # Remove all existing handlers from the root logger
+        for handler in logging.root.handlers[:]:
+            logging.root.removeHandler(handler)
+
         handler = logging.FileHandler(
             ASSISTANT_LOG.format(base_path=working_folder),
             mode="w",

@@ -430,6 +430,7 @@ pip install -r requirements/requirements.txt
 ### v3.2.0
 
 - [X] Issue#151: Re-uploader MongoDB with authentication
+- [X] Issue#204: Uploading to wrong tracker with right tracker's API key and PID
 - [X] Support for encrypted config.env files
 - [X] Fixed pyyaml dependency
 - [X] Added VC-1 codec support from blu-ray disks
