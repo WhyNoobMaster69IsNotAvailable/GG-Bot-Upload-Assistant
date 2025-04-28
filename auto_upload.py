@@ -2242,6 +2242,11 @@ class GGBotUploadAssistant:
         log_format = logging.Formatter(
             "%(asctime)s | %(name)s | %(levelname)s | %(message)s", "%Y-%m-%d %H:%M:%S"
         )
+
+        # Remove all existing handlers from the root logger
+        for handler in logging.root.handlers[:]:
+            logging.root.removeHandler(handler)
+
         handler = logging.FileHandler(
             ASSISTANT_LOG.format(base_path=working_folder),
             mode="w",
