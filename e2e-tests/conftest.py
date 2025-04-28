@@ -109,7 +109,7 @@ def mongo_container_with_auth(docker_testing_network, e2e_test_working_folder):
     )
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="module", autouse=True)
 def qbittorrent_container(docker_testing_network, e2e_test_working_folder):
     logging.info("[TestContainers]Creating Qbittorrent docker container")
     container = DockerContainer("linuxserver/qbittorrent:4.6.5")
