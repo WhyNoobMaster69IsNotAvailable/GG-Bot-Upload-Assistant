@@ -2236,9 +2236,6 @@ class GGBotUploadAssistant:
 
     @staticmethod
     def _setup_loggers(*, args, working_folder):
-        # Debug logs for the upload processing
-        # Logger running in "w" : write mode
-        # Create a custom log format with UTF-8 encoding
         log_format = logging.Formatter(
             "%(asctime)s | %(name)s | %(levelname)s | %(message)s", "%Y-%m-%d %H:%M:%S"
         )
