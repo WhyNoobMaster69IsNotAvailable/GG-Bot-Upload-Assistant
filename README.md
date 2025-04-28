@@ -426,16 +426,6 @@ pip install -r requirements/requirements.txt
 
 # Roadmap
 
-### v3.2.0
-
-- [X] Issue#151: Re-uploader MongoDB with authentication
-- [X] Issue#204: Uploading to wrong tracker with right tracker's API key and PID
-- [X] Support for encrypted config.env files
-- [X] Fixed pyyaml dependency
-- [X] Added VC-1 codec support from blu-ray disks
-- [X] Added Dolby Digital Ex codec support from blu-ray disks
-- [X] Issue#203: Uploads fails when tmdb doesn't have any poster
-
 ### v3.2.1
 
 - [ ] New Tracker: UHDBits
@@ -531,6 +521,22 @@ This project exists thanks to all the people who contribute.
 <br>
 
 # Change Log
+
+## **3.2**
+    New Features
+        * Support for encrypted config.env files
+        * Added VC-1 codec support from blu-ray disks
+        * Added Dolby Digital Ex codec support from blu-ray disks
+        * [Reuploader] Added support for authenticated mongo db with examples
+
+    Underhood Changes
+        * Fixed pyyaml dependency
+
+    Bug Fixes
+        * Issue#203: Uploads fails when tmdb doesn't have any poster
+        * Issue#204: Uploading to wrong tracker with right tracker's API key and PID
+
+<br>
 
 ## **3.1.9**
 
