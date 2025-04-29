@@ -19,6 +19,8 @@ FROM arm32v7/alpine:3.14
 # Default envs for upload assistant
 ENV IS_CONTAINERIZED=true
 ENV IS_FULL_DISK_SUPPORTED=false
+ENV RUST_VERSION=1.76.0
+ENV TARGET=armv7-unknown-linux-musleabihf
 
 # dependencies necessary in alpine to use and run python
 RUN \
@@ -30,6 +32,8 @@ RUN \
     libffi-dev \
     openssl-dev \
     curl \
+    tar \
+    musl-dev \
 	  py3-pip \
 	  python3-dev
 
@@ -48,12 +52,18 @@ RUN \
 	mktorrent \
 	unrar
 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
-    source $HOME/.cargo/env && \
-    echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> /root/.profile && \
-    rustup update stable
+# RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+#     source $HOME/.cargo/env && \
+#    echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> /root/.profile && \
+#    rustup update stable \
 
-ENV PATH="/root/.cargo/bin:${PATH}"
+RUN curl -LO https://static.rust-lang.org/dist/rust-${RUST_VERSION}-${TARGET}.tar.gz && \
+    tar -xzf rust-${RUST_VERSION}-${TARGET}.tar.gz && \
+    cd rust-${RUST_VERSION}-${TARGET} && \
+    ./install.sh --prefix=/usr --components=rustc,cargo && \
+    cd .. && rm -rf rust-${RUST_VERSION}-${TARGET}*
+
+ENV PATH="/root/.cargo/bin:${PATH}"g
 
 WORKDIR /build
 COPY requirements requirements
