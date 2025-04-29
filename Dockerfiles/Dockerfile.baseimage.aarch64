@@ -28,6 +28,8 @@ RUN \
 	  libxml2-dev \
   	libxslt-dev \
     libffi-dev \
+    openssl-dev \
+    curl \
 	  py3-pip \
 	  python3-dev
 
@@ -45,6 +47,13 @@ RUN \
 	python3 \
 	mktorrent \
 	unrar
+
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    source $HOME/.cargo/env && \
+    echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> /root/.profile && \
+    rustup update stable
+
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 WORKDIR /build
 COPY requirements requirements
