@@ -14,21 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# GG Bot Upload Assistant
-# Copyright (C) 2025  Noob Master669
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import json
 import shutil
 import sys
@@ -56,7 +41,7 @@ def clean_up(pth):
     pth.rmdir()
 
 
-class TestAutoReuploaderAuthMongo:
+class TestAutoReuploaderTransmissionAuthMongo:
     @pytest.fixture(autouse=True)
     def run_around_tests(self):
         folder = f"{working_folder}{temp_working_dir}"
@@ -79,7 +64,7 @@ class TestAutoReuploaderAuthMongo:
     def setup_reuploader_env_with_dynamic_config(
         self,
         mongo_container_with_auth,
-        rutorrent_credentials,
+        transmission_credentials_function_scoped,
         run_around_tests,
         mongo_credentials,
     ):
@@ -104,10 +89,33 @@ class TestAutoReuploaderAuthMongo:
             )
 
             config_data = config_data.replace(
-                "<<CLIENT_HOST_PLACEHOLDER>>", f"http://{rutorrent_credentials['host']}"
+                "<<CLIENT_HOST_PLACEHOLDER>>",
+                transmission_credentials_function_scoped["host"],
             )
             config_data = config_data.replace(
-                "<<CLIENT_PORT_PLACEHOLDER>>", rutorrent_credentials["port"]
+                "<<CLIENT_PORT_PLACEHOLDER>>",
+                transmission_credentials_function_scoped["port"],
+            )
+            config_data = config_data.replace("client=Rutorrent", "client=Transmission")
+            config_data = config_data.replace(
+                "client_username=",
+                f'client_username={transmission_credentials_function_scoped["username"]}',
+            )
+            config_data = config_data.replace(
+                "client_password=",
+                f'client_password={transmission_credentials_function_scoped["password"]}',
+            )
+            config_data = config_data.replace(
+                "client_path=/",
+                "client_path=/transmission/rpc",
+            )
+            config_data = config_data.replace(
+                "cache_database=gg-bot-reuploader",
+                "cache_database=gg-bot-reuploader-transmission-auth-mongo",
+            )
+            config_data = config_data.replace(
+                "VISOR_SERVER_PORT=30035",
+                "VISOR_SERVER_PORT=30039",
             )
 
         with open(
@@ -122,7 +130,7 @@ class TestAutoReuploaderAuthMongo:
     def setup_reuploader_env_with_dynamic_config_dynamic_tracker_selection(
         self,
         mongo_container_with_auth,
-        rutorrent_credentials,
+        transmission_credentials_function_scoped,
         run_around_tests,
         mongo_credentials,
     ):
@@ -147,18 +155,38 @@ class TestAutoReuploaderAuthMongo:
             )
             config_data = config_data.replace(
                 "cache_database=gg-bot-reuploader",
-                "cache_database=gg-bot-reuploader-rutorrent-dynamic",
+                "cache_database=gg-bot-reuploader-transmission-auth-mongo-dynamic",
             )
 
             config_data = config_data.replace(
-                "<<CLIENT_HOST_PLACEHOLDER>>", f"http://{rutorrent_credentials['host']}"
+                "<<CLIENT_HOST_PLACEHOLDER>>",
+                f"{transmission_credentials_function_scoped['host']}",
             )
             config_data = config_data.replace(
-                "<<CLIENT_PORT_PLACEHOLDER>>", rutorrent_credentials["port"]
+                "<<CLIENT_PORT_PLACEHOLDER>>",
+                transmission_credentials_function_scoped["port"],
             )
+            config_data = config_data.replace("client=Rutorrent", "client=Transmission")
+            config_data = config_data.replace(
+                "client_username=",
+                f'client_username={transmission_credentials_function_scoped["username"]}',
+            )
+            config_data = config_data.replace(
+                "client_password=",
+                f'client_password={transmission_credentials_function_scoped["password"]}',
+            )
+            config_data = config_data.replace(
+                "client_path=/",
+                "client_path=/transmission/rpc",
+            )
+
             config_data = config_data.replace(
                 "dynamic_tracker_selection=False",
                 "dynamic_tracker_selection=True",
+            )
+            config_data = config_data.replace(
+                "VISOR_SERVER_PORT=30035",
+                "VISOR_SERVER_PORT=30040",
             )
 
         with open(
@@ -205,7 +233,7 @@ class TestAutoReuploaderAuthMongo:
         mongo_client: MongoClient = reuploader.cache.cache_client.mongo_client
         assert mongo_client is not None
 
-        gg_bot_database = "gg-bot-reuploader"
+        gg_bot_database = "gg-bot-reuploader-transmission-auth-mongo"
         expected_collections = [
             "MetaData_TMDB",
             "ReUpload_Torrent",
@@ -270,7 +298,7 @@ class TestAutoReuploaderAuthMongo:
         We also need to list all torrents from torrent client and ensure that the new torrent is seeding
             and the original torrent has been moved to a different category.
         """
-        gg_bot_database = "gg-bot-reuploader"
+        gg_bot_database = "gg-bot-reuploader-transmission-auth-mongo"
         mongo_client: MongoClient = reuploader.cache.cache_client.mongo_client
         database = mongo_client.get_database(gg_bot_database)
 
@@ -299,7 +327,7 @@ class TestAutoReuploaderAuthMongo:
         torrent_collection = database.get_collection("ReUpload_Torrent")
         torrents = list(torrent_collection.find({}))
         assert len(torrents) == 1
-        assert torrents[0]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80"
+        assert torrents[0]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert (
             torrents[0]["name"]
             == "Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv"
@@ -308,7 +336,9 @@ class TestAutoReuploaderAuthMongo:
         assert torrents[0]["upload_attempt"] == 1
         assert torrents[0]["possible_matches"] == "None"
         assert torrents[0]["torrent"] is not None
-        assert "F97062F80387BBBD8C1D2F04DBD3830D0706FF80" in torrents[0]["torrent"]
+        assert (
+            "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower() in torrents[0]["torrent"]
+        )
         assert torrents[0]["movie_db"] is not None
         assert torrents[0]["movie_db"] == json.dumps(expected_movie_db_data)
         assert torrents[0]["id"] is not None
@@ -316,7 +346,7 @@ class TestAutoReuploaderAuthMongo:
         job_collection = database.get_collection("ReUpload_JobRepository")
         jobs = list(job_collection.find({}))
         assert len(jobs) == 1
-        assert jobs[0]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80"
+        assert jobs[0]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert jobs[0]["tracker"] == "TSP"
         assert jobs[0]["status"] == "SUCCESS"
         assert jobs[0]["job_id"] is not None
@@ -328,9 +358,9 @@ class TestAutoReuploaderAuthMongo:
         all_torrents = reuploader.torrent_client.list_all_torrents()
         assert len(all_torrents) == 2
         for torrent in all_torrents:
-            if torrent["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80":
+            if torrent["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower():
                 assert torrent["category"] == "GGBotCrossSeed_Source"
-            if torrent["hash"] == "607AFF625031CD1F68A8B9C62B044112945F6C9A":
+            if torrent["hash"] == "607AFF625031CD1F68A8B9C62B044112945F6C9A".lower():
                 assert torrent["category"] == "GGBotCrossSeed"
 
         assert all_torrents[0]["size"] == all_torrents[0]["size"]
@@ -448,7 +478,7 @@ class TestAutoReuploaderAuthMongo:
         We also need to list all torrents from torrent client and ensure that the new torrent is seeding
             and the original torrent has been moved to a different category.
         """
-        gg_bot_database = "gg-bot-reuploader-rutorrent-dynamic"
+        gg_bot_database = "gg-bot-reuploader-transmission-auth-mongo-dynamic"
         mongo_client: MongoClient = reuploader.cache.cache_client.mongo_client
         database = mongo_client.get_database(gg_bot_database)
 
@@ -477,7 +507,7 @@ class TestAutoReuploaderAuthMongo:
         torrent_collection = database.get_collection("ReUpload_Torrent")
         torrents = list(torrent_collection.find({}))
         assert len(torrents) == 1
-        assert torrents[0]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80"
+        assert torrents[0]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert (
             torrents[0]["name"]
             == "Deadpool.&.Wolverine.2024.2160p.AMZN.WEB-DL.HDR.DDP.5.1.H.264-ReleaseGroup.mkv"
@@ -486,7 +516,9 @@ class TestAutoReuploaderAuthMongo:
         assert torrents[0]["upload_attempt"] == 1
         assert torrents[0]["possible_matches"] == "None"
         assert torrents[0]["torrent"] is not None
-        assert "F97062F80387BBBD8C1D2F04DBD3830D0706FF80" in torrents[0]["torrent"]
+        assert (
+            "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower() in torrents[0]["torrent"]
+        )
         assert torrents[0]["movie_db"] is not None
         assert torrents[0]["movie_db"] == json.dumps(expected_movie_db_data)
         assert torrents[0]["id"] is not None
@@ -494,31 +526,31 @@ class TestAutoReuploaderAuthMongo:
         job_collection = database.get_collection("ReUpload_JobRepository")
         jobs = list(job_collection.find({}))
         assert len(jobs) == 7
-        assert jobs[0]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80"
+        assert jobs[0]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert jobs[0]["tracker"] == "BHD"
         assert jobs[0]["status"] == "SUCCESS"
         assert jobs[0]["job_id"] is not None
         assert jobs[0]["tracker_response"] == '{"success": true}'
 
-        assert jobs[1]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80"
-        assert jobs[1]["tracker"] == "DT"
-        assert jobs[1]["status"] == "SUCCESS"
+        assert jobs[1]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
+        assert jobs[1]["tracker"] == "ATH"
+        assert jobs[1]["status"] == "DUPE_UPLOAD"
         assert jobs[1]["job_id"] is not None
-        assert jobs[1]["tracker_response"] == '{"success": true}'
+        assert jobs[1]["tracker_response"] == "null"
 
-        assert jobs[2]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80"
-        assert jobs[2]["tracker"] == "SPD"
-        assert jobs[2]["status"] == "SUCCESS"
+        assert jobs[2]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
+        assert jobs[2]["tracker"] == "DT"
+        assert jobs[2]["status"] == "DUPE_UPLOAD"
         assert jobs[2]["job_id"] is not None
-        assert jobs[2]["tracker_response"] == '{"success": true}'
+        assert jobs[2]["tracker_response"] == "null"
 
-        assert jobs[3]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80"
-        assert jobs[3]["tracker"] == "GPW"
+        assert jobs[3]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
+        assert jobs[3]["tracker"] == "SPD"
         assert jobs[3]["status"] == "SUCCESS"
         assert jobs[3]["job_id"] is not None
         assert jobs[3]["tracker_response"] == '{"success": true}'
 
-        assert jobs[4]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80"
+        assert jobs[4]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert jobs[4]["tracker"] == "BHDTV"
         assert jobs[4]["status"] == "FAILED"
         assert jobs[4]["job_id"] is not None
@@ -527,13 +559,13 @@ class TestAutoReuploaderAuthMongo:
             == '{"data": "No user found!", "message": "Unauthorized", "status": "Error"}'
         )
 
-        assert jobs[5]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80"
+        assert jobs[5]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert jobs[5]["tracker"] == "ANT"
-        assert jobs[5]["status"] == "SUCCESS"
+        assert jobs[5]["status"] == "FAILED"
         assert jobs[5]["job_id"] is not None
-        assert jobs[5]["tracker_response"] == '{"success": true}'
+        assert jobs[5]["tracker_response"] == "500"
 
-        assert jobs[6]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80"
+        assert jobs[6]["hash"] == "F97062F80387BBBD8C1D2F04DBD3830D0706FF80".lower()
         assert jobs[6]["tracker"] == "TSP"
         assert jobs[6]["status"] == "SUCCESS"
         assert jobs[6]["job_id"] is not None
@@ -543,17 +575,23 @@ class TestAutoReuploaderAuthMongo:
         )
 
         all_torrents = reuploader.torrent_client.list_all_torrents()
-        assert len(all_torrents) == 7
+        assert len(all_torrents) == 4
 
         original_torrent = None
         for torrent in all_torrents:
-            if torrent["hash"].lower() != "f97062f80387bbbd8c1d2f04dbd3830d0706ff80":
+            if (
+                torrent["hash"].lower()
+                != "f97062f80387bbbd8c1d2f04dbd3830d0706ff80".lower()
+            ):
                 continue
             original_torrent = torrent
             break
 
         for torrent in all_torrents:
-            if torrent["hash"].lower() == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80":
+            if (
+                torrent["hash"].lower()
+                == "f97062f80387bbbd8c1d2f04dbd3830d0706ff80".lower()
+            ):
                 assert torrent["category"] == "PARTIALLY_SUCCESSFUL"
             else:
                 assert torrent["category"] == "GGBotCrossSeed"

@@ -182,6 +182,42 @@ def deluge_container(docker_testing_network, e2e_test_working_folder):
     )
 
 
+@pytest.fixture
+def transmission_container_function_scoped(
+    docker_testing_network, e2e_test_working_folder
+):
+    logging.info(
+        "[TestContainers]Creating Transmission docker container scoped to function"
+    )
+    container = DockerContainer("lscr.io/linuxserver/transmission:latest")
+    container.with_bind_ports(9091, 9092)
+    container.with_network(docker_testing_network)
+    container.with_network_aliases("transmission_function")
+
+    container.with_env("PUID", "1000")
+    container.with_env("PGID", "1000")
+    container.with_env("TZ", "UTC")
+    container.with_env("USER", "TRANSMISSION_USER")
+    container.with_env("PASS", "TRANSMISSION_USER_PASSWORD")
+
+    # the paths needs to be same to allow reuploader to access the media files
+    container.with_volume_mapping(
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+        f"{e2e_test_working_folder}/{e2e_resources_dir}",
+    )
+
+    container.start()
+    container_id = container._container.id
+    logging.info(
+        f"[TestContainers] Created Transmission container for e2e testing scoped to function: {container_id}"
+    )
+    yield container
+    container.stop()
+    logging.info(
+        f"[TestContainers] Removed the Transmission container used for e2e testing scoped to function: {container_id}"
+    )
+
+
 @pytest.fixture(scope="module", autouse=True)
 def transmission_container(docker_testing_network, e2e_test_working_folder):
     logging.info("[TestContainers]Creating Transmission docker container")
@@ -312,6 +348,37 @@ def deluge_credentials(deluge_container):
         "port": port,
         "username": "localclient",
         "password": "46495af7aaba2b27a33002c596747e82bdf88450",
+    }
+
+
+@pytest.fixture
+def transmission_credentials_function_scoped(transmission_container_function_scoped):
+    time.sleep(2)  # allowing time for transmission container to start properly
+
+    transmission_function_scoped_logs = "".join(
+        [
+            log.decode("utf-8")
+            for log in transmission_container_function_scoped.get_logs()
+            if isinstance(log, bytes)
+        ]
+    )
+    match1 = re.search(
+        r"Connection to localhost \(127\.0\.0\.1\) 9091 port \[tcp/.*] succeeded!",
+        transmission_function_scoped_logs,
+    )
+    match2 = re.search(r"\[ls\.io-init] done\.", transmission_function_scoped_logs)
+
+    assert bool(match1) is True, "Failed to connect to transmission host"
+    assert bool(match2) is True, "Transmission container didn't start as expected"
+
+    host = transmission_container_function_scoped.get_container_host_ip()
+    port = transmission_container_function_scoped.get_exposed_port(9091)
+
+    yield {
+        "host": host,
+        "port": port,
+        "username": "TRANSMISSION_USER",
+        "password": "TRANSMISSION_USER_PASSWORD",
     }
 
 

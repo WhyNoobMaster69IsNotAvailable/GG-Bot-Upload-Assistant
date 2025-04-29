@@ -1,5 +1,21 @@
 # GG Bot Upload Assistant
 # Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
@@ -386,13 +402,18 @@ class AutoReUploaderManager:
         }
         self.insert_into_job_repo(job_repo_entry)
 
-    def mark_failed_upload(self, torrent, tracker, upload_response):
+    def mark_failed_upload(
+        self, torrent, tracker, upload_response, job_status: JobStatus = None
+    ):
         # getting the overall status of the torrent from cache
         torrent_status = self.get_torrent_status(torrent["hash"])
 
         # this is the first tracker for this torrent
         self._save_job_repo_entry(
-            torrent["hash"], tracker, JobStatus.FAILED, upload_response
+            torrent["hash"],
+            tracker,
+            job_status if job_status else JobStatus.FAILED,
+            upload_response,
         )
 
         # inserting the torrent->tracker data to job_repository

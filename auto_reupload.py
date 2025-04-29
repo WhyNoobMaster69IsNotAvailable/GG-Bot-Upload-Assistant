@@ -63,7 +63,11 @@ from modules.constants import (
 )
 from modules.description.description_manager import GGBotDescriptionManager
 from modules.exceptions.exception import GGBotUploaderException, GGBotFatalException
-from modules.reuploader.enums import TrackerUploadStatus, TorrentFailureStatus
+from modules.reuploader.enums import (
+    TrackerUploadStatus,
+    TorrentFailureStatus,
+    JobStatus,
+)
 from modules.reuploader.reupload_manager import AutoReUploaderManager
 from modules.sentry_config import SentryConfig
 from modules.sys_arguments.arg_parser import GGBotArgumentParser
@@ -648,10 +652,16 @@ class GGBotReUploader:
             )
             console.print("Upload failed.", style="bold red")
             try:
-                logging.critical(
-                    f'[GGBotReUploader] 400 was returned on that upload, this is a problem with the site ({upload_to}).'
-                    f' Error: Error {response.json()["error"] if "error" in response.json() else response.json()}'
+                error = (
+                    response.json()["error"]
+                    if "error" in response.json()
+                    else response.json()
                 )
+                logging.critical(
+                    f"[GGBotReUploader] 400 was returned on that upload, this is a problem with the site ({upload_to})."
+                    f" Error: Error {error}"
+                )
+                return False, error or response.status_code
             except Exception:
                 logging.error(
                     f"[GGBotReUploader] 400 was returned on that upload, this is a problem with the site ({upload_to}).",
@@ -661,7 +671,7 @@ class GGBotReUploader:
                 f"[TrackerUpload] Upload failed to tracker {upload_to}",
                 extra={"error": response.text},
             )
-            return False, response.status_code
+            return False, response.text or response.status_code
 
         else:
             console.print(
@@ -673,7 +683,7 @@ class GGBotReUploader:
             logging.error(
                 "[GGBotReUploader] Status code is not 200, upload might have failed"
             )
-            return False, "Unknown Error"
+            return False, f"Unknown Error. Status Code: {response.status_code}"
         # -------------- END of upload_to_site --------------
 
     # ---------------------------------------------------------------------- #
@@ -1015,6 +1025,9 @@ class GGBotReUploader:
                 f"/bold red]",
                 style="red",
             )
+            self.reupload_manager.mark_failed_upload(
+                torrent, tracker, None, job_status=JobStatus.BANNED_GROUP
+            )
             return TrackerUploadStatus.BANNED_GROUP, None
 
         # -------- format the torrent title --------
@@ -1072,6 +1085,9 @@ class GGBotReUploader:
                 # If dupe was found & the script is auto_mode OR if the user responds with 'n' for the 'dupe
                 # found, continue?' prompt we will essentially stop the current 'for loops' iteration & jump back
                 # to the beginning to start next cycle (if exists else quits)
+                self.reupload_manager.mark_failed_upload(
+                    torrent, tracker, None, job_status=JobStatus.DUPE_UPLOAD
+                )
                 return TrackerUploadStatus.DUPE, None
 
         # -------- Generate .torrent file --------
@@ -1120,6 +1136,9 @@ class GGBotReUploader:
             )
             == "STOP"
         ):
+            self.reupload_manager.mark_failed_upload(
+                torrent, tracker, None, job_status=JobStatus.INVALID_PAYLOAD
+            )
             return TrackerUploadStatus.PAYLOAD_ERROR, None
 
         logging.debug(
@@ -1550,6 +1569,14 @@ class GGBotReUploader:
             api_keys_dict=self.api_keys_dict,
             all_trackers_list=self.acronym_to_tracker.keys(),
         )
+        for tracker in self.blacklist_trackers:
+            if tracker not in target_trackers:
+                continue
+            target_trackers.remove(tracker)
+            console.print(
+                f"[red bold] Uploading to [yellow]{tracker}[/yellow] not supported in GGBOT Auto ReUploader"
+            )
+
         logging.info(
             f"[Main] Trackers this torrent needs to be uploaded to are {target_trackers}"
         )
