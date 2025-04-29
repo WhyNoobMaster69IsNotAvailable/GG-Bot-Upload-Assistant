@@ -1,4 +1,20 @@
 # GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# GG Bot Upload Assistant
 # Copyright (C) 2022  Noob Master669
 #
 # This program is free software: you can redistribute it and/or modify
@@ -63,9 +79,7 @@ class Query:
     UNKNOWN_FAILURE = {"status": TorrentStatus.UNKNOWN_FAILURE}
     DUPE_CHECK_FAILED = {"status": TorrentStatus.DUPE_CHECK_FAILED}
     PARTIALLY_SUCCESSFUL = {"status": TorrentStatus.PARTIALLY_SUCCESSFUL}
-    TMDB_IDENTIFICATION_FAILED = {
-        "status": TorrentStatus.TMDB_IDENTIFICATION_FAILED
-    }
+    TMDB_IDENTIFICATION_FAILED = {"status": TorrentStatus.TMDB_IDENTIFICATION_FAILED}
 
 
 def serialize_json(function):
@@ -118,9 +132,7 @@ def _get_data_as_object_from_torrents_collection(
 
 
 def __get_unique_document(cache, info_hash):
-    document = cache.get(
-        TORRENT_DB_KEY_PREFIX, {"hash": {"$regex": f"^{info_hash}"}}
-    )
+    document = cache.get(TORRENT_DB_KEY_PREFIX, {"hash": {"$regex": f"^{info_hash}"}})
     return None if len(document) != 1 else document[0]
 
 
@@ -136,9 +148,7 @@ class VisorServerManager:
             "all": self._count_torrents_collection({}),
             "successful": self._count_torrents_collection(Query.SUCCESS),
             "failed": self._count_torrents_collection(Query.ALL_FAILED),
-            "partial": self._count_torrents_collection(
-                Query.PARTIALLY_SUCCESSFUL
-            ),
+            "partial": self._count_torrents_collection(Query.PARTIALLY_SUCCESSFUL),
         }
 
     def failed_torrents_statistics(self):
@@ -150,9 +160,7 @@ class VisorServerManager:
             "tmdb_failure": self._count_torrents_collection(
                 Query.TMDB_IDENTIFICATION_FAILED
             ),
-            "unknown_failure": self._count_torrents_collection(
-                Query.UNKNOWN_FAILURE
-            ),
+            "unknown_failure": self._count_torrents_collection(Query.UNKNOWN_FAILURE),
             "dupe_check_failure": self._count_torrents_collection(
                 Query.DUPE_CHECK_FAILED
             ),
@@ -188,9 +196,7 @@ class VisorServerManager:
             items_per_page=10,
             filter_query={"id": torrent_id},
         )
-        self.__validate_torrent_from_cache(
-            torrent_id=torrent_id, torrent=torrent
-        )
+        self.__validate_torrent_from_cache(torrent_id=torrent_id, torrent=torrent)
         return torrent
 
     def get_torrent_details_object(self, torrent_id):
@@ -201,9 +207,7 @@ class VisorServerManager:
             items_per_page=10,
             filter_query={"id": torrent_id},
         )
-        self.__validate_torrent_from_cache(
-            torrent_id=torrent_id, torrent=torrent
-        )
+        self.__validate_torrent_from_cache(torrent_id=torrent_id, torrent=torrent)
         return torrent
 
     def update_torrent_object(self, torrent):
@@ -219,10 +223,7 @@ class VisorServerManager:
     def update_torrent(self, *, torrent_id, update_data):
         torrent = self.get_torrent_details_object(torrent_id=torrent_id)[0]
 
-        if (
-            update_data["action_items"]["action"]
-            == TorrentActions.UPDATE_TMDB.value
-        ):
+        if update_data["action_items"]["action"] == TorrentActions.UPDATE_TMDB.value:
             self.__update_tmdb_metadata(
                 torrent=torrent, **update_data["action_items"]["action_options"]
             )

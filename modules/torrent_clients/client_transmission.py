@@ -1,19 +1,18 @@
 # GG Bot Upload Assistant
-# Copyright (C) 2022  Noob Master669
-#
+# Copyright (C) 2025  Noob Master669
+
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
+
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-#
+
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 import logging
 import re
 from datetime import datetime
@@ -130,6 +129,9 @@ class Transmission(GGBotTorrentClientTemplate):
         # user wants to ignore labels, hence we'll consider all the torrents
         if self.target_label == "IGNORE_LABEL":
             return True
+        # if dynamic tracker selection is enabled, then labels will follow the pattern GGBOT::TR1::TR2::TR3
+        if self.dynamic_tracker_selection:
+            return label.startswith(self.target_label)
         return label == self.target_label
 
     @staticmethod

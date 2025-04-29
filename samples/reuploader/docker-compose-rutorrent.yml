@@ -29,8 +29,24 @@ services:
     image: mongo:${MONGO_VERSION}
     hostname: mongo
     restart: unless-stopped
+    command: ["--auth"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root_password
     volumes:
       - ${BASE_PATH}/apps/mongo:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+  mongo-express:
+    image: mongo-express:latest
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    env_file:
+      - .mongo_express.env
+    depends_on:
+      - mongo
+
   rutorrent:
     image: romancin/rutorrent:${RUTORRENT_VERSION}
     hostname: rutorrent

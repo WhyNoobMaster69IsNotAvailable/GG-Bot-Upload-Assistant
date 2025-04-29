@@ -28,9 +28,7 @@ working_folder = Path(__file__).resolve().parent.parent.parent
 @pytest.fixture(scope="class")
 def load_config():
     yield json.load(
-        open(
-            f"{working_folder}/tests/resources/translations/hybrid_mapping.json"
-        )
+        open(f"{working_folder}/tests/resources/translations/hybrid_mapping.json")
     )
 
 
@@ -197,9 +195,7 @@ def test_get_hybrid_type(load_config, tracker_settings, torrent_info, expected):
     ],
 )
 @pytest.mark.usefixtures("load_config")
-def test_get_hybrid_type_application_exit(
-    load_config, tracker_settings, torrent_info
-):
+def test_get_hybrid_type_application_exit(load_config, tracker_settings, torrent_info):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         GGBotHybridMapper(
             hybrid_mappings=load_config["hybrid_mappings"],
@@ -208,10 +204,9 @@ def test_get_hybrid_type_application_exit(
         ).perform_hybrid_mapping(
             translation_value="subcat", tracker_settings=tracker_settings
         )
-    assert pytest_wrapped_e.type == SystemExit
+    assert pytest_wrapped_e.type is SystemExit
     assert (
-        pytest_wrapped_e.value.code
-        == "Invalid hybrid mapping configuration provided."
+        pytest_wrapped_e.value.code == "Invalid hybrid mapping configuration provided."
     )
 
 
@@ -236,9 +231,7 @@ def test_should_delay_mapping(load_config, tracker_settings, expected):
     assert (
         GGBotHybridMapper.should_delay_mapping(
             translation_value="subcat",
-            prerequisites=load_config["hybrid_mappings"]["subcat"][
-                "prerequisite"
-            ],
+            prerequisites=load_config["hybrid_mappings"]["subcat"]["prerequisite"],
             tracker_settings=tracker_settings,
         )
         == expected

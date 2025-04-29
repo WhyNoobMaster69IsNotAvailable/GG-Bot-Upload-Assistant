@@ -43,9 +43,7 @@ def run_around_tests():
     if Path(folder).is_dir():
         clean_up(folder)
 
-    Path(f"{folder}/{hash_prefix}screenshots").mkdir(
-        parents=True, exist_ok=True
-    )
+    Path(f"{folder}/{hash_prefix}screenshots").mkdir(parents=True, exist_ok=True)
 
     yield
     clean_up(folder)
@@ -121,9 +119,7 @@ def test_take_upload_screens_1_screenshots(mocker):
     with open(
         f"{working_folder}/{media_path}/temp_upload/{hash_prefix}screenshots/uploads_complete.mark",
     ) as completed_mark:
-        assert (
-            completed_mark.readline() == "ALL_SCREENSHOT_UPLOADED_SUCCESSFULLY"
-        )
+        assert completed_mark.readline() == "ALL_SCREENSHOT_UPLOADED_SUCCESSFULLY"
         completed_mark.close()
 
 

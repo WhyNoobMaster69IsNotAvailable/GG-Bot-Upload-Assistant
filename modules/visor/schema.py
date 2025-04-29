@@ -26,8 +26,8 @@ class GGBotReUploaderSchema(Schema):
 
 
 class UpdateTmdbSchema(GGBotReUploaderSchema):
-    tmdb = fields.Str(missing=None)
-    imdb = fields.Str(missing=None)
+    tmdb = fields.Str(load_default=None)
+    imdb = fields.Str(load_default=None)
 
     @post_load
     def validate(self, data):

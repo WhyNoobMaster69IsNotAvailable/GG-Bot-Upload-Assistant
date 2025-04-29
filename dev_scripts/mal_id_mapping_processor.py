@@ -1,3 +1,19 @@
+# GG Bot Upload Assistant
+# Copyright (C) 2025  Noob Master669
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import requests
 from typing import Dict, Any
 import json
@@ -34,9 +50,7 @@ class AnimeListIdMapper:
         print("Successfully downloaded latest mapping...")
         return response.text
 
-    def _prepare_mapping_structure(
-        self, raw_mapping
-    ) -> Dict[str, Dict[Any, Any]]:
+    def _prepare_mapping_structure(self, raw_mapping) -> Dict[str, Dict[Any, Any]]:
         print("Processing latest mapping...")
         anime_list = json.loads(raw_mapping)
         id_to_mal_mapping = {}

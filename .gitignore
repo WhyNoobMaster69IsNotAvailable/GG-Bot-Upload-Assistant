@@ -12,6 +12,7 @@ __pycache__/
 /cookies
 /external
 /dev_scripts/gibberish
+keys
 
 # Excluded file formats
 *.mkv

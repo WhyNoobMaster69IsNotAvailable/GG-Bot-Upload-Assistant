@@ -39,3 +39,9 @@ repos:
         language: system
         entry: poetry run codespell
         types: [text]
+      - id: add-license-header
+        name: add license header
+        description: Add the required license header to Python files if missing
+        language: script
+        entry: ./hooks/add_license_header.py
+        types: [python]

@@ -52,6 +52,7 @@ automated torrent uploading.
 # Main Features
 
 * Generate, parse and attach `Mediainfo` or `BDInfo` to torrent uploads
+* Support for encrypted secrets in config files. [Demo](https://asciinema.org/a/716946)
 * Support for Full Disk uploads
 * Support for per
   tracker [Custom Description Templates](https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/wikis/Custom-Description-Templates)
@@ -83,7 +84,8 @@ to catch any errors / exceptions that happen in the application and fix them pro
 
 
 > If you do no wish to have this enabled, you can disable the error log tracking from the config file. Simple
-> set `ENABLE_SENTRY_ERROR_TRACKING` to `False` in assistant or re-uploader config and error / exceptions will not be sent
+> set `ENABLE_SENTRY_ERROR_TRACKING` to `False` in assistant or re-uploader config and error / exceptions will not be
+> sent
 > to GitLab.
 
 - No personal information is collected from this error tracking. No API_KEYS or PIDs will be sent to the repository.
@@ -350,7 +352,8 @@ docker run --rm -it \
    try python3.9)
 
 > Run command
-> template ```python3 auto_upload.py -t <TRACKERS> -p "<FILE_OR_FOLDER_TO_BE_UPLOADED>" [OPTIONAL ARGUMENTS 1] [OPTIONAL ARGUMENTS 2...]```
+>
+template ```python3 auto_upload.py -t <TRACKERS> -p "<FILE_OR_FOLDER_TO_BE_UPLOADED>" [OPTIONAL ARGUMENTS 1] [OPTIONAL ARGUMENTS 2...]```
 > Please see Bare Metal Installation and Upgrade Wiki for details instructions.
 
 <br>
@@ -424,17 +427,17 @@ pip install -r requirements/requirements.txt
 
 # Roadmap
 
-### v3.2.0
+### v3.2.1
 
 - [ ] New Tracker: UHDBits
+- [ ] New Tracker: DigitalCoreClub
 - [ ] Use IMDB GraphQL Api
 - [ ] Use Anilist GraphQL Api
 - [ ] Support for encrypted values from config
 - [ ] Issue#79: Not able to cross-seed rared releases
 - [ ] Issue#93: Bit-hdtv doesn't allow ptpimg screenshots
-- [ ] Issue#151: Re-uploader MongoDB with authentication
 
-### v3.2.1
+### v3.2.2
 
 - [ ] EPIC: GG-Bot Auto Uploader
 - [ ] EPIC: GG-Bot Visor for reports and failure recoveries
@@ -519,6 +522,22 @@ This project exists thanks to all the people who contribute.
 <br>
 
 # Change Log
+
+## **3.2**
+    New Features
+        * Support for encrypted config.env files
+        * Added VC-1 codec support from blu-ray disks
+        * Added Dolby Digital Ex codec support from blu-ray disks
+        * [Reuploader] Added support for authenticated mongo db with examples
+
+    Underhood Changes
+        * Fixed pyyaml dependency
+
+    Bug Fixes
+        * Issue#203: Uploads fails when tmdb doesn't have any poster
+        * Issue#204: Uploading to wrong tracker with right tracker's API key and PID
+
+<br>
 
 ## **3.1.9**
 
