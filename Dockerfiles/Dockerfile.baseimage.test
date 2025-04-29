@@ -44,9 +44,9 @@ RUN set -eux; \
 	gnupg \
 	tar \
 	xz \
-	\
 	bluez-dev \
 	bzip2-dev \
+  libffi-dev \
 	dpkg-dev dpkg \
 	expat-dev \
 	findutils \
