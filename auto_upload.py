@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # GG Bot Upload Assistant
-# Copyright (C) 2022  Noob Master669
+# Copyright (C) 2025  Noob Master669
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
