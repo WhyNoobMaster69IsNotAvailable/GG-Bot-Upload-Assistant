@@ -19,16 +19,6 @@ FROM noobmaster669/gg-bot-base:latest
 
 WORKDIR /app
 
-RUN \
-	echo "**** install build packages ****" && \
-	apk add --no-cache --virtual=build-dependencies \
-	g++ \
-  libxml2-dev \
-  libxslt-dev \
-	py3-pip \
-	python3-dev
-
-
 # add local files
 COPY requirements requirements
 RUN \
