@@ -76,6 +76,7 @@ class GGBotConfig(ABC):
         if raw_value is None:
             return default
 
+        raw_value = str(raw_value)
         # --- Decryption Logic ---
         # Use global_decryptor_instance directly
         if global_decryptor_instance and raw_value.startswith("ENC::"):

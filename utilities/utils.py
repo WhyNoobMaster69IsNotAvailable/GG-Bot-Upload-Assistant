@@ -866,6 +866,8 @@ class GenericUtils:
         # After we finish uploading, we can add all the dot torrent files to a torrent client to start seeding immediately.
         # This post-processing step can be enabled or disabled based on the users configuration
         if upload_assistant_config.ENABLE_POST_PROCESSING:
+            # TODO: first we need to check whether torrent download from tracker is needed or not.
+            # If yes, then download nad use that. Otherwise don't do anything.
             # When running in a bare meta, there is a chance for the user to provide relative paths.
             """data/movie_name/movie.mkv"""
             # the way to identify a relative path is to check whether the `upload_media` starts with a `/`

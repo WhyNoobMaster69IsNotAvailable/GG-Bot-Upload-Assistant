@@ -503,6 +503,16 @@ def test_check_successful_upload(response, expected, mocker):
             {
                 "tmdb_metadata": {"keywords": []},
                 "type": "movie",
+                "duration": "4200000",  # 20min * 60000
+                "imdb": "0499549",
+            },
+            "Feature Film",
+            id="feature_film_by_imdb",
+        ),
+        pytest.param(
+            {
+                "tmdb_metadata": {"keywords": []},
+                "type": "movie",
                 "duration": "1200000",  # 20min * 60000
                 "imdb": "",
             },
@@ -518,16 +528,6 @@ def test_check_successful_upload(response, expected, mocker):
             },
             "Short Film",
             id="short_film_by_imdb",
-        ),
-        pytest.param(
-            {
-                "tmdb_metadata": {"keywords": []},
-                "type": "movie",
-                "duration": "4200000",  # 20min * 60000
-                "imdb": "0499549",
-            },
-            "Feature Film",
-            id="feature_film_by_imdb",
         ),
     ],
 )

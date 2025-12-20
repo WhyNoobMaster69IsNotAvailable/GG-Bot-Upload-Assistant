@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>config.env Documentation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page-id="config.env">
+    <div class="container">
+
+        <h1>config.env Documentation</h1>
+        <div class='description'>
+            <p>This documentation is automatically generated from the configuration file.</p>
+            <a href='index.html' class='back-link'>Back to Index</a>
+        </div>
+
+        <h2>Table of Contents</h2>
+        <ul class='toc'><li><a href='#'></a></li><li><a href='#'></a></li><li><a href='#'></a></li><li><a href='#'></a></li><li><a href='#'></a></li><li><a href='#'>---------------------------</a></li><li><a href='#'></a></li><li><a href='#'>------------------------------------------------------------</a></li><li><a href='#'></a></li><li><a href='#-if-you-arent-using-docker-containers-for-anything-and-your-rtorrent-path-is-the-same-as-your-system-path-set-translationneeded-equal-to-false-'>------ If you aren't using docker containers for anything and your rtorrent path is the same as your system path, set 'translation_needed' equal to False -----</a></li><li><a href='#'></a></li></ul>
+
+        <div class='filter-container'>
+            <input type='text' id='variable-filter' placeholder='Filter variables...' class='filter-input'>
+            <div class='filter-options'>
+                <label><input type='checkbox' id='show-required-only'> Show required only</label>
+            </div>
+        </div>
+
+        <div class='sections-container'>
+
+            <div class='config-section' id=''>
+                <h2></h2>
+                <div class='section-description'>Enable sentry error tracking or not. You can disable this if you don&#x27;t want<br>to send stack traces and errors to the project sentry error log.<br>This is aenabled by default to help with identifying any errors or exceptions pro-actively and take necessary actions.<br>Note: No personal information is collected from this tracking tool. No API_KEYS or PIDs will be sent to the repository.<br>Note: User tracking is not enabled in this project.<br>Note: Search for `if sentry_config.ENABLE_SENTRY_ERROR_TRACKING is True:` to see the configs enabled.<br>You can read more about Gitlab Sentry error tracking here: <a href="https://docs.gitlab.com/ee/operations/integrated_error_tracking.html" target="_blank">https://docs.gitlab.com/ee/operations/integrated_error_tracking.html</a><br>Unfortunately I couldn&#x27;t find any way to make the error logs publicly available from gitlab.</div>
+
+                <table class='variables-table'>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr class='variable-row' data-name='ENABLE_SENTRY_ERROR_TRACKING'>
+                        <td class='var-name'><code>ENABLE_SENTRY_ERROR_TRACKING</code></td>
+                        <td class='var-type'><span class='type-badge type-boolean'>boolean</span></td>
+                        <td class='var-default'><code>True</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            <div class='config-section' id=''>
+                <h2></h2>
+                <div class='section-description'>DarkLand</div>
+
+                <table class='variables-table'>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr class='variable-row' data-name='DL_API_KEY'>
+                        <td class='var-name'><code>DL_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='DL_ANNOUNCE_URL'>
+                        <td class='var-name'><code>DL_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://darkland.top/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='SHRI_API_KEY'>
+                        <td class='var-name'><code>SHRI_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Shareisland</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='SHRI_ANNOUNCE_URL'>
+                        <td class='var-name'><code>SHRI_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://shareisland.org/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='ACM_API_KEY'>
+                        <td class='var-name'><code>ACM_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>AsianCinema</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='ACM_ANNOUNCE_URL'>
+                        <td class='var-name'><code>ACM_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://eiga.moi/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='BHD_API_KEY'>
+                        <td class='var-name'><code>BHD_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Beyond-HD</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='BHD_ANNOUNCE_URL'>
+                        <td class='var-name'><code>BHD_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://beyond-hd.me/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='BLU_API_KEY'>
+                        <td class='var-name'><code>BLU_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Blutopia</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='BLU_ANNOUNCE_URL'>
+                        <td class='var-name'><code>BLU_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://blutopia.cc/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='R4E_API_KEY'>
+                        <td class='var-name'><code>R4E_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Racing4Everyone</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='R4E_ANNOUNCE_URL'>
+                        <td class='var-name'><code>R4E_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://racing4everyone.eu/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='ATH_API_KEY'>
+                        <td class='var-name'><code>ATH_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Aither</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='ATH_ANNOUNCE_URL'>
+                        <td class='var-name'><code>ATH_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://aither.cc/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TELLY_API_KEY'>
+                        <td class='var-name'><code>TELLY_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Telly.wtf</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TELLY_ANNOUNCE_URL'>
+                        <td class='var-name'><code>TELLY_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://telly.wtf/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='NTELOGO_API_KEY'>
+                        <td class='var-name'><code>NTELOGO_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Ntelogo</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='NTELOGO_ANNOUNCE_URL'>
+                        <td class='var-name'><code>NTELOGO_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://ntelogo.org/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TSP_API_KEY'>
+                        <td class='var-name'><code>TSP_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>TheScenePlace</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TSP_ANNOUNCE_URL'>
+                        <td class='var-name'><code>TSP_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>http://www.thesceneplace.com/announce.php?pid=&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='DT_API_KEY'>
+                        <td class='var-name'><code>DT_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>DesiTorrents</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='DT_ANNOUNCE_URL'>
+                        <td class='var-name'><code>DT_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://desitorrents.rocks/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='STC_API_KEY'>
+                        <td class='var-name'><code>STC_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>SkipTheCommericals</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='STC_ANNOUNCE_URL'>
+                        <td class='var-name'><code>STC_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://skipthecommericals.xyz/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='STT_API_KEY'>
+                        <td class='var-name'><code>STT_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>SkipTheTrailers</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='STT_ANNOUNCE_URL'>
+                        <td class='var-name'><code>STT_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://skipthetrailers.xyz/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='SPD_API_KEY'>
+                        <td class='var-name'><code>SPD_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>SpeedApp</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='SPD_ANNOUNCE_URL'>
+                        <td class='var-name'><code>SPD_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://ramjet.speedapp.io/&lt;TRACKER_PASS_KEY&gt;/announce</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TDB_API_KEY'>
+                        <td class='var-name'><code>TDB_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># Tracker Passkey</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>TorrentDB</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TDB_ANNOUNCE_URL'>
+                        <td class='var-name'><code>TDB_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://reactor.torrentdb.net/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='BHDTV_API_KEY'>
+                        <td class='var-name'><code>BHDTV_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>BIT-HDTV</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='BHDTV_ANNOUNCE_URL'>
+                        <td class='var-name'><code>BHDTV_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>http://tracker.bit-hdtv.com:2710/&lt;TRACKER_PASS_KEY&gt;/announce</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='NBL_API_KEY'>
+                        <td class='var-name'><code>NBL_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY - Torrent List and Upload permissions required</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Nebulance</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='NBL_ANNOUNCE_URL'>
+                        <td class='var-name'><code>NBL_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://nebulance.io:2001/&lt;TRACKER_PASS_KEY&gt;/announce</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='ANT_API_KEY'>
+                        <td class='var-name'><code>ANT_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY - Torrent List and Upload permissions required</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Anthelion</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='ANT_ANNOUNCE_URL'>
+                        <td class='var-name'><code>ANT_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://tracker.anthelion.me:34001/&lt;TRACKER_PASS_KEY&gt;/announce</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='RF_API_KEY'>
+                        <td class='var-name'><code>RF_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>ReelFliX</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='RF_ANNOUNCE_URL'>
+                        <td class='var-name'><code>RF_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://reelflix.xyz/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='SZN_API_KEY'>
+                        <td class='var-name'><code>SZN_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Swarmazon</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='SZN_ANNOUNCE_URL'>
+                        <td class='var-name'><code>SZN_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://tracker.swarmazon.club:8443/&lt;TRACKER_PASS_KEY&gt;/announce</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='LST_API_KEY'>
+                        <td class='var-name'><code>LST_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>LST</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='LST_ANNOUNCE_URL'>
+                        <td class='var-name'><code>LST_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://lst.gg/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='3EVILS_API_KEY'>
+                        <td class='var-name'><code>3EVILS_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>3Evils</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='3EVILS_ANNOUNCE_URL'>
+                        <td class='var-name'><code>3EVILS_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://3evils.net/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='PTP_API_USER'>
+                        <td class='var-name'><code>PTP_API_USER</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_USER</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>PassThePopcorn</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='PTP_API_KEY'>
+                        <td class='var-name'><code>PTP_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='PTP_ANNOUNCE_URL'>
+                        <td class='var-name'><code>PTP_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&lt;TRACKER_ANNOUNCE_URL&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='PTP_USER_NAME'>
+                        <td class='var-name'><code>PTP_USER_NAME</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># Username of your PTP Account</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='PTP_USER_PASSWORD'>
+                        <td class='var-name'><code>PTP_USER_PASSWORD</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># Password to your account (encouraged to wrap it inside &quot;&quot; )</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='PTP_2FA_ENABLED'>
+                        <td class='var-name'><code>PTP_2FA_ENABLED</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>False # Set this to True if you have 2fa enabled for your account.</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='PTP_2FA_CODE'>
+                        <td class='var-name'><code>PTP_2FA_CODE</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># The 2FA key to generate 2FA codes</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='PSS_API_KEY'>
+                        <td class='var-name'><code>PSS_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>PrivateSilverScreen</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='PSS_ANNOUNCE_URL'>
+                        <td class='var-name'><code>PSS_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://privatesilverscreen.cc/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='GPW_API_KEY'>
+                        <td class='var-name'><code>GPW_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>GreatPostertWall</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='GPW_ANNOUNCE_URL'>
+                        <td class='var-name'><code>GPW_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://tracker.greatposterwall.com/&lt;TRACKER_PASS_KEY&gt;/announce</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='RTX_API_KEY'>
+                        <td class='var-name'><code>RTX_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>RetroFlix</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='RTX_ANNOUNCE_URL'>
+                        <td class='var-name'><code>RTX_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>http://peer.retroflix.net/announce.php?passkey=&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TDC_API_KEY'>
+                        <td class='var-name'><code>TDC_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>TheDarkCommunity</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TDC_ANNOUNCE_URL'>
+                        <td class='var-name'><code>TDC_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://thedarkcommunity.cc/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='NXT_API_KEY'>
+                        <td class='var-name'><code>NXT_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>N3XTDemoSite</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='NXT_ANNOUNCE_URL'>
+                        <td class='var-name'><code>NXT_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>http://demo.n3xtsource.com/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TL_API_KEY'>
+                        <td class='var-name'><code>TL_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># TRACKER_PASS_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>TorrentLeech</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TL_ANNOUNCE_URL'>
+                        <td class='var-name'><code>TL_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;https://tracker.torrentleech.org/a/&lt;TRACKER_PASS_KEY&gt;/announce https://tracker.tleechreload.org/a/&lt;TRACKER_PASS_KEY&gt;/announce&#x27;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='ULCX_API_KEY'>
+                        <td class='var-name'><code>ULCX_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Upload.cx</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='ULCX_ANNOUNCE_URL'>
+                        <td class='var-name'><code>ULCX_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>http://upload.cx/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='FNP_API_KEY'>
+                        <td class='var-name'><code>FNP_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Fearnopeer</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='FNP_ANNOUNCE_URL'>
+                        <td class='var-name'><code>FNP_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://fearnopeer.com/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='OE_API_KEY'>
+                        <td class='var-name'><code>OE_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>OnlyEncodes</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='OE_ANNOUNCE_URL'>
+                        <td class='var-name'><code>OE_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://onlyencodes.cc/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='OTW_API_KEY'>
+                        <td class='var-name'><code>OTW_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>OldToonsWorld</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='OTW_ANNOUNCE_URL'>
+                        <td class='var-name'><code>OTW_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://oldtoons.world/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='VHD_API_KEY'>
+                        <td class='var-name'><code>VHD_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Vision-HD</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='VHD_ANNOUNCE_URL'>
+                        <td class='var-name'><code>VHD_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://vision-hd.org/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='YOINK_API_KEY'>
+                        <td class='var-name'><code>YOINK_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Yoinked</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='YOINK_ANNOUNCE_URL'>
+                        <td class='var-name'><code>YOINK_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://yoinked.org/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TMG_API_KEY'>
+                        <td class='var-name'><code>TMG_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>TmGHuB</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TMG_ANNOUNCE_URL'>
+                        <td class='var-name'><code>TMG_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://tmghub.org/announce.php?pid=&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='SPL_API_KEY'>
+                        <td class='var-name'><code>SPL_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># API_KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>SeedPool</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='SPL_ANNOUNCE_URL'>
+                        <td class='var-name'><code>SPL_ANNOUNCE_URL</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>https://seedpool.org/announce/&lt;TRACKER_PASS_KEY&gt;</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            <div class='config-section' id=''>
+                <h2></h2>
+                <div class='section-description'>TMDB API key (Required)</div>
+
+                <table class='variables-table'>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr class='variable-row' data-name='TMDB_API_KEY'>
+                        <td class='var-name'><code>TMDB_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># https://www.themoviedb.org/documentation/api</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='IMDB_API_KEY'>
+                        <td class='var-name'><code>IMDB_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># https://tv-api.com/api</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>IMDB API key (Optional)</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='TVDB_API_KEY'>
+                        <td class='var-name'><code>TVDB_API_KEY</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># https://www.thetvdb.com/api-information</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>TVDB Api Key</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='default_trackers_list'>
+                        <td class='var-name'><code>default_trackers_list</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'>(Optional) Comma separated list of trackers which should be considered as default or fallback trackers in case `--trackers or -t`  flag is not provided.<br>eg: default_tracker_list=NBL,BLU,BHDTV -&gt; This will by default uploads the torrent to NBL, BLU and BHDTV if `--trackers or -t` is not provided as command line argument.<br>please not that the command line argument `--trackers or -t` has higher priority and overrides `default_tracker_list` property.</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            <div class='config-section' id=''>
+                <h2></h2>
+                <div class='section-description'>GG-BOT uploaders support uploading screenshots to 9 different image hosting services.<br>|  imgbox  |  imgbb  |  freeimage  |  ptpimg  |  imgfi  |  imgur  |  snappie  | pixhost | lensdump |<br>set their order below (spelling matters) (to remove a host just delete the value and leave it blank)</div>
+
+                <table class='variables-table'>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr class='variable-row' data-name='img_host_1'>
+                        <td class='var-name'><code>img_host_1</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='img_host_2'>
+                        <td class='var-name'><code>img_host_2</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='img_host_3'>
+                        <td class='var-name'><code>img_host_3</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='img_host_4'>
+                        <td class='var-name'><code>img_host_4</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='img_host_5'>
+                        <td class='var-name'><code>img_host_5</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='img_host_6'>
+                        <td class='var-name'><code>img_host_6</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='img_host_7'>
+                        <td class='var-name'><code>img_host_7</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='img_host_8'>
+                        <td class='var-name'><code>img_host_8</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='img_host_9'>
+                        <td class='var-name'><code>img_host_9</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='pixhost_api_key'>
+                        <td class='var-name'><code>pixhost_api_key</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>leave_blank # No API key needed here</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>set the image hosts API keys below</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='imgbox_api_key'>
+                        <td class='var-name'><code>imgbox_api_key</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>leave_blank # No API key needed here</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='ptpimg_api_key'>
+                        <td class='var-name'><code>ptpimg_api_key</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># follow https://github.com/theirix/ptpimg-uploader#api-key guide to get api key</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='imgbb_api_key'>
+                        <td class='var-name'><code>imgbb_api_key</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='freeimage_api_key'>
+                        <td class='var-name'><code>freeimage_api_key</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='snappie_api_key'>
+                        <td class='var-name'><code>snappie_api_key</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># Get in touch with staff to get API KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='imgfi_api_key'>
+                        <td class='var-name'><code>imgfi_api_key</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># Get in touch with staff to get API KEY</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='imgur_api_key'>
+                        <td class='var-name'><code>imgur_api_key</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># this is your client_secret</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='imgur_client_id'>
+                        <td class='var-name'><code>imgur_client_id</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># register your application (https://api.imgur.com/oauth2/addclient) with Anonymous usage without user authorization to get client id and secret</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='lensdump_api_key'>
+                        <td class='var-name'><code>lensdump_api_key</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='ptscreens_api_key'>
+                        <td class='var-name'><code>ptscreens_api_key</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='num_of_screenshots'>
+                        <td class='var-name'><code>num_of_screenshots</code></td>
+                        <td class='var-type'><span class='type-badge type-integer'>integer</span></td>
+                        <td class='var-default'><code>10</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>pretty self explanatory, this will take number of screenshots you want, all evenly spaced depending on how long the video is<br>Set this to 0 if you want to upload without taking any screenshots</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='thumb_size'>
+                        <td class='var-name'><code>thumb_size</code></td>
+                        <td class='var-type'><span class='type-badge type-integer'>integer</span></td>
+                        <td class='var-default'><code>350</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='no_spoilers'>
+                        <td class='var-name'><code>no_spoilers</code></td>
+                        <td class='var-type'><span class='type-badge type-boolean'>boolean</span></td>
+                        <td class='var-default'><code>True</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>when no_spoilers is enabled, screenshots will be taken from the first half of the file<br>when no_spoilers is disabled, screenshots will be taken from the whole file after equal intervals</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            <div class='config-section' id=''>
+                <h2></h2>
+                <div class='section-description'></div>
+
+                <table class='variables-table'>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr class='variable-row' data-name='check_dupes'>
+                        <td class='var-name'><code>check_dupes</code></td>
+                        <td class='var-type'><span class='type-badge type-boolean'>boolean</span></td>
+                        <td class='var-default'><code>True</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            <div class='config-section' id=''>
+                <h2>---------------------------</h2>
+                <div class='section-description'></div>
+
+                <table class='variables-table'>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr class='variable-row' data-name='acceptable_similarity_percentage'>
+                        <td class='var-name'><code>acceptable_similarity_percentage</code></td>
+                        <td class='var-type'><span class='type-badge type-integer'>integer</span></td>
+                        <td class='var-default'><code>75</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            <div class='config-section' id=''>
+                <h2></h2>
+                <div class='section-description'>Set this to &#x27;False&#x27; if you want an interactive &amp; hands on experience<br>You&#x27;ll be prompted to select the correct TMDB ID, Prompted to fix any small issues/discrepancies found during the upload process<br>!! It&#x27;s recommended to keep this set to &#x27;False&#x27; !!</div>
+
+                <table class='variables-table'>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr class='variable-row' data-name='auto_mode'>
+                        <td class='var-name'><code>auto_mode</code></td>
+                        <td class='var-type'><span class='type-badge type-boolean'>boolean</span></td>
+                        <td class='var-default'><code>False</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='force_auto_upload'>
+                        <td class='var-name'><code>force_auto_upload</code></td>
+                        <td class='var-type'><span class='type-badge type-boolean'>boolean</span></td>
+                        <td class='var-default'><code>False</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>!! THIS ONLY APPLIES IF ^^ &quot;auto_mode=true&quot; ^^  !!<br>Set this to &#x27;true&#x27; if you want an upload to to be forced through unless a critical issue is found<br>e.g. If we can&#x27;t auto detect &#x27;audio_channels&#x27;, we can still upload but we&#x27;ll just omit that part from the torrent title<br>But if something like &#x27;resolution&#x27; can&#x27;t be detected then the upload will be cancelled since &#x27;resolution&#x27; is a required API/Upload Key<br>!! It&#x27;s recommended to keep this set to &#x27;False&#x27; !! (Remember, you are responsible for following all tracker rules!)</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            <div class='config-section' id=''>
+                <h2>------------------------------------------------------------</h2>
+                <div class='section-description'>This only applies to BHD since they are the only site that have a &#x27;draft&#x27;/&#x27;live on site&#x27; option<br>Its great for testing and verifying the script submits the correct info before posting it live<br>True == Live on site, everyone can see it<br>False == Goes to your private drafts <a href="https://beyond-hd.me/drafts" target="_blank">https://beyond-hd.me/drafts</a></div>
+
+                <table class='variables-table'>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr class='variable-row' data-name='live'>
+                        <td class='var-name'><code>live</code></td>
+                        <td class='var-type'><span class='type-badge type-boolean'>boolean</span></td>
+                        <td class='var-default'><code>False</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='bdinfo_script'>
+                        <td class='var-name'><code>bdinfo_script</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'>This is required to upload raw bluray discs (.iso not supported)<br>download &amp; install docker then clone <a href="https://github.com/zoffline/BDInfoCLI-ng" target="_blank">https://github.com/zoffline/BDInfoCLI-ng</a><br>Inside the project files for BDInfoCLI-ng you&#x27;ll find a folder called &#x27;scripts&#x27; and in it you&#x27;ll find the file &#x27;bdinfo&#x27;<br>You want to paste the full system path to that &#x27;bdinfo&#x27; file here<br>If you are using the docker version of the uploader, then there is not need to fill in this value<br>just use FullDisk-{TAG} docker image and you are good to go</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            <div class='config-section' id=''>
+                <h2></h2>
+                <div class='section-description'>GG-BOT Uploader is capable of 2 kinds of post processing steps<br>1. Immediate seeding via torrent client<br>Once a torrent has been uploaded, the uploader can add the dot torrent to a torrent client for immediate seeding.<br>2. Move media and torrents to watch folders<br>You can specify a &quot;Watch Directory&quot; in some torrent clients that will automatically add new .torrent files to its download queue<br>this could be used to automatically start seeding an upload using AutoTools (rtorrent)<br>Once a torrent has been uploaded, the uploader can add the dot torrent to a torrent client for immediate seeding.<br>this feature can be enabled or disabled based on the property below (True/False)</div>
+
+                <table class='variables-table'>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr class='variable-row' data-name='enable_post_processing'>
+                        <td class='var-name'><code>enable_post_processing</code></td>
+                        <td class='var-type'><span class='type-badge type-boolean'>boolean</span></td>
+                        <td class='var-default'><code>False</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='post_processing_mode'>
+                        <td class='var-name'><code>post_processing_mode</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>CROSS_SEED</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>you can select the mode using this property. (CROSS_SEED / WATCH_FOLDER)</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='dot_torrent_move_location'>
+                        <td class='var-name'><code>dot_torrent_move_location</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'>WATCH_FOLDER_CONFIGS<br>Note: Please ensure that the below two paths (if configured) are available and writable.<br>Uploader will not create these paths.</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='media_move_location'>
+                        <td class='var-name'><code>media_move_location</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='enable_type_base_move'>
+                        <td class='var-name'><code>enable_type_base_move</code></td>
+                        <td class='var-type'><span class='type-badge type-boolean'>boolean</span></td>
+                        <td class='var-default'><code>False</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>when type based move is enabled,<br>--- torrents will be moved to sub folders within the dot_torrent_move_location<br>--- media will be moved to sub folders within the media_move_location<br>where the subfolder will be the type<br>eg: movies dot torrent will be moved to {dot_torrent_move_location}/movie/...torrent<br>episode dot torrent  will be moved to {dot_torrent_move_location}/episode/...torrent<br>movies file will be moved to {media_move_location}/movie/...file<br>episodes file will be moved to {media_move_location}/episode/...file</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='client'>
+                        <td class='var-name'><code>client</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>Qbittorrent</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>CROSS-SEEDING CONFIGS<br>Specifies the client to which torrents needs to be uploaded.<br>Possible Values: |  Qbittorrent  |  Rutorrent  |  Transmisison  |  Deluge  |</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='client_host'>
+                        <td class='var-name'><code>client_host</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># https://qbit.mydomain.com</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>These are the configurations needed to connect to the torrent client</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='client_port'>
+                        <td class='var-name'><code>client_port</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># 443</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='client_username'>
+                        <td class='var-name'><code>client_username</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># username</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='client_password'>
+                        <td class='var-name'><code>client_password</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code># my_password</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='client_path'>
+                        <td class='var-name'><code>client_path</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>/</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Applicable for Rutorrent and Transmisison.<br>Rutorrent: Default is /<br>Transmission: Default value must be configured as /transmission/rpc or a custom path as per your configuration</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='cross_seed_label'>
+                        <td class='var-name'><code>cross_seed_label</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'>The label / category to which cross-seeding torrents needs to be added to.<br>Default: GGBotCrossSeed</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            <div class='config-section' id='-if-you-arent-using-docker-containers-for-anything-and-your-rtorrent-path-is-the-same-as-your-system-path-set-translationneeded-equal-to-false-'>
+                <h2>------ If you aren't using docker containers for anything and your rtorrent path is the same as your system path, set 'translation_needed' equal to False -----</h2>
+                <div class='section-description'></div>
+
+                <table class='variables-table'>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr class='variable-row' data-name='translation_needed'>
+                        <td class='var-name'><code>translation_needed</code></td>
+                        <td class='var-type'><span class='type-badge type-boolean'>boolean</span></td>
+                        <td class='var-default'><code>False</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='client_accessible_path'>
+                        <td class='var-name'><code>client_accessible_path</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='uploader_accessible_path'>
+                        <td class='var-name'><code>uploader_accessible_path</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            <div class='config-section' id=''>
+                <h2></h2>
+                <div class='section-description'>This property decided whether or not the sub_folders in temp_upload containing screenshots, mediainfo, urls etc needs to be in a human readable format or not.<br>By default a unique hash will be generated for the input path and it&#x27;ll be used.<br>If this property is enabled then the sub_folder will be created using the file name.</div>
+
+                <table class='variables-table'>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr class='variable-row' data-name='readable_temp_data'>
+                        <td class='var-name'><code>readable_temp_data</code></td>
+                        <td class='var-type'><span class='type-badge type-boolean'>boolean</span></td>
+                        <td class='var-default'><code>False</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='uploader_signature'>
+                        <td class='var-name'><code>uploader_signature</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>&#x27;&#x27;</code></td>
+                        <td class='var-required'>No</td>
+                        <td class='var-description'>Uploader signature is added at the bottom of the torrent description. By default if no signature is provided the upload assistant will add<br>``` Uploaded with ❤ using GG-BOT Upload Assistant ``` as the uploader signature.<br>With this property you can add your own custom signature to torrent uploads.<br>Notes:<br>1. The signature provided has to be plain text or must be a valid bbcode<br>2. The signature will automatically be wrapped inside [center][/center] tag by the upload assistant<br>Sample: uploader_signature=[url=<a href="https://ibb.co/VH6n8tC][img]https://i.ibb.co/VH6n8tC/Manchester-United-Logo11.jpg[/img][/url]" target="_blank">https://ibb.co/VH6n8tC][img]https://i.ibb.co/VH6n8tC/Manchester-United-Logo11.jpg[/img][/url]</a></td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='torf_mix_piece_size'>
+                        <td class='var-name'><code>torf_mix_piece_size</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>KB_16</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'>Set the max / min allowed piece size when using torf to generate torrents.<br>See: <a href="https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/issues/159" target="_blank">https://gitlab.com/NoobMaster669/gg-bot-upload-assistant/-/issues/159</a> for discussions.<br>This property can be used to set smaller max piece sizes in case you face memory issues in shared seedboxes.<br>Possible values: KB_16, KB_32, KB_64, MB_1, MB_2, MB_4, MB_8, MB_16, MB_32, MB_64<br>Defaults: min =&gt; KB_16  max =&gt; MB_32</td>
+                    </tr>
+
+                    <tr class='variable-row' data-name='torf_max_piece_size'>
+                        <td class='var-name'><code>torf_max_piece_size</code></td>
+                        <td class='var-type'><span class='type-badge type-string'>string</span></td>
+                        <td class='var-default'><code>MB_32</code></td>
+                        <td class='var-required'>Yes</td>
+                        <td class='var-description'></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                </div>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
