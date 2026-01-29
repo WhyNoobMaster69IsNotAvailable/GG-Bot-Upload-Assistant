@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "config.env Configuration",
+  "description": "Schema for config.env configuration file",
+  "type": "object",
+  "properties": {
+    "": {
+      "type": "object",
+      "title": "------------------------------------------------------------",
+      "description": "Configuration for ------------------------------------------------------------",
+      "properties": {
+        "live": {
+          "type": "boolean",
+          "description": "Live / Draft (BHD)\nThis only applies to BHD since they are the only site that have a 'draft'/'live on site' option\nIts great for testing and verifying the script submits the correct info before posting it live\nTrue == Live on site, everyone can see it\nFalse == Goes to your private drafts https://beyond-hd.me/drafts",
+          "default": "False"
+        },
+        "bdinfo_script": {
+          "type": "string",
+          "description": "This is required to upload raw bluray discs (.iso not supported)\ndownload & install docker then clone https://github.com/zoffline/BDInfoCLI-ng\nInside the project files for BDInfoCLI-ng you'll find a folder called 'scripts' and in it you'll find the file 'bdinfo'\nYou want to paste the full system path to that 'bdinfo' file here\nIf you are using the docker version of the uploader, then there is not need to fill in this value\njust use FullDisk-{TAG} docker image and you are good to go",
+          "default": ""
+        }
+      },
+      "required": [
+        "live"
+      ]
+    },
+    "_if_you_arent_using_docker_containers_for_anything_and_your_rtorrent_path_is_the_same_as_your_system_path_set_translation_needed_equal_to_false_": {
+      "type": "object",
+      "title": "------ If you aren't using docker containers for anything and your rtorrent path is the same as your system path, set 'translation_needed' equal to False -----",
+      "description": "Configuration for ------ If you aren't using docker containers for anything and your rtorrent path is the same as your system path, set 'translation_needed' equal to False -----",
+      "properties": {
+        "translation_needed": {
+          "type": "boolean",
+          "description": "If you are running the torrent client / uploader in a docker containers there is a high chance that the paths accessible inside the containers will\nbe different. For such cases, path translations can be used for proper seeding.\nIf you're running the client / uploader in a docker container you will need to map the containers download path to its system path\n(If you are using Sonarr/Radarr then you've already probably done this under \"Remote Path Mappings\" in the \"Download Clients\" section)\ne.g.\nUploader container / system path: /mnt/local/downloads/torrents/rutorrent/completed/file.mkv\nClient container / system path:   /media/torrents/rutorrent/completed/file.mkv\n------- Using those paths ^^ you would set the mappings like this\nuploader_accessible_path=/mnt/local/downloads/\nclient_accessible_path=/media/\n--------- That way the file with path `/mnt/local/downloads/torrents/rutorrent/completed/file.mkv`\nwill be uploaded to client with path `/media/torrents/rutorrent/completed/file.mkv`\nThis allows us to translate the \"d.data_path\" rtorrent returns to something that this project can access/upload",
+          "default": "False"
+        },
+        "client_accessible_path": {
+          "type": "string",
+          "description": "",
+          "default": ""
+        },
+        "uploader_accessible_path": {
+          "type": "string",
+          "description": "",
+          "default": ""
+        }
+      },
+      "required": [
+        "translation_needed"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": []
+}

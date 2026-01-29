@@ -1175,7 +1175,7 @@ class GGBotUploadAssistant:
                 logging.info(
                     f"[TrackerUpload] User chose to cancel the upload to {self.tracker}"
                 )
-                return False
+                return False, None
 
         logging.info(
             f"[TrackerUpload] URL: {url_masked} \n Data: {payload} \n Files: {files}"
@@ -1216,13 +1216,13 @@ class GGBotUploadAssistant:
                             console.print(
                                 f"Upload to tracker failed. Error: [bold red]{error_message}[/bold red]"
                             )
-                        return upload_status
+                        return upload_status, response.text
                     except Exception as ex:
                         logging.exception(
                             "[TrackerUpload] Custom action to parse response text failed. Marking upload as failed",
                             exc_info=ex,
                         )
-                        return False
+                        return False, None
                 elif "success" in response.json():
                     if str(response.json()["success"]).lower() == "true":
                         logging.info(
@@ -1234,7 +1234,7 @@ class GGBotUploadAssistant:
                             style="bold green1",
                             align="center",
                         )
-                        return True
+                        return True, response.text
                     else:
                         console.print("Upload to tracker failed.", style="bold red")
                         logging.critical(
@@ -1256,13 +1256,13 @@ class GGBotUploadAssistant:
                             style="bold green1",
                             align="center",
                         )
-                        return True
+                        return True, response.text
                     else:
                         console.print("Upload to tracker failed.", style="bold red")
                         logging.critical(
                             f"[TrackerUpload] Upload to {upload_to} failed"
                         )
-                        return False
+                        return False, None
                 elif "success" in str(response.json()).lower():
                     if str(response.json()["success"]).lower() == "true":
                         logging.info(
@@ -1276,13 +1276,13 @@ class GGBotUploadAssistant:
                             style="bold green1",
                             align="center",
                         )
-                        return True
+                        return True, response.text
                     else:
                         console.print("Upload to tracker failed.", style="bold red")
                         logging.critical(
                             f"[TrackerUpload] Upload to {upload_to} failed"
                         )
-                        return False
+                        return False, None
                 elif "status" in str(response.json()).lower():
                     if str(response.json()["status"]).lower() == "true":
                         logging.info(
@@ -1296,13 +1296,13 @@ class GGBotUploadAssistant:
                             style="bold green1",
                             align="center",
                         )
-                        return True
+                        return True, response.text
                     else:
                         console.print("Upload to tracker failed.", style="bold red")
                         logging.critical(
                             f"[TrackerUpload] Upload to {upload_to} failed"
                         )
-                        return False
+                        return False, None
                 else:
                     console.print("Upload to tracker failed.", style="bold red")
                     logging.critical(
@@ -1310,7 +1310,7 @@ class GGBotUploadAssistant:
                             upload_to
                         )
                     )
-                return False
+                return False, None
 
             elif response.status_code == 404:
                 console.print(
@@ -1371,7 +1371,7 @@ class GGBotUploadAssistant:
             console.print(
                 "[bold red] Dry Run Mode [bold red] Skipping upload to tracker"
             )
-        return False
+        return False, None
 
     def start(self, custom_paths: Optional[List[str]] = None):
         script_start_time = time.perf_counter()
@@ -2111,7 +2111,10 @@ class GGBotUploadAssistant:
                 # to each site that you upload to 1.1 things like screenshots, TMDB/IMDB ID's can & are reused for each site
                 # you upload to 2.0 we take all the info we generated outside of this loop (mediainfo, description,
                 # etc) and combine it with tracker specific info and upload it all now
-                self.torrent_info[f"{tracker}_upload_status"] = self.upload_to_site(
+                (
+                    self.torrent_info[f"{tracker}_upload_status"],
+                    self.torrent_info[f"{tracker}_upload_response"],
+                ) = self.upload_to_site(
                     upload_to=tracker,
                     tracker_api_key=temp_tracker_api_key,
                     config=config,

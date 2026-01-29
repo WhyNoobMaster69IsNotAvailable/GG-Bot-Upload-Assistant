@@ -20,7 +20,8 @@
     "technical_jargons": {
         "authentication_mode": "API_KEY",
         "response_type": "JSON",
-        "payload_type": "MULTI-PART"
+        "payload_type": "MULTI-PART",
+        "success_processor": "modules.custom_actions.unit3d_actions.redownload_torrent_from_json_response"
     },
 
     "hybrid_mappings": {
@@ -96,7 +97,8 @@
                 "dvd_remux": 2
             },
             "3": {
-                "bluray_encode": 1
+                "bluray_encode": 1,
+                "dvd_encode": 1
             },
             "4": {
                 "webdl": 2,
@@ -108,6 +110,9 @@
             },
             "6": {
                 "hdtv": 1
+            },
+            "7": {
+                "sdtv": 1
             }
         },
 
@@ -183,6 +188,7 @@
             "bluray_encode": "{title} {year} {s00e00} {repack} {screen_size} {uhd} {hybrid} {source} {multiaudio} {dualaudio} {audio_codec} {audio_channels} {atmos} {dv} {hdr} {video_codec} {release_group}",
             "web": "{title} {year} {s00e00} {repack} {screen_size} {web_source} {web_type} {multiaudio} {dualaudio} {audio_codec} {audio_channels} {atmos} {dv} {hdr} {video_codec} {release_group}",
             "hdtv": "{title} {year} {s00e00} {repack} {screen_size} {hybrid} {source} {multiaudio} {dualaudio} {audio_codec} {audio_channels} {video_codec} {release_group}",
+            "sdtv": "{title} {year} {s00e00} {repack} {screen_size} {hybrid} {source} {multiaudio} {dualaudio} {audio_codec} {audio_channels} {video_codec} {release_group}",
             "dvd": "{title} {year} {s00e00} {edition} {repack} {screen_size} {region} {hybrid} {source} {video_codec} {remux} {multiaudio} {dualaudio} {audio_codec} {audio_channels} {atmos} {release_group}"
         },
 
@@ -192,17 +198,26 @@
             "bluray_encode": "{title} {year} {edition} {repack} {screen_size} {uhd} {hybrid} {source} {multiaudio} {dualaudio} {audio_codec} {audio_channels} {atmos} {dv} {hdr} {video_codec} {release_group}",
             "web": "{title} {year} {edition} {repack} {screen_size} {hybrid} {web_source} {web_type} {multiaudio} {dualaudio} {audio_codec} {audio_channels} {atmos} {dv} {hdr} {video_codec} {release_group}",
             "hdtv": "{title} {year} {edition} {repack} {screen_size} {hybrid} {source} {multiaudio} {dualaudio} {audio_codec} {audio_channels} {atmos} {video_codec} {release_group}",
+            "sdtv": "{title} {year} {edition} {repack} {screen_size} {hybrid} {source} {multiaudio} {dualaudio} {audio_codec} {audio_channels} {atmos} {video_codec} {release_group}",
             "dvd": "{title} {year} {edition} {repack} {screen_size} {region} {hybrid} {source} {video_codec} {remux} {multiaudio} {dualaudio} {audio_codec} {audio_channels} {atmos} {release_group}"
         }
     },
     "banned_groups": [
-        "GalaxyTV",
-        "TGx",
-        "YIFY",
-        "YTS",
+        "4K4U",
+        "BiTOR",
+        "d3g",
+        "FGT",
+        "FRDS",
+        "FTUApps",
+        "GalaxyRG",
+        "LAMA",
+        "MeGusta",
+        "NeoNoir",
+        "PSA",
         "RARBG",
-        "Will1896",
-        "TSP",
-        "TSPxL"
+        "YAWNiX",
+        "YTS",
+        "YIFY",
+        "x0r"
     ]
 }

@@ -1,16 +1,16 @@
 # GG Bot Upload Assistant
-# Copyright (C) 2022  Noob Master669
-#
+# Copyright (C) 2025  Noob Master669
+
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
+
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-#
+
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -404,7 +404,7 @@ def get_ptp_type(torrent_info, tracker_settings, _):
         # we can get the `kind` from IMDb we can use that to find the PTP type.
         kind = movie_details.get("kind", "movie").lower()
         # TODO: this doesn't seem to work always. Find another way to get this working
-        if kind in ("movie", "tv movie"):
+        if kind in ("movie", "tv movie") and "runtimes" in movie_details:
             # if this is a movie, then we need to compare the runtimes to decide between Feature and Short Films
             if int(movie_details.get("runtimes", ["0"])[0]) >= 45:
                 tracker_settings["type"] = "Feature Film"
@@ -418,7 +418,8 @@ def get_ptp_type(torrent_info, tracker_settings, _):
             tracker_settings["type"] = "Short Film"
         elif kind == "tv mini series":
             tracker_settings["type"] = "Miniseries"
-    else:
+
+    if tracker_settings["type"] is None:
         # In cases where we do not have a `kind` value from IMDb we need to choose a type from the `keywords`.
         # keywords will be all lower case
         keywords = (

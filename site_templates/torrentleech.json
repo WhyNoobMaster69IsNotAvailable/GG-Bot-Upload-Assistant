@@ -28,7 +28,7 @@
         "category": {
             "required": true,
             "prerequisite": [
-                "resolution", "category_id", "type_id"
+                "resolution_id", "category_id", "type_id"
             ],
             "mapping":{
                 "36":{

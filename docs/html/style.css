@@ -1,0 +1,236 @@
+
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2980b9;
+    --text-color: #333;
+    --light-bg: #f8f9fa;
+    --border-color: #ddd;
+    --header-bg: #2c3e50;
+    --header-text: #ecf0f1;
+    --type-string: #2ecc71;
+    --type-number: #3498db;
+    --type-boolean: #9b59b6;
+    --type-array: #e67e22;
+    --type-object: #34495e;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    min-height: 100vh;
+}
+
+h1 {
+    color: var(--header-bg);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+h2 {
+    color: var(--header-bg);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.toc {
+    background-color: var(--light-bg);
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 2rem;
+    list-style-type: none;
+}
+
+.toc li {
+    margin-bottom: 0.5rem;
+}
+
+.toc a {
+    display: block;
+    padding: 0.25rem 0;
+}
+
+.config-section {
+    margin-bottom: 3rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-description {
+    margin-bottom: 1rem;
+}
+
+.variables-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+}
+
+.variables-table th,
+.variables-table td {
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.variables-table th {
+    background-color: var(--light-bg);
+    font-weight: 600;
+}
+
+.variables-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.variables-table code {
+    background-color: var(--light-bg);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    max-width: 300px;
+    overflow-x: auto;
+    display: inline-block;
+    word-break: break-all;
+}
+
+.type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: white;
+}
+
+.type-string {
+    background-color: var(--type-string);
+}
+
+.type-integer, .type-number {
+    background-color: var(--type-number);
+}
+
+.type-boolean {
+    background-color: var(--type-boolean);
+}
+
+.type-array {
+    background-color: var(--type-array);
+}
+
+.type-object {
+    background-color: var(--type-object);
+}
+
+.var-name {
+    width: 20%;
+}
+
+.var-type {
+    width: 10%;
+}
+
+.var-default {
+    width: 15%;
+}
+
+.var-required {
+    width: 10%;
+    text-align: center;
+}
+
+.var-description {
+    width: 45%;
+}
+
+.filter-container {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.filter-input {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    font-size: 1rem;
+    flex-grow: 1;
+    min-width: 250px;
+}
+
+.filter-options {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.filter-options label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 3px;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    background-color: var(--secondary-color);
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .variables-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .var-name, .var-type, .var-default, .var-required, .var-description {
+        width: auto;
+    }
+}
